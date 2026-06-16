@@ -1,7 +1,7 @@
-package com.example.examplemod.platform;
+package kawun.new_treasure_maps.platform;
 
-import com.example.examplemod.Constants;
-import com.example.examplemod.platform.services.IPlatformHelper;
+import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 

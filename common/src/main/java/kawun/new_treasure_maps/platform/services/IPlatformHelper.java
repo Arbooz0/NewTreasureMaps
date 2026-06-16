@@ -1,4 +1,4 @@
-package com.example.examplemod.platform.services;
+package kawun.new_treasure_maps.platform.services;
 
 public interface IPlatformHelper {
 

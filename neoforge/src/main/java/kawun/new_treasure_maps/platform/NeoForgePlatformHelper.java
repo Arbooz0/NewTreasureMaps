@@ -1,6 +1,6 @@
-package com.example.examplemod.platform;
+package kawun.new_treasure_maps.platform;
 
-import com.example.examplemod.platform.services.IPlatformHelper;
+import kawun.new_treasure_maps.platform.services.IPlatformHelper;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 

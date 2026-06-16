@@ -16,7 +16,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.example.examplemod.ExampleMod"
+            "kawun.new_treasure_maps.NewTreasureMapsFabric"
         ]
     },
     "mixins": [
