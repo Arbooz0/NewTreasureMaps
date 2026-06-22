@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.commands.create_map.CreateMapCommand;
+import kawun.new_treasure_maps.commands.pose.PoseCommand;
 import kawun.new_treasure_maps.commands.test.TestCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -18,7 +19,8 @@ public class CommandRegister {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands = List.of(
                 TestCommand::get_command,
-                CreateMapCommand::get_command
+                CreateMapCommand::get_command,
+                PoseCommand::get_command
         );
 
         LiteralArgumentBuilder<CommandSourceStack> base_command = Commands.literal(Constants.MOD_ID);
