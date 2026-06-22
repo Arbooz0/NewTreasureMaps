@@ -1,7 +1,0 @@
-{
-  "gui_light": "front",
-  "parent": "builtin/entity",
-  "textures": {
-    "layer0": "minecraft:item/stick"
-  }
-}
