@@ -1,4 +1,4 @@
-package kawun.new_treasure_maps.model;
+package kawun.new_treasure_maps.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -9,6 +9,9 @@ import org.joml.Vector3f;
 
 
 public class MapModelGenerator {
+
+
+
 
 
     private final Vector2i[] clockwise_add = {
@@ -31,6 +34,7 @@ public class MapModelGenerator {
     public MapModelGenerator() {
         size = 11;
         grid = createGrid(3);
+
     }
 
 
