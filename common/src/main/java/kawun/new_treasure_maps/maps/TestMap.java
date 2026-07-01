@@ -28,9 +28,27 @@ public class TestMap {
 
         MapItemSavedData data = MapItem.getSavedData(item, level).locked();
 
-        TimePassed time = new TimePassed();
+        /*TimePassed time = new TimePassed();
         coloring_map(level, data);
-        time.end("Coloring map");
+        time.end("Coloring map");*/
+
+        MapColor.Brightness[] brightnesses = new MapColor.Brightness[]{
+                MapColor.Brightness.HIGH,
+                MapColor.Brightness.NORMAL,
+                MapColor.Brightness.LOW,
+                MapColor.Brightness.LOWEST
+        };
+
+        int start_y = 0;
+
+        for (MapColor.Brightness b : brightnesses) {
+            for (int y = 0; y < 32; y++) {
+                for (int x = 0; x < 32; x++) {
+                    data.setColor(x + 48, start_y + y, MapColor.GRASS.getPackedId(b));
+                }
+            }
+            start_y += 32;
+        }
 
         level.setMapData(item.get(DataComponents.MAP_ID), data);
 

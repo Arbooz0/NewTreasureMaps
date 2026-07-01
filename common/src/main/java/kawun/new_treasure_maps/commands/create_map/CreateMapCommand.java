@@ -1,9 +1,12 @@
 package kawun.new_treasure_maps.commands.create_map;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.commands.Command;
+import kawun.new_treasure_maps.enums.MapType;
+import kawun.new_treasure_maps.maps.Maps;
 import kawun.new_treasure_maps.maps.TestMap;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -14,18 +17,19 @@ public class CreateMapCommand extends Command {
 
 
     public static LiteralArgumentBuilder<CommandSourceStack> get_command() {
-        return Commands.literal("create_map").executes(CreateMapCommand::execute);
+        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("create_map");
+
+        for (MapType type : MapType.values()) {
+            command.then(Commands.literal(type.name().toLowerCase()).executes(
+                    context -> execute(type, context)
+            ));
+        }
+        return command;
     }
 
-    private static int execute(CommandContext<CommandSourceStack> context) {
-        Constants.LOG.info("CREATE MAP!");
-
-        CommandSourceStack source = context.getSource();
-
-        ServerPlayer player = source.getPlayer();
-        Vector2i pos = new Vector2i((int) source.getPosition().x, (int) source.getPosition().z);
-
-        player.getInventory().add(TestMap.create_map(pos, source.getLevel()));
+    private static int execute(MapType type, CommandContext<CommandSourceStack> context) {
+        Constants.LOG.info("CREATE MAP: " + type);
+        Maps.createMapFromCommand(type, context);
         return 1;
     }
 

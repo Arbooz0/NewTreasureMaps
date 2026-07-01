@@ -4,7 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.enums.MapType;
+import kawun.new_treasure_maps.network.MapPacket;
+import kawun.new_treasure_maps.network.Network;
 import kawun.new_treasure_maps.utils.Utils;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jspecify.annotations.Nullable;
@@ -30,14 +33,16 @@ public class MapSavedData extends SavedData {
 
     public MapSavedData() {}
 
-    public MapSavedData(int size) {bytes = new byte[size * size];}
+    public MapSavedData(int id, MapType mapType, byte[] bytes) {
+        this.id = id;
+        this.mapType = mapType;
+        this.bytes = bytes;
+    }
 
     public MapSavedData(MapType mapType, ByteBuffer bytes) {
         this.mapType = mapType;
         this.bytes = bytes.array();
     }
-
-    public MapSavedData(byte[] bytes) {this.bytes = bytes;}
 
 
     public static SavedDataType<MapSavedData> getSavedDataType(int id) {
@@ -66,6 +71,11 @@ public class MapSavedData extends SavedData {
         if (NewTreasureMaps.server != null) {
             NewTreasureMaps.server.getDataStorage().set(getSavedDataType(id), this);
         }
+    }
+
+
+    public void sendToPlayer(ServerPlayer player) {
+        Network.sendToPlayer(player, new MapPacket(id, mapType, bytes));
     }
 
 

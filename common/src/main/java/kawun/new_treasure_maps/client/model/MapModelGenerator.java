@@ -65,9 +65,10 @@ public class MapModelGenerator {
             x -= 0.5F;
             y *= scale;
             x *= scale;
-            y += (float) (Math.random() * 0.1 - 0.05);
-            x += (float) (Math.random() * 0.1 - 0.05);
-            grid[i] = new Vector3f(x, y, (float) (Math.random() - 0.5f) / 20.0F);
+            //y += (float) (Math.random() * 0.1 - 0.05);
+            //x += (float) (Math.random() * 0.1 - 0.05);
+            float z = 0;//(float) (Math.random() - 0.5f) / 20.0F;
+            grid[i] = new Vector3f(x, y, z);
         }
 
         return grid;
@@ -127,7 +128,7 @@ public class MapModelGenerator {
         vertexConsumer
                 .addVertex(pose, vec)
                 .setColor(-1)
-                .setUv(uv.x, uv.y)
+                .setUv(uv.x, uv.y * -1)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(lightCoords)
                 .setNormal(pose, normal);

@@ -1,9 +1,25 @@
 package kawun.new_treasure_maps.items;
 
 import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.network.MapPacket;
+import kawun.new_treasure_maps.network.Network;
+import kawun.new_treasure_maps.saveddata.MapSavedData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TreasureMap extends Item {
+
+
+    public static HashMap<ServerPlayer, ArrayList<Integer>> playerGettedMap = new HashMap<>();
 
 
     public TreasureMap(Properties properties) {
@@ -11,5 +27,26 @@ public class TreasureMap extends Item {
         super(properties);
     }
 
+    @Override
+    public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+        if (level.isClientSide()) {
+            return;
+        }
+        if (slot == null || slot.getType() != EquipmentSlot.Type.HAND) {
+            return;
+        }
 
+        if (owner instanceof ServerPlayer player) {
+            MapComponent data = itemStack.get(Items.MAP_COMPONENT);
+            if (!playerGettedMap.containsKey(player) || !playerGettedMap.get(player).contains(data.id())) {
+                if (!playerGettedMap.containsKey(player)) {
+                    playerGettedMap.put(player, new ArrayList<>());
+                }
+                playerGettedMap.get(player).add(data.id());
+                MapSavedData savedData = MapSavedData.load(data.id());
+                savedData.sendToPlayer(player);
+                Constants.LOG.info("Send MapData " + data.id() + " to " + player);
+            }
+        }
+    }
 }

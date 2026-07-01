@@ -13,6 +13,7 @@ import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.commands.pose.PoseCommand;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.items.Items;
+import kawun.new_treasure_maps.items.MapComponent;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -68,18 +69,16 @@ public class MapRenderer {
 
         poseStack.mulPose(new Matrix4f().rotateLocalX(xRot * ((float) Math.PI / 180F)));
 
-        int id = 1;
-        MapId mapId = itemStack.get(DataComponents.MAP_ID);
-        if (mapId != null) {
-            id = mapId.id();
+        MapComponent data = itemStack.get(Items.MAP_COMPONENT);
+        if (data == null) {
+            return;
         }
-        FoldType foldType = itemStack.getOrDefault(Items.FOLD_TYPE, FoldType.ACCORDION);
 
         RenderType renderType;
-        if (renders.containsKey(id)) {
-            renderType = renders.get(id);
+        if (renders.containsKey(data.id())) {
+            renderType = renders.get(data.id());
         } else {
-            renderType = newRenderType(id, foldType);
+            renderType = newRenderType(data.id(), data.foldType());
         }
 
         submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {

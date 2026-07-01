@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.enums.FoldType;
+import kawun.new_treasure_maps.utils.Pixels;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -12,7 +13,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.material.MapColor;
 
+import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 
@@ -20,6 +26,7 @@ public class MapTextureManager {
 
 
     public static Int2ObjectMap<DynamicTexture> maps = new Int2ObjectOpenHashMap<>();
+    public static Int2ObjectMap<Pixels> unsetted_pixels = new Int2ObjectOpenHashMap<>();
 
 
 
@@ -51,17 +58,19 @@ public class MapTextureManager {
         Identifier identifier = getTextureIdentifier(id);
         Minecraft.getInstance().getTextureManager().register(identifier, texture);
         maps.put(id, texture);
+        if (unsetted_pixels.containsKey(id)) {
+            insertPixels(id, unsetted_pixels.get(id));
+            unsetted_pixels.remove(id);
+        }
         return identifier;
     }
 
 
-    public static void insertPixels(int id, byte[] pixels) {
+    public static void insertPixels(int id, Pixels pixels) {
         if (!maps.containsKey(id)) {
-            Constants.LOG.error("insertPixels: No contains map " + id);
+            unsetted_pixels.put(id, pixels);
             return;
         }
-
-        boolean upscale = pixels.length == 16384;
 
         DynamicTexture texture = maps.get(id);
         NativeImage image = texture.getPixels();
@@ -71,18 +80,77 @@ public class MapTextureManager {
 
         for (int y = 0; y < 256; y++) {
             for (int x = 0; x < 256; x++) {
-                int i;
-                if (upscale) {
-                    i = (x / 2) + (y / 2) * 128;
-                } else {
-                    i = x + y * 256;
+                int color = pixels.getPixel(x + y * 256);
+                int alpha = (color >> 24) & 0xFF;
+                if (alpha != 255) {
+                    if (alpha < 10) {
+                        continue;
+                    }
+                    int bg = image.getPixel(x + x_offset, y + y_offset);
+                    color = blendColor(bg, color, alpha);
                 }
-                image.setPixel(x + x_offset, y + y_offset, MapColor.getColorFromPackedId(pixels[i]));
+                image.setPixel(x + x_offset, y + y_offset, color);
             }
         }
 
+
+        if (pixels.copyImages != null) {
+            for (Pixels.CopyImage copyImage : pixels.copyImages) {
+                NativeImage i = loadTexture(copyImage.texture());
+                if (i == null) {
+                    continue;
+                }
+                int w = i.getWidth();
+                int h = i.getHeight();
+
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) {
+                        int tX = copyImage.x() + x_offset + x;
+                        int tY = copyImage.y() + y_offset + y;
+
+                        int color = i.getPixel(x, y);
+                        int alpha = (color >> 24) & 0xFF;
+                        if (alpha != 255) {
+                            if (alpha < 10) {
+                                continue;
+                            }
+                            int bg = image.getPixel(tX, tY);
+                            color = blendColor(bg, color, alpha);
+                        }
+                        image.setPixel(tX, tY, color);
+                    }
+                }
+
+                i.close();
+            }
+        }
+
+
+        /*try {
+            image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/0.png"));
+        } catch (IOException e) {
+            System.err.println("ERROR SAVE: " + e.getMessage());
+        }*/
+
         texture.upload();
 
+    }
+
+
+    private static int blendColor(int bg, int fg, int a) {
+        int r1 = (bg >> 16) & 0xFF;
+        int g1 = (bg >> 8) & 0xFF;
+        int b1 = bg & 0xFF;
+
+        int r2 = (fg >> 16) & 0xFF;
+        int g2 = (fg >> 8) & 0xFF;
+        int b2 = fg & 0xFF;
+
+        int r = (r2 * a + r1 * (255 - a)) / 255;
+        int g = (g2 * a + g1 * (255 - a)) / 255;
+        int b = (b2 * a + b1 * (255 - a)) / 255;
+
+        return (255 << 24) | (r << 16) | (g << 8) | b;
     }
 
 
