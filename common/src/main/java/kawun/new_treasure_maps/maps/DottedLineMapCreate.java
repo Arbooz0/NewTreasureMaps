@@ -127,7 +127,7 @@ public class DottedLineMapCreate {
         Vector2i max = new Vector2i();
 
         Vector2i now = new Vector2i();
-        Vector2i now_client = new Vector2i();
+        Vector2i nowClient = new Vector2i();
         Vector2i lastDir = null;
 
         for (int i = 0; i < 30; i ++) {
@@ -139,12 +139,12 @@ public class DottedLineMapCreate {
                 list.add(add);
                 now.add(add);
 
-                now_client.add(add.mul(2, new Vector2i()));
-                now_client.add(dir);
+                nowClient.add(add.mul(2, new Vector2i()));
+                nowClient.add(dir);
             }
 
-            min.min(now_client);
-            max.max(now_client);
+            min.min(nowClient);
+            max.max(nowClient);
 
             if (now.distanceSquared(vector) < 400) {
                 break;
@@ -189,7 +189,7 @@ public class DottedLineMapCreate {
         distToCorner.put(new Vector2i(224, 32), 256.0);
         distToCorner.put(new Vector2i(32, 224), 256.0);
         distToCorner.put(new Vector2i(224, 224), 256.0);
-        now_client.set(start);
+        nowClient.set(start);
 
         int i = 4;
         for (Vector2i vec : list) {
@@ -198,11 +198,11 @@ public class DottedLineMapCreate {
             bytes[i] = (byte) vec.y;
             i++;
 
-            now_client.add(vec.mul(2));
-            now_client.add(normalizeVector(vec));
+            nowClient.add(vec.mul(2));
+            nowClient.add(normalizeVector(vec));
 
             distToCorner.forEach((pos, d) -> {
-                double this_d = now_client.distance(pos);
+                double this_d = nowClient.distance(pos);
                 if (this_d < d) {
                     distToCorner.put(pos, this_d);
                 }
@@ -238,8 +238,6 @@ public class DottedLineMapCreate {
         if (Math.random() > 0.5) {
             list.removeIf(v -> ((v.x != 0) && (v.y != 0)));
         }
-
-        ArrayList<Vector2i> copy = (ArrayList<Vector2i>) list.clone();
 
         if (lastDir != null) {
             list.remove(lastDir);

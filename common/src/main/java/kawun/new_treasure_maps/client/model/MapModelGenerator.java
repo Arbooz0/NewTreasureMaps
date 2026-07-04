@@ -59,15 +59,16 @@ public class MapModelGenerator {
         for (int i = 0; i < grid.length; i++) {
             float y = i / size;
             float x = i - (y * size);
+            float z = 0;
             y /= (float) (size - 1);
             x /= (float) (size - 1);
             y -= 0.5F;
             x -= 0.5F;
             y *= scale;
             x *= scale;
-            //y += (float) (Math.random() * 0.1 - 0.05);
-            //x += (float) (Math.random() * 0.1 - 0.05);
-            float z = 0;//(float) (Math.random() - 0.5f) / 20.0F;
+            /*y += (float) (Math.random() * 0.02 - 0.01);
+            x += (float) (Math.random() * 0.02 - 0.01);
+            z = (float) (Math.random() - 0.5f) / 50.0F;*/
             grid[i] = new Vector3f(x, y, z);
         }
 

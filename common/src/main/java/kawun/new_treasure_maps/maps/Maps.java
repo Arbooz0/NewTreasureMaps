@@ -3,6 +3,7 @@ package kawun.new_treasure_maps.maps;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.enums.MapType;
+import kawun.new_treasure_maps.utils.TimePassed;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,11 +27,15 @@ public class Maps {
         ServerLevel level = source.getLevel();
         Vector2i player_pos = new Vector2i(player.getBlockX(), player.getBlockZ());
 
+        TimePassed time = new TimePassed();
         itemStack = switch (type) {
             case DOTTED_LINE -> DottedLineMapCreate.create(player_pos, level);
             case COLORED -> ColoredMapCreate.create(player_pos, level);
+            case LANDMARKS -> LandmarksMapCreate.create(player_pos, level);
+            case PERSPECTIVE -> PerspectiveMapCreate.create(player_pos, level);
             default -> itemStack;
         };
+        time.end("Generated map");
 
         if (itemStack != null) {
             player.getInventory().add(itemStack);

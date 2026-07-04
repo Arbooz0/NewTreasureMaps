@@ -125,7 +125,6 @@ public class MapTextureManager {
             }
         }
 
-
         /*try {
             image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/0.png"));
         } catch (IOException e) {

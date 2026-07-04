@@ -63,71 +63,71 @@ public class ColoredMapCreate {
         Pixels pixels = new Pixels(256);
 
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
-        int last_y;
-        boolean next_low = false;
-        int[] prev_column_y = new int[256];
+        int lastY;
+        boolean nextLow = false;
+        int[] prevColumnY = new int[256];
 
         for (int x = 0; x < 256; x++) {
-            last_y = 0;
+            lastY = 0;
             for (int y = 0; y < 256; y++) {
-                int pos_x = start.x + x;
-                int pos_z = start.y + y;
+                int posX = start.x + x;
+                int posZ = start.y + y;
 
-                LevelChunk chunk = level.getChunk(SectionPos.blockToSectionCoord(pos_x), SectionPos.blockToSectionCoord(pos_z));
+                LevelChunk chunk = level.getChunk(SectionPos.blockToSectionCoord(posX), SectionPos.blockToSectionCoord(posZ));
 
-                int pos_y = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, pos_x, pos_z);
-                blockPos.set(pos_x, pos_y, pos_z);
+                int posY = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, posX, posZ);
+                blockPos.set(posX, posY, posZ);
                 BlockState state = chunk.getBlockState(blockPos);
                 MapColor color = state.getMapColor(level, blockPos);
 
                 MapColor.Brightness b;
                 if (color == MapColor.WATER) {
-                    int floor_y = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, pos_x, pos_z);
-                    floor_y = pos_y - floor_y;
-                    floor_y += ((x + y) & 1) * 3;
-                    if (floor_y < 6) {
+                    int floorY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, posX, posZ);
+                    floorY = posY - floorY;
+                    floorY += ((x + y) & 1) * 3;
+                    if (floorY < 6) {
                         b = MapColor.Brightness.HIGH;
-                    } else if (floor_y < 12) {
+                    } else if (floorY < 12) {
                         b = MapColor.Brightness.NORMAL;
-                    } else if (floor_y < 20) {
+                    } else if (floorY < 20) {
                         b = MapColor.Brightness.LOW;
                     } else {
                         b = MapColor.Brightness.LOWEST;
                     }
-                    next_low = false;
+                    nextLow = false;
                 } else {
-                    if (pos_y == last_y) {
-                        int prev_y = prev_column_y[y];
-                        if (pos_y == prev_y) {
-                            if (next_low) {
+                    if (posY == lastY) {
+                        int prev_y = prevColumnY[y];
+                        if (posY == prev_y) {
+                            if (nextLow) {
                                 b = MapColor.Brightness.LOW;
                             } else {
                                 b = MapColor.Brightness.NORMAL;
                             }
-                        } else if (pos_y > prev_y) {
+                        } else if (posY > prev_y) {
                             b = MapColor.Brightness.HIGH;
                         } else {
                             b = MapColor.Brightness.LOW;
                         }
-                        next_low = false;
-                    } else if (pos_y > last_y) {
+                        nextLow = false;
+                    } else if (posY > lastY) {
                         b = MapColor.Brightness.HIGH;
-                        next_low = false;
+                        nextLow = false;
                     } else {
-                        if ((last_y - pos_y) > 2) {
+                        if ((lastY - posY) > 2) {
                             b = MapColor.Brightness.LOWEST;
-                            next_low = true;
+                            nextLow = true;
                         } else {
                             b = MapColor.Brightness.LOW;
-                            next_low = false;
+                            nextLow = false;
                         }
                     }
                 }
 
                 pixels.setPixel(x, y, color.getPackedId(b));
 
-                last_y = pos_y;
-                prev_column_y[y] = pos_y;
+                lastY = posY;
+                prevColumnY[y] = posY;
             }
         }
 
