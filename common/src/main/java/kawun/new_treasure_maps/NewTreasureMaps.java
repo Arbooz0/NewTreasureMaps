@@ -1,12 +1,17 @@
 package kawun.new_treasure_maps;
 
 
+import kawun.new_treasure_maps.utils.TimePassed;
 import net.minecraft.server.MinecraftServer;
+
+import java.util.ArrayList;
 
 public class NewTreasureMaps {
 
 
     public static MinecraftServer server;
+    public static ArrayList<Task> tasks = new ArrayList<>();
+    public static int totalTimeTask = 0;
 
 
     public static void init() {
@@ -16,41 +21,67 @@ public class NewTreasureMaps {
 
     public static void serverStarted(MinecraftServer server) {
         NewTreasureMaps.server = server;
+        server.addTickable(NewTreasureMaps::tick);
     }
 
+
+    private static void tick() {
+        if (tasks.isEmpty()) {
+            return;
+        }
+
+        Task task = tasks.getFirst();
+
+        long start = System.currentTimeMillis();
+        boolean isFinished = task.run();
+        long end = System.currentTimeMillis();
+        end -= start; // passed
+        totalTimeTask += (int) end;
+        Constants.LOG.info("Task running: " + end + " ms");
+
+        if (isFinished) {
+            tasks.removeFirst();
+            Constants.LOG.info("Total time Task running: " + totalTimeTask + " ms");
+            totalTimeTask = 0;
+        }
+    }
+
+
+    public static void addTask(Task task) {
+        tasks.add(task);
+    }
+
+
+
+    public interface Task {
+        boolean run();
+    }
+
+
+
+
+
+
+
     public static byte compress(int rgb) {
-        // 1. Извлекаем чистые каналы 0-255
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8)  & 0xFF;
         int b =  rgb        & 0xFF;
-
-        // 2. Урезаем биты (сдвигаем вправо, оставляя только старшие биты)
-        int r3 = r >> 5; // Из 8 бит оставляем 3 старших (значения 0..7)
-        int g3 = g >> 5; // Из 8 бит оставляем 3 старших (значения 0..7)
-        int b2 = b >> 6; // Из 8 бит оставляем 2 старших (значения 0..3)
-
-        // 3. Упаковываем их в один байт по схеме: RRRGGGBB
+        int r3 = r >> 5;
+        int g3 = g >> 5;
+        int b2 = b >> 6;
         int packed = (r3 << 5) | (g3 << 2) | b2;
-
         return (byte) packed;
     }
 
     public static int decompress(byte compressed) {
-        // Убираем знаковый бит Java, превращая byte (-128..127) в чистый int (0..255)
         int c = compressed & 0xFF;
-
-        // 1. Достаем урезанные каналы по их маскам
-        int r3 = (c >> 5) & 0x07; // Маска 00000111
-        int g3 = (c >> 2) & 0x07; // Маска 00000111
-        int b2 =  c       & 0x03; // Маска 00000011
-
-        // 2. Растягиваем их обратно до диапазона 0..255
-        // Формула (val * 255) / max гарантирует, что максимальное сжатое значение станет ровно 255
+        int r3 = (c >> 5) & 0x07;
+        int g3 = (c >> 2) & 0x07;
+        int b2 =  c       & 0x03;
         int r = (r3 * 255) / 7;
         int g = (g3 * 255) / 7;
         int b = (b2 * 255) / 3;
-
-        // 3. Собираем обратно в один int (формат RGB)
         return (r << 16) | (g << 8) | b;
     }
 }

@@ -1,17 +1,13 @@
 package kawun.new_treasure_maps.commands.create_map;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.commands.Command;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.maps.Maps;
-import kawun.new_treasure_maps.maps.TestMap;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.level.ServerPlayer;
-import org.joml.Vector2i;
 
 public class CreateMapCommand extends Command {
 

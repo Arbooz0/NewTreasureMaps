@@ -4,10 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
-import kawun.new_treasure_maps.maps.ColoredMapCreate;
-import kawun.new_treasure_maps.maps.DottedLineMapCreate;
-import kawun.new_treasure_maps.maps.LandmarksMapCreate;
-import kawun.new_treasure_maps.maps.PerspectiveMapCreate;
+import kawun.new_treasure_maps.maps.*;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -37,6 +34,7 @@ public record MapPacket(int id, MapType mapType, byte[] bytes) implements Custom
             case COLORED -> ColoredMapCreate.clientHandle(packet);
             case LANDMARKS -> LandmarksMapCreate.clientHandle(packet);
             case PERSPECTIVE -> PerspectiveMapCreate.clientHandle(packet);
+            case TEST -> TestMapCreate.clientHandle(packet);
         }
     }
 }

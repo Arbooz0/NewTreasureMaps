@@ -3,15 +3,11 @@ package kawun.new_treasure_maps.maps;
 
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
-import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.network.MapPacket;
-import kawun.new_treasure_maps.saveddata.FreeID;
-import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Pixels;
+import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -19,32 +15,32 @@ import net.minecraft.world.level.material.MapColor;
 import org.joml.Vector2i;
 
 
-public class ColoredMapCreate {
+public class ColoredMapCreate extends BaseMapCreate {
 
 
 
     public static final Pixels CROSS;
 
 
+    @Override
+    public void start() {
+        BlockPos chestBlockPos = findPlaceChest(3, 6);
+        if (chestBlockPos == null) {
+            Utils.sendErrorCreateMap();
+            return;
+        }
+        createChest(chestBlockPos);
 
-    public static ItemStack create(Vector2i from, Level level) {
-        Vector2i chestPos = Maps.getRandomPoint(50, 100).add(from);
+        Vector2i chestPos = new Vector2i(chestBlockPos.getX(), chestBlockPos.getZ());
+        Vector2i start = fromPosition.add(chestPos, new Vector2i()).div(2).sub(128, 128);
 
-        Maps.createChest(chestPos.x, chestPos.y, level);
-
-        Vector2i start = from.add(chestPos, new Vector2i()).div(2).sub(128, 128);
-
-        Pixels pixels = generateMap(start, level);
+        Pixels pixels = generateMap(start);
 
         chestPos.sub(start, start);
 
         pixels.drawImage(start, CROSS);
 
-        int id = FreeID.getFreeID();
-        MapSavedData data = new MapSavedData(id, MapType.COLORED, pixels.pixels);
-        data.save();
-
-        return Items.newTreasureMap(id);
+        save(MapType.COLORED, pixels.pixels);
     }
 
 
@@ -59,7 +55,7 @@ public class ColoredMapCreate {
 
 
 
-    public static Pixels generateMap(Vector2i start, Level level) {
+    public Pixels generateMap(Vector2i start) {
         Pixels pixels = new Pixels(256);
 
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();

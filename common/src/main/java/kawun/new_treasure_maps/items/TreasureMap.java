@@ -42,10 +42,14 @@ public class TreasureMap extends Item {
                 if (!playerGettedMap.containsKey(player)) {
                     playerGettedMap.put(player, new ArrayList<>());
                 }
-                playerGettedMap.get(player).add(data.id());
                 MapSavedData savedData = MapSavedData.load(data.id());
-                savedData.sendToPlayer(player);
-                Constants.LOG.info("Send MapData " + data.id() + " to " + player);
+                if (savedData != null) {
+                    savedData.sendToPlayer(player);
+                    playerGettedMap.get(player).add(data.id());
+                    Constants.LOG.info("Send MapData " + data.id() + " to " + player);
+                } else {
+                    Constants.LOG.error("No contains MapData " + data.id());
+                }
             }
         }
     }

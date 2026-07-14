@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.Objects;
 
 
 class Converter {
@@ -40,12 +40,17 @@ class Converter {
                     f.write((byte) width);
                     f.write((byte) height);
 
+                    /*System.out.printf("%10s%10s%10s%10s", "--------", "--------", "--------", "--------");
+                    System.out.print("\n");*/
+
                     for (int y = 0; y < height; y++) {
                         for (int x = 0; x < width; x++) {
                             int color_rgb = image.getRGB(x, y);
                             byte color = converter.convert(color_rgb);
                             f.write(color);
+                            //System.out.printf("%10s", Integer.toBinaryString(color & 0xFF));
                         }
+                        //System.out.print("\n");
                     }
                 }
 
@@ -60,8 +65,30 @@ class Converter {
 
     public static byte landmarksConvert(int color) {
         int a = (color >> 24) & 0xFF;
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+
         a >>= 4;
-        return (byte) a;
+
+        int type = 0;
+        int blackout = 0;
+
+        if (r > 5) {
+            blackout = (r >> 6) & 3;
+            if (g > 5) {
+                if (b < 5) {
+                    type = 3;
+                }
+            } else {
+                type = 2;
+            }
+        } else if (b > 5) {
+            type = 1;
+            blackout = (b >> 6) & 3;
+        }
+
+        return (byte) ((type << 6) | (blackout << 4) | a);
     }
 
 

@@ -11,14 +11,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.world.level.material.MapColor;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Optional;
 
 
@@ -125,11 +122,11 @@ public class MapTextureManager {
             }
         }
 
-        /*try {
-            image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/0.png"));
+        try {
+            image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/map.png"));
         } catch (IOException e) {
             System.err.println("ERROR SAVE: " + e.getMessage());
-        }*/
+        }
 
         texture.upload();
 

@@ -1,30 +1,21 @@
 package kawun.new_treasure_maps.maps;
 
 
-import com.mojang.blaze3d.platform.NativeImage;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
-import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.network.MapPacket;
-import kawun.new_treasure_maps.saveddata.FreeID;
-import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Pixels;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.MapColor;
-import org.joml.Vector2f;
+import kawun.new_treasure_maps.utils.Utils;
+import net.minecraft.core.BlockPos;
 import org.joml.Vector2i;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 
-public class DottedLineMapCreate {
+public class DottedLineMapCreate extends BaseMapCreate {
 
 
 
@@ -32,20 +23,19 @@ public class DottedLineMapCreate {
 
 
 
-    public static ItemStack create(Vector2i from, Level level) {
-        Constants.LOG.info("Player pos: " + from.toString(new DecimalFormat()));
-        Vector2i vec = Maps.getRandomPoint(40, 80);
-        Constants.LOG.info("VEC: " + vec.toString(new DecimalFormat()));
-        from.add(vec);
-        Maps.createChest(from.x, from.y, level);
+    @Override
+    public void start() {
+        BlockPos chestPos = findPlaceChest(3, 5);
+        if (chestPos == null) {
+            Utils.sendErrorCreateMap();
+            return;
+        }
 
-        byte[] bytes = generateLines(vec);
+        createChest(chestPos);
 
-        int id = FreeID.getFreeID();
-        MapSavedData data = new MapSavedData(id, MapType.DOTTED_LINE, bytes);
-        data.save();
+        byte[] bytes = generateLines(new Vector2i(chestPos.getX() - fromPosition.x, chestPos.getZ() - fromPosition.y));
 
-        return Items.newTreasureMap(id);
+        save(MapType.DOTTED_LINE, bytes);
     }
 
 
@@ -121,7 +111,7 @@ public class DottedLineMapCreate {
 
 
 
-    public static byte[] generateLines(Vector2i vector) {
+    public byte[] generateLines(Vector2i vector) {
         ArrayList<Vector2i> list = new ArrayList<>();
         Vector2i min = new Vector2i();
         Vector2i max = new Vector2i();
@@ -225,7 +215,7 @@ public class DottedLineMapCreate {
 
     }
 
-    private static Vector2i randomDir(Vector2i dir, @Nullable Vector2i lastDir) {
+    private Vector2i randomDir(Vector2i dir, @Nullable Vector2i lastDir) {
         ArrayList<Vector2i> list = new ArrayList<>();
         list.add(normalizeVector(dir));
         Vector2i v1 = new Vector2i(dir.y, dir.x * -1);
@@ -267,11 +257,6 @@ public class DottedLineMapCreate {
     }
 
 
-    private static int randomNumber() {
-        return (int) ((Math.random() * 100) - 50);
-    }
-
-
 
     static {
         byte l = 1;
@@ -291,6 +276,5 @@ public class DottedLineMapCreate {
         };
         CROSS = new Pixels(bytes);
     }
-
 
 }

@@ -12,7 +12,8 @@ public enum MapType {
     LANDMARKS(2),
     COLORED(3),
     PERSPECTIVE(4),
-    SIDE_VIEW(5);
+    SIDE_VIEW(5),
+    TEST(6);
 
     private final byte id;
     private static final MapType[] BY_ID = values();

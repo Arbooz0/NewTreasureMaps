@@ -100,7 +100,6 @@ public class Pixels {
         }
     }
 
-
     public void addCopyImage(String texture, int x, int y) {
         if (copyImages == null) {
             copyImages = new ArrayList<>();

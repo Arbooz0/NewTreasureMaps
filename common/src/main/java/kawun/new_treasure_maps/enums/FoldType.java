@@ -7,7 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 
 public enum FoldType{
 
-    ACCORDION(0,"square"),
+    ACCORDION(0,"square2"),
     SCROLL(1,"tall");
 
     private final byte id;
