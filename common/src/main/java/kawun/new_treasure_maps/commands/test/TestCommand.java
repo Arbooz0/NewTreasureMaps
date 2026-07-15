@@ -10,6 +10,9 @@ import kawun.new_treasure_maps.utils.TimePassed;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongArrayTag;
@@ -21,9 +24,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.SimpleBitStorage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 
 import java.util.*;
 
@@ -54,53 +62,51 @@ public class TestCommand extends Command {
         int type = IntegerArgumentType.getInteger(context, "type");
 
         TimePassed time = new TimePassed();
+        time.start();
 
+        ChunkStatus status = null;
         switch (type) {
             case 0 -> {
-
                 Optional<CompoundTag> optional = level.getChunkSource().chunkMap.read(new ChunkPos(x, z)).join();
                 if (optional.isPresent()) {
                     CompoundTag tag = optional.get();
-                    Constants.LOG.info("Loaded tag, size: " + tag.size() + ", in bytes: " + tag.sizeInBytes());
-
-                    CompoundTag structures = tag.getCompoundOrEmpty("structures");
-                    CompoundTag references = structures.getCompoundOrEmpty("References");
-                    CompoundTag starts = structures.getCompoundOrEmpty("starts");
-
-                    CompoundTag heightmaps = tag.getCompoundOrEmpty("Heightmaps");
-                    LongArrayTag surface = (LongArrayTag) heightmaps.get("WORLD_SURFACE");
-
-                    for (Map.Entry<String, Tag> entry : references.entrySet()) {
-                        Constants.LOG.info(entry.getKey() + ": " + entry.getValue().getType());
-                    }
-                    Constants.LOG.info("---");
-                    for (Map.Entry<String, Tag> entry : starts.entrySet()) {
-                        Constants.LOG.info(entry.getKey() + ": " + entry.getValue().getType());
-                        CompoundTag startsTag = (CompoundTag) entry.getValue();
-                        for (Map.Entry<String, Tag> entry2 : startsTag.entrySet()) {
-                            Constants.LOG.info("   " + entry2.getKey() + ": " + entry2.getValue().getType());
-                        }
-                        ListTag listTag = startsTag.getList("Children").get();
-                        for (Tag t : listTag) {
-                            Constants.LOG.info("C: " + ((CompoundTag) t).get("BB").getType() + ", " + t);
-                        }
-                    }
-                    Constants.LOG.info("---");
-
-                    if (surface != null) {
-                        Constants.LOG.info("H: " + getHeight(surface.getAsLongArray(), 0, 0, level));
-                    }
-
+                    Constants.LOG.info("Status:" + tag.getStringOr("Status", "-"));
                 } else {
                     Constants.LOG.info("No load");
                 }
                 break;
             }
             case 1 -> {
-                ChunkAccess chunkAccess = level.getChunk(x, z, ChunkStatus.FULL, true);
-                Constants.LOG.info("H: " + chunkAccess.getHeight(Heightmap.Types.WORLD_SURFACE, 0, 0));
+                status = ChunkStatus.EMPTY;
                 break;
             }
+            case 2 -> {
+                status = ChunkStatus.STRUCTURE_STARTS;
+                break;
+            }
+            case 3 -> {
+                status = ChunkStatus.SURFACE;
+                break;
+            }
+            case 4 -> {
+                status = ChunkStatus.FEATURES;
+                break;
+            }
+            case 5 -> {
+                status = ChunkStatus.FULL;
+                break;
+            }
+        }
+
+        if (status != null) {
+            ChunkAccess chunk = level.getChunk(x, z, status, true);
+            time.end("Load");
+            time.start();
+
+            int y = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, 0, 0);
+            Constants.LOG.info("Y: " + y);
+            BlockState blockState = chunk.getBlockState(new BlockPos(0, y - 1, 0));
+            Constants.LOG.info("Block: " + blockState);
         }
 
         time.end("Time");

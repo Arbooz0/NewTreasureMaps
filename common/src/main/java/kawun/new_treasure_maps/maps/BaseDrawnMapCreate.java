@@ -3,6 +3,7 @@ package kawun.new_treasure_maps.maps;
 import it.unimi.dsi.fastutil.bytes.*;
 import it.unimi.dsi.fastutil.ints.Int2ByteMap;
 import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
+import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.biome.Biome;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 
@@ -28,18 +30,31 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
     public static final HashMap<TagKey<Biome>, TextureType> TAGS;
     public static final TagKey<Biome> ICEBERG_TAG = TagKey.create(Registries.BIOME, Utils.identifier("iceberg"));
+    public static final String[] ALL_STRUCTURES = new String[]{
+            "pillager_outpost",
+            "village_plains",
+            "village_taiga"
+    };
 
     byte[] biomes = new byte[65536];
     Int2ByteMap mapping = new Int2ByteOpenHashMap();
     Byte2IntMap mappingReverse = new Byte2IntOpenHashMap();
+    HashMap<Vector2i, String> structures = new HashMap<>();
     Vector2i start;
     Vector2i crossPos;
     int step = 0;
+
+    HashSet<Vector2i> testStructPos = new HashSet<>();
 
 
 
     @Override
     public void start() {
+        if (false) { // TEST
+            spriteSheet();
+            return;
+        }
+
         canChestUnderWater = false;
         BlockPos chestBlockPos = getChestPos();
         if (chestBlockPos == null) {
@@ -85,8 +100,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
         byte water = 127;
         byte waterDarker = 111;
-        byte borderWater = 111;
-        byte borderWaterDarker = 95;
+        byte[] borders = new byte[]{79, 95, waterDarker};
 
         byte[] biomes2 = new byte[65536];
 
@@ -114,7 +128,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
                         ) {
                             biomes2[index] = -1;
                             if (i < 3 && biome < -1) {
-                                pixels.setPixel(x, y, (i == 0) ? borderWaterDarker : borderWater);
+                                pixels.setPixel(x, y, borders[i]);
                             }
                         } else {
                             biomes2[index] = biome;
@@ -173,8 +187,8 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
                     }
 
                     if (type == TextureType.CACTUS) {
-                        if (Math.random() < 0.01) {
-                            pixels.setPixel(x, y, (byte) 0b0011_1100);
+                        if (Math.random() < 0.1) {
+                            pixels.setPixel(x, y, (byte) (Math.random() * 7 + 6));
                             continue;
                         }
                     }
@@ -204,6 +218,13 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
             }
         }
 
+        for (Map.Entry<Vector2i, String> entry : structures.entrySet()) {
+            Pixels texture = PixelsLoader.getTexture(entry.getValue());
+            if (texture != null) {
+                pixels.drawImage(entry.getKey(), texture);
+            }
+        }
+
         modifyPixels(pixels);
 
         PixelsLoader.clearCache();
@@ -226,6 +247,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
         for (int y = (step * 64); y < ((step + 1) * 64); y++) {
             int offsetY = y << 8;
+            boolean checkStructure = y % 4 == 0;
 
             for (int x = 0; x < 256; x++) {
                 pos.setX(x * 4 + start.x);
@@ -259,8 +281,71 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
                     }
                 }
 
+                if (checkStructure && (x % 4 == 0)) {
+                    Vector2i chunkPos = new Vector2i(pos.getX() >> 4, pos.getZ() >> 4);
+                    if (step == 0 && (x < 64)) {
+                        System.out.println(chunkPos.toString(new DecimalFormat()) + " " + pos.toString() + " " + x + " " + y);
+                    }
+                    if (testStructPos.contains(chunkPos)) {
+                        Constants.LOG.error("Pos checked: " + chunkPos.toString(new DecimalFormat()) + ", " + x + " " + y);
+                        continue;
+                    }
+
+                    testStructPos.add(chunkPos);
+
+                    String structureName = getStructure(chunkPos.x, chunkPos.y, true);
+                    if (!structureName.isEmpty()) {
+                        if (hasStructure(structureName)) {
+                            structures.put(new Vector2i(x + 2, y + 2), structureName);
+                        }
+                    }
+                }
+
             }
         }
+    }
+
+
+    public void spriteSheet() {
+        Pixels pixels = new Pixels(256);
+        boolean isStructure = false;
+        int iTexture = 0;
+        int iVariation = 0;
+
+        for (int y = 25; y < 230; y+=25) {
+            for (int x = 25; x < 230; x+=25) {
+                String name = "";
+                if (isStructure) {
+                    if (iVariation < ALL_STRUCTURES.length) {
+                        name = ALL_STRUCTURES[iVariation];
+                        iVariation++;
+                    }
+                } else {
+                    TextureType type = TextureType.BY_ID[iTexture];
+                    iVariation++;
+                    name = type.texture + iVariation;
+
+                    if (iVariation >= type.count) {
+                        iTexture++;
+                        iVariation = 0;
+                        if (iTexture >= TextureType.BY_ID.length) {
+                            isStructure = true;
+                        }
+                    }
+                }
+
+                if (!name.isEmpty()) {
+                    Pixels texture = PixelsLoader.getTexture(name);
+                    if (texture != null) {
+                        pixels.drawImage(new Vector2i(x, y), texture);
+                    }
+                }
+            }
+        }
+
+        PixelsLoader.clearCache();
+
+        save(MapType.LANDMARKS, pixels.pixels);
     }
 
 
@@ -287,16 +372,18 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
     public static int convertColor(byte color) {
         int type = ((color & 0xFF) >> 6);
         int blackout = (color >> 4) & 3;
-        blackout++;
-        blackout = (blackout * 255) / 4;
-        int a = color & 15;
-        a = ((a * 255) / 15) << 24;
+        int a = ((color & 15) * 255) / 15;
+        if (type != 0) {
+            blackout += 3;
+            a <<= 24;
+        }
+        blackout = (blackout * 255) / 6;
 
         return switch (type) {
             case 1 -> ARGB.scaleRGB(a | 4352433, blackout); // Синий
             case 2 -> ARGB.scaleRGB(a | 13107250, blackout); // Красный
             case 3 -> ARGB.scaleRGB(a | 8866583, blackout); // Коричневый
-            default -> a;
+            default -> ARGB.color(a, blackout, blackout, blackout); // Черный-Серый
         };
     }
 
@@ -333,22 +420,33 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
 
 
+    public static boolean hasStructure(String structureName) {
+        for (String name : ALL_STRUCTURES) {
+            if (name.equals(structureName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 
 
     public enum TextureType {
 
-        ACACIA(3, 15),
+        ACACIA(3, 18),
         BIRCH(4, 7, "tree"),
         CACTUS(3, 15),
-        DARK_TREE(3, 10, "tree"),
+        DARK_TREE(3, 7, "tree"),
         GRASS(4, 8),
         HILL(2, 10),
         ICEBERG(3, 15),
         JUNGLE(4, 8, "tree"),
-        MOUNTAINS(4, 12),
+        MOUNTAINS(4, 15),
         SNOW(2, 8),
         SPRUCE(4, 7, "tree"),
-        TALL_SPRUCE(3, 10, "tree"),
+        TALL_SPRUCE(3, 9, "tree"),
         TREE(5, 7, "tree");
 
         public final String texture;

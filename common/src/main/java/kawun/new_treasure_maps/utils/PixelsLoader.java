@@ -45,6 +45,8 @@ public class PixelsLoader {
             } catch (IOException e) {
                 Constants.LOG.error("ERROR LOAD PIXELS " + name + ": " + e.getMessage());
             }
+        } else {
+            Constants.LOG.error("NO PIXELS: " + name);
         }
         return null;
     }

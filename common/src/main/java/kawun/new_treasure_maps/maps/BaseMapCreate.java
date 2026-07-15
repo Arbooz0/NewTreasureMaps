@@ -6,10 +6,13 @@ import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
@@ -18,11 +21,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -191,7 +198,18 @@ public abstract class BaseMapCreate {
 
 
 
+
     public String getStructure(int chunkX, int chunkZ, boolean onlyOnGround) {
+        if (level.hasChunk(chunkX, chunkZ)) {
+            return getStructureFromChunk(chunkX, chunkZ, onlyOnGround);
+        } else {
+            return getStructureFromFile(chunkX, chunkZ, onlyOnGround);
+        }
+    }
+
+
+
+    public String getStructureFromFile(int chunkX, int chunkZ, boolean onlyOnGround) {
         Optional<CompoundTag> optional = level.getChunkSource().chunkMap.read(new ChunkPos(chunkX, chunkZ)).join();
         if (optional.isEmpty()) {
             return "";
@@ -206,16 +224,45 @@ public abstract class BaseMapCreate {
             if (onlyOnGround) {
                 CompoundTag data = ((CompoundTag) entry.getValue()).getListOrEmpty("Children").getCompoundOrEmpty(0);
                 IntArrayTag aabb = (IntArrayTag) data.get("BB");
-                int y = (aabb.get(1).value() + aabb.get(4).value()) / 2;
+                int y = aabb.get(4).value();
                 if (y < 60) {
                     continue;
                 }
             }
-            return entry.getKey();
+            String[] name = entry.getKey().split(":", 2);
+            if (!name[0].equals("minecraft")) {
+                continue;
+            }
+            return name[1];
         }
 
         return "";
     }
+
+
+    public String getStructureFromChunk(int chunkX, int chunkZ, boolean onlyOnGround) {
+        ChunkAccess chunk = level.getChunk(chunkX, chunkZ);
+        for (Map.Entry<Structure, StructureStart> entry : chunk.getAllStarts().entrySet()) {
+            if (onlyOnGround) {
+                BoundingBox box = entry.getValue().getBoundingBox();
+                if (box.maxY() < 60) {
+                    continue;
+                }
+            }
+
+            Identifier identifier = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getKey(entry.getKey());
+            if (identifier == null) {
+                continue;
+            }
+            if (!identifier.getNamespace().equals("minecraft")) {
+                continue;
+            }
+            return identifier.getPath();
+        }
+        return "";
+    }
+
+
 
 
 
