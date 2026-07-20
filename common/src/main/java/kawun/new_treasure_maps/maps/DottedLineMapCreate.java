@@ -9,7 +9,7 @@ import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
 import org.joml.Vector2i;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;

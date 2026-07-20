@@ -6,17 +6,18 @@ import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -24,12 +25,13 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -40,15 +42,18 @@ public abstract class BaseMapCreate {
     public int mapId;
     public ServerLevel level;
     public Vector2i fromPosition;
+    public int lootLevel = 0;
 
     public boolean canChestUnderWater = true;
     private int attemptChestFind = 0;
 
 
-    public void setContext(Vector2i fromPosition, ServerLevel level, int id) {
+    public void setContext(Vector2i fromPosition, ServerLevel level, int id, int lootLevel) {
         this.fromPosition = fromPosition;
         this.level = level;
         this.mapId = id;
+        this.lootLevel = Math.clamp(lootLevel, 0, 2);
+        Constants.LOG.info("New map " + id + ", level: " + lootLevel + ", pos: " + fromPosition.toString(new DecimalFormat()));
         NewTreasureMaps.addTask(this::waitTick);
     }
 
@@ -184,6 +189,22 @@ public abstract class BaseMapCreate {
                     pos.set(center.getX() + x, center.getY() + y, center.getZ() + z);
                     if (x == 0 && y == 0 && z == 0) {
                         level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
+                        BlockEntity blockEntity = level.getBlockEntity(pos);
+                        if (blockEntity instanceof RandomizableContainerBlockEntity container) {
+
+                            String path;
+                            if ((lootLevel < 2) && (Math.random() < 0.4)) {
+                                path = "treasure_map/" + (lootLevel + 1);
+                            } else {
+                                path = "treasure/" + lootLevel;
+                            }
+
+                            ResourceKey<LootTable> lootTableKey = ResourceKey.create(
+                                    Registries.LOOT_TABLE,
+                                    Utils.identifier(path)
+                            );
+                            container.setLootTable(lootTableKey);
+                        }
                     } else if (y == -1) {
                         level.setBlock(pos, Blocks.RED_SANDSTONE.defaultBlockState(), 3);
                     } else {

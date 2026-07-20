@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "new_treasure_maps:treasure_map",
+          "functions": [
+            {
+              "function": "new_treasure_maps:treasure_map",
+              "loot_level": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "new_treasure_maps:treasure_map/0"
+}

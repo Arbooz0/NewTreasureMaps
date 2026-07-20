@@ -1,4 +1,4 @@
-package kawun.new_treasure_maps.commands.pose;
+package kawun.new_treasure_maps.commands;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -6,7 +6,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
-import kawun.new_treasure_maps.commands.Command;
 import kawun.new_treasure_maps.client.model.MapModelGenerator;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -19,7 +18,7 @@ import org.joml.Vector3f;
 
 import java.text.DecimalFormat;
 
-public class PoseCommand extends Command {
+public class PoseCommand {
 
 
     public static PoseStack.Pose pose = new PoseStack.Pose();

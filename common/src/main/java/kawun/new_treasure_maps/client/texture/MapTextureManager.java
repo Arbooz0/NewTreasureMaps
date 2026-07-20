@@ -28,7 +28,7 @@ public class MapTextureManager {
 
 
     public static Identifier getTextureIdentifier(int id) {
-        return Utils.identifier("map" + String.valueOf(id));
+        return Utils.identifier("map" + id);
     }
 
 

@@ -3,6 +3,8 @@ package kawun.new_treasure_maps;
 
 import kawun.new_treasure_maps.commands.CommandRegister;
 import kawun.new_treasure_maps.items.Items;
+import kawun.new_treasure_maps.loot.LootRegister;
+import kawun.new_treasure_maps.loot.LootTableModify;
 import kawun.new_treasure_maps.network.Network;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -10,6 +12,8 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,6 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientResourceLoadFinishedEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -59,6 +64,12 @@ public class NewTreasureMapsNeoforge {
         if (event.getRegistryKey().equals(Registries.DATA_COMPONENT_TYPE)) {
             Items.registerComponents((id, data) -> event.register(Registries.DATA_COMPONENT_TYPE, id, () -> data));
         }
+        if (event.getRegistryKey().equals(Registries.LOOT_POOL_ENTRY_TYPE)) {
+            LootRegister.registerLootEntry((id, codec) -> event.register(Registries.LOOT_POOL_ENTRY_TYPE, id, () -> codec));
+        }
+        if (event.getRegistryKey().equals(Registries.LOOT_FUNCTION_TYPE)) {
+            LootRegister.registerLootFunction((id, codec) -> event.register(Registries.LOOT_FUNCTION_TYPE, id, () -> codec));
+        }
 
     }
 
@@ -84,6 +95,15 @@ public class NewTreasureMapsNeoforge {
                 (type, consumer) -> event.register(type,
                         ((payload, context) -> consumer.accept(payload)))
         );
+    }
+
+
+    @SubscribeEvent
+    public static void lootTableLoaded(LootTableLoadEvent event) {
+        LootPool.Builder pool = LootTableModify.modify(event.getName());
+        if (pool != null) {
+            event.getTable().addPool(pool.build());
+        }
     }
 
 

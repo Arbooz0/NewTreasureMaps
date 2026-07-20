@@ -99,7 +99,7 @@ public class LandmarksMapCreate extends BaseDrawnMapCreate {
                 }
 
                 if (isLastLine) {
-                    if (t > 0.95) {
+                    if (t > 0.94) {
                         break;
                     }
                 }

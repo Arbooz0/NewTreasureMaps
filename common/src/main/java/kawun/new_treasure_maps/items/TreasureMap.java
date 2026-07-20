@@ -38,6 +38,9 @@ public class TreasureMap extends Item {
 
         if (owner instanceof ServerPlayer player) {
             MapComponent data = itemStack.get(Items.MAP_COMPONENT);
+            if (data == null) {
+                return;
+            }
             if (!playerGettedMap.containsKey(player) || !playerGettedMap.get(player).contains(data.id())) {
                 if (!playerGettedMap.containsKey(player)) {
                     playerGettedMap.put(player, new ArrayList<>());

@@ -7,10 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.model.MapModelGenerator;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
-import kawun.new_treasure_maps.commands.pose.PoseCommand;
+import kawun.new_treasure_maps.commands.PoseCommand;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.items.MapComponent;
@@ -19,12 +18,9 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.saveddata.maps.MapId;
 import org.joml.Matrix4f;
 
 public class MapRenderer {
