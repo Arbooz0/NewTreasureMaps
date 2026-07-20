@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://e3ti8sgeiyys"]
+
+[ext_resource type="Script" uid="uid://cpup0sv1mlyy0" path="res://scene/generator_scene.gd" id="1_hie7s"]
+[ext_resource type="Texture2D" uid="uid://cfeb878ax2nfs" path="res://test/ночной город.png" id="2_8ynvv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqrab"]
+cull_mode = 2
+albedo_texture = ExtResource("2_8ynvv")
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_fqrab"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hie7s"]
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
+grow_amount = 0.315
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_hie7s"]
+
+[node name="Generator" type="Node" unique_id=1792557105]
+script = ExtResource("1_hie7s")
+scale_mesh = 0.18
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1022880150]
+transform = Transform3D(0.9848078, 0.08682409, -0.15038376, 0, 0.8660254, 0.5, 0.1736482, -0.49240386, 0.85286856, 0, 50, 50)
+light_energy = 0.5
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=736935186]
+material_override = SubResource("StandardMaterial3D_fqrab")
+mesh = SubResource("ImmediateMesh_fqrab")
+
+[node name="Debug" type="MeshInstance3D" parent="." unique_id=1511924500]
+material_override = SubResource("StandardMaterial3D_hie7s")
+cast_shadow = 0
+mesh = SubResource("ImmediateMesh_hie7s")
