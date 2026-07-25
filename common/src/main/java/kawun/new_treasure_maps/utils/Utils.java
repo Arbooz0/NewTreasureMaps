@@ -7,6 +7,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
 
 import java.awt.*;
@@ -64,6 +65,20 @@ public class Utils {
         getLocalPlayer().sendSystemMessage(Component
                 .literal("Карта не сгенерировалась")
                 .withColor(new Color(188, 51, 69).getRGB()));
+    }
+
+
+    public static String matrixToString(Matrix4f m) {
+        return "\n" + String.format(
+                "%5.2ff; %5.2ff; %5.2ff; %5.2ff;\n" +
+                "%5.2ff; %5.2ff; %5.2ff; %5.2ff;\n" +
+                "%5.2ff; %5.2ff; %5.2ff; %5.2ff;\n" +
+                "%5.2ff; %5.2ff; %5.2ff; %5.2ff\n",
+                m.m00(), m.m01(), m.m02(), m.m03(),
+                m.m10(), m.m11(), m.m12(), m.m13(),
+                m.m20(), m.m21(), m.m22(), m.m23(),
+                m.m30(), m.m31(), m.m32(), m.m33()
+        ).replace(',', '.').replace(';', ',');
     }
 
 }

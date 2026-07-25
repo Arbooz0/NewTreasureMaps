@@ -7,6 +7,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.model.MapModelGenerator;
+import kawun.new_treasure_maps.client.render.MapRenderer;
+import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
@@ -26,8 +28,10 @@ public class PoseCommand {
     public static PoseStack.Pose result_pose = new PoseStack.Pose();
 
     public static LiteralArgumentBuilder<CommandSourceStack> get_command() {
-        pose.pose().set(3, 2, -2);
-        pose.mulPose(new Matrix4f().rotateLocalX(-45 * ((float) Math.PI / 180F)));
+        /*pose = new PoseStack.Pose();
+        pose.pose().set(3, 2, -1.5f);
+        pose.mulPose(new Matrix4f().rotateLocalX(-45 * ((float) Math.PI / 180F)));*/
+
         return Commands.literal("pose").then(Commands.literal("reset").executes(PoseCommand::reset))
                 .then(Commands.literal("pos").then(Commands.argument("pos", Vec3Argument.vec3()).executes(PoseCommand::pos)))
                 .then(Commands.literal("rotate")
@@ -56,7 +60,7 @@ public class PoseCommand {
     private static void print_pose(String message, PoseStack.Pose p, CommandContext<CommandSourceStack> context) {
         Matrix4f matrix = p.pose();
         chat("+------------------+", context);
-        chat(message + ":\n" + matrix.toString(new DecimalFormat()), context);
+        chat(message + ":\n" + Utils.matrixToString(matrix), context);
         chat("Pos: " + matrix.getTranslation(new Vector3f()).toString(new DecimalFormat()), context);
         chat("Rot: " + matrix.getRotation(new AxisAngle4f()).toString(new DecimalFormat()), context);
         chat("Sce: " + matrix.getScale(new Vector3f()).toString(new DecimalFormat()), context);

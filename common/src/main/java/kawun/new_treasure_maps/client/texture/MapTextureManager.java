@@ -63,6 +63,19 @@ public class MapTextureManager {
     }
 
 
+    public static Identifier createNewBackTexture(FoldType type) {
+        NativeImage image = loadTexture(type.texture);
+        if (image == null) {
+            return Identifier.withDefaultNamespace("textures/map/map_background.png");
+        }
+        DynamicTexture texture = new DynamicTexture(() -> "treasuremap_" + type.texture, image);
+
+        Identifier identifier = Utils.identifier("map_" + type.texture);
+        Minecraft.getInstance().getTextureManager().register(identifier, texture);
+        return identifier;
+    }
+
+
     public static void insertPixels(int id, Pixels pixels) {
         if (!maps.containsKey(id)) {
             unsetted_pixels.put(id, pixels);

@@ -30,15 +30,15 @@ func save(converter: Conventer):
 		if frame == 0:
 			file.store_16(converter.vertex.size())
 			print("Count vertex: ", converter.vertex.size())
+			
+			for uv: Vector2 in converter.uv:
+				file.store_8(roundi(uv.x * 255))
+				file.store_8(roundi(uv.y * 255))
 		
 		for pos: Vector3 in converter.vertex:
 			file.store_8(roundi(pos.x * 127))
 			file.store_8(roundi(pos.y * 127))
 			file.store_8(roundi(pos.z * 127))
-		
-		for uv: Vector2 in converter.uv:
-			file.store_8(roundi(uv.x * 255))
-			file.store_8(roundi(uv.y * 255))
 		
 		for pos: Vector3 in converter.normal:
 			file.store_8(roundi(pos.x * 127))
@@ -51,4 +51,6 @@ func save(converter: Conventer):
 	
 	var path_to: String = ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
 	path_to += COPY_TO + filename
-	DirAccess.copy_absolute(path, path_to)
+	var err: int = DirAccess.copy_absolute(path, path_to)
+	if err != OK:
+		printerr("Error copy: " + error_string(err))

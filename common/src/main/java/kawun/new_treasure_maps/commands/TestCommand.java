@@ -36,12 +36,12 @@ public class TestCommand {
 
         int type = IntegerArgumentType.getInteger(context, "type");
 
-        TimePassed time = new TimePassed();
+        /*TimePassed time = new TimePassed();
         time.start();
 
 
 
-        time.end("Time");
+        time.end("Time");*/
 
         return 1;
     }

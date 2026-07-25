@@ -14,8 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemInHandRenderer.class)
-public abstract class MixinItemInHandRenderer {
-
+public class MixinItemInHandRenderer {
 
     @Inject(at = @At("HEAD"), method = "renderArmWithItem", cancellable = true)
     private void renderArmWithItem(
@@ -31,16 +30,16 @@ public abstract class MixinItemInHandRenderer {
           int lightCoords,
           CallbackInfo ci
     ) {
-        if (hand != InteractionHand.MAIN_HAND) {
+        if (!itemStack.is(Items.TREASURE_MAP)) {
+            MapRenderer.setLastItem(hand, null);
             return;
         }
 
-        if (!itemStack.is(Items.TREASURE_MAP)) {
-          return;
-        }
-
+        poseStack.pushPose();
         MapRenderer.render(player, xRot, hand, attack, itemStack, inverseArmHeight, poseStack, submitNodeCollector, lightCoords);
+        poseStack.popPose();
 
         ci.cancel();
     }
+
 }

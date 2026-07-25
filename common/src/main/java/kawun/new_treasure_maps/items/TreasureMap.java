@@ -1,16 +1,22 @@
 package kawun.new_treasure_maps.items;
 
 import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.client.render.MapRenderer;
 import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.network.Network;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -55,5 +61,21 @@ public class TreasureMap extends Item {
                 }
             }
         }
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+       if (!level.isClientSide()) {
+           return InteractionResult.PASS;
+       }
+
+        MapComponent data = player.getItemInHand(hand).get(Items.MAP_COMPONENT);
+        if (data == null) {
+            return InteractionResult.FAIL;
+        }
+
+        MapRenderer.startAnimation(data.id());
+
+        return InteractionResult.CONSUME;
     }
 }
