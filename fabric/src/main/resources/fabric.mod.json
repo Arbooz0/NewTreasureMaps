@@ -16,7 +16,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "kawun.new_treasure_maps.NewTreasureMapsFabric"
+            "kawun.new_treasure_maps.FabricEntrypoint"
+        ],
+        "client": [
+            "kawun.new_treasure_maps.FabricClientEntrypoint"
         ]
     },
     "mixins": [

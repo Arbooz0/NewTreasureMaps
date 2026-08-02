@@ -3,7 +3,10 @@ package kawun.new_treasure_maps.client.animation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import kawun.new_treasure_maps.client.utils.AnimationTime;
 import kawun.new_treasure_maps.client.utils.HandHelper;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.HumanoidArm;
 import org.joml.Matrix4f;
 
@@ -15,15 +18,24 @@ public abstract class Animation {
     protected HumanoidArm arm;
     protected AnimationTime time;
     protected int lightCoords;
-    protected float inverseArmHeight;
-    protected float attack;
 
+    protected boolean mainHandEmpty;
+
+    protected PlayerModel model;
+    protected AvatarRenderState state;
 
 
 
     public abstract Matrix4f getMapOffsetInHand(HumanoidArm arm);
 
+    public abstract Matrix4f getMapOffsetThirdPerson(HumanoidArm arm);
+
     protected abstract void animate();
+
+    protected abstract void animateThirdPerson();
+
+    protected abstract void animateArm();
+
 
 
     public void animate(
@@ -32,16 +44,14 @@ public abstract class Animation {
             HumanoidArm arm,
             AnimationTime time,
             int lightCoords,
-            float inverseArmHeight,
-            float attack
+            boolean mainHandEmpty
     ) {
         this.poseStack = poseStack;
         this.submitNodeCollector = submitNodeCollector;
         this.arm = arm;
         this.time = time;
         this.lightCoords = lightCoords;
-        this.inverseArmHeight = inverseArmHeight;
-        this.attack = attack;
+        this.mainHandEmpty = mainHandEmpty;
         animate();
         this.poseStack = null;
         this.submitNodeCollector = null;
@@ -50,9 +60,52 @@ public abstract class Animation {
     }
 
 
+    public void animateThirdPerson(
+            PoseStack poseStack,
+            SubmitNodeCollector submitNodeCollector,
+            HumanoidArm arm,
+            AnimationTime time,
+            PlayerModel model,
+            AvatarRenderState state,
+            int lightCoords
+    ) {
+        this.poseStack = poseStack;
+        this.submitNodeCollector = submitNodeCollector;
+        this.arm = arm;
+        this.time = time;
+        this.model = model;
+        this.state = state;
+        this.lightCoords = lightCoords;
+        animateThirdPerson();
+        this.poseStack = null;
+        this.submitNodeCollector = null;
+        this.arm = null;
+        this.time = null;
+        this.model = null;
+        this.state = null;
+    }
+
+
+    public void animateArm(PlayerModel model, AnimationTime time, HumanoidArm arm) {
+        this.model = model;
+        this.time = time;
+        this.arm = arm;
+        animateArm();
+        this.model = null;
+        this.time = null;
+        this.arm = null;
+    }
+
+
+
+
+    public float lerp(float a, float b, float t) {
+        return a + (b - a) * t;
+    }
+
 
     public void applyDefaultArmPose(HumanoidArm arm) {
-        HandHelper.defaultArmPose(poseStack, inverseArmHeight, attack, arm);
+        HandHelper.defaultArmPose(poseStack, 0, 0, arm);
     }
 
 
@@ -63,6 +116,27 @@ public abstract class Animation {
 
     public float getInvert(HumanoidArm arm) {
         return (arm == HumanoidArm.RIGHT) ? 1.0F : -1.0F;
+    }
+
+
+    public void translateToHand(HumanoidArm arm) {
+        model.translateToHand(state, arm, poseStack);
+    }
+
+
+    public ModelPart getArm(HumanoidArm arm) {
+        return arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;
+    }
+
+    public void lerpArm(HumanoidArm arm, float x, float y, float z, float t) {
+        ModelPart part = getArm(arm);
+        part.xRot = lerp(part.xRot, x, t);
+        part.yRot = lerp(part.yRot, y, t);
+        part.zRot = lerp(part.zRot, z, t);
+    }
+
+    public float getHeadRotationX() {
+        return model.head.xRot;
     }
 
 }

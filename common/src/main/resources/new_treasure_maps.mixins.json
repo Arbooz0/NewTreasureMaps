@@ -6,7 +6,8 @@
   "mixins": [],
   "client": [
     "MixinItemInHandRenderer",
-    "MixinItemInHandLayer"
+    "MixinItemInHandLayer",
+    "MixinPlayerModel"
   ],
   "server": [],
   "injectors": {

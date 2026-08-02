@@ -11,19 +11,21 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
 
-public class NewTreasureMapsFabric implements ModInitializer {
+public class FabricEntrypoint implements ModInitializer {
     
     @Override
     public void onInitialize() {
         NewTreasureMaps.init();
 
-        ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> NewTreasureMaps.serverStarted(server));
+        ServerLifecycleEvents.SERVER_STARTED.register(NewTreasureMaps::serverStarted);
+        ServerLifecycleEvents.SERVER_STOPPING.register(s -> NewTreasureMaps.serverStopped());
+
+        ServerPlayConnectionEvents.DISCONNECT.register((listener, server) -> NewTreasureMaps.playerLeaved(listener.getPlayer()));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CommandRegister.register(dispatcher);
@@ -36,9 +38,6 @@ public class NewTreasureMapsFabric implements ModInitializer {
 
         Network.registerPacket((type, codec) -> PayloadTypeRegistry.clientboundPlay()
                 .register(type, codec));
-
-        Network.registerHandler((type, consumer) -> ClientPlayNetworking
-                .registerGlobalReceiver(type, (payload, context) -> consumer.accept(payload)));
 
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             LootPool.Builder pool = LootTableModify.modify(key.identifier());

@@ -44,8 +44,6 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
     Vector2i crossPos;
     int step = 0;
 
-    HashSet<Vector2i> testStructPos = new HashSet<>();
-
 
 
     @Override
@@ -282,18 +280,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
                 }
 
                 if (checkStructure && (x % 4 == 0)) {
-                    Vector2i chunkPos = new Vector2i(pos.getX() >> 4, pos.getZ() >> 4);
-                    if (step == 0 && (x < 64)) {
-                        System.out.println(chunkPos.toString(new DecimalFormat()) + " " + pos.toString() + " " + x + " " + y);
-                    }
-                    if (testStructPos.contains(chunkPos)) {
-                        Constants.LOG.error("Pos checked: " + chunkPos.toString(new DecimalFormat()) + ", " + x + " " + y);
-                        continue;
-                    }
-
-                    testStructPos.add(chunkPos);
-
-                    String structureName = getStructure(chunkPos.x, chunkPos.y, true);
+                    String structureName = getStructure(pos.getX() >> 4, pos.getZ() >> 4, true);
                     if (!structureName.isEmpty()) {
                         if (hasStructure(structureName)) {
                             structures.put(new Vector2i(x + 2, y + 2), structureName);

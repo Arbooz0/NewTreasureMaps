@@ -86,7 +86,6 @@ public class Model {
         if (res.isPresent()) {
             try (InputStream stream = res.get().open()) {
                 byte[] bytes = stream.readAllBytes();
-                Constants.LOG.info("Bytes: " + bytes.length);
                 return loadModel(bytes);
             } catch (Exception e) {
                 Constants.LOG.error("Error load model " + type + ": " + e.getMessage());
@@ -101,7 +100,6 @@ public class Model {
     private static Model loadModel(byte[] bytes) {
         int countVertex = ((bytes[1] & 0xFF) << 8) | (bytes[0] & 0xFF);
         int countFrame = (bytes.length - 2 - (countVertex * 2)) / (countVertex * 6);
-        Constants.LOG.info("Count vertex: " + countVertex + ", frame: " + countFrame);
         Model model = new Model(countVertex, countFrame);
 
         int i = 2;
@@ -133,8 +131,6 @@ public class Model {
             }
 
         }
-
-        Constants.LOG.info("Model loaded");
 
         return model;
     }

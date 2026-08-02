@@ -18,27 +18,20 @@ public class Network {
 
     public static void registerPacket(BiConsumer<CustomPacketPayload.Type, StreamCodec> consumer) {
         consumer.accept(MapPacket.TYPE, MapPacket.STREAM_CODEC);
+        consumer.accept(OpenMapPacket.TYPE, OpenMapPacket.STREAM_CODEC);
     }
 
 
     public static void registerHandler(BiConsumer<CustomPacketPayload.Type, Consumer> consumer) {
         consumer.accept(MapPacket.TYPE, obj -> MapPacket.handle((MapPacket) obj));
+        consumer.accept(OpenMapPacket.TYPE, obj -> OpenMapPacket.handle((OpenMapPacket) obj));
     }
-
 
 
 
     public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         player.connection.send(makePacket(payload));
     }
-
-
-
-    public static List<ServerPlayer> getPlayersNearPlayer(ServerLevel level, ServerPlayer player, float radius, List<ServerPlayer> excludes) {
-        float radiusSq = radius * radius;
-        return level.getPlayers((p) -> !excludes.contains(p) && p.distanceToSqr(player) <= radiusSq);
-    }
-
 
 
 

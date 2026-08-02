@@ -6,14 +6,9 @@ import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.loot.LootRegister;
 import kawun.new_treasure_maps.loot.LootTableModify;
 import kawun.new_treasure_maps.network.Network;
-import kawun.new_treasure_maps.utils.Utils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,20 +18,18 @@ import net.neoforged.neoforge.client.event.ClientResourceLoadFinishedEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Optional;
-
 @Mod(Constants.MOD_ID)
 @EventBusSubscriber
-public class NewTreasureMapsNeoforge {
+public class NeoforgeEntrypoint {
 
-    public NewTreasureMapsNeoforge(IEventBus eventBus, Dist dist) {
+    public NeoforgeEntrypoint(IEventBus eventBus, Dist dist) {
         NewTreasureMaps.init();
 
         Constants.LOG.info("+----------------+");
@@ -44,15 +37,20 @@ public class NewTreasureMapsNeoforge {
         Constants.LOG.info("+----------------+");
     }
 
-    @SubscribeEvent
-    public static void clientLoaded(ClientResourceLoadFinishedEvent event) {
-        Constants.LOG.info("RESOURCE LOAD FINISHED");
-    }
-
 
     @SubscribeEvent
     public static void serverStarted(ServerStartedEvent event) {
         NewTreasureMaps.serverStarted(event.getServer());
+    }
+
+    @SubscribeEvent
+    public static void serverStopping(ServerStoppingEvent event) {
+        NewTreasureMaps.serverStopped();
+    }
+
+    @SubscribeEvent
+    public static void playerLeaved(PlayerEvent.PlayerLoggedOutEvent event) {
+        NewTreasureMaps.playerLeaved((ServerPlayer) event.getEntity());
     }
 
 
@@ -85,15 +83,6 @@ public class NewTreasureMapsNeoforge {
         final PayloadRegistrar registrar = event.registrar("1");
         Network.registerPacket(
                 (type, codec) -> registrar.playToClient(type, codec)
-        );
-    }
-
-
-    @SubscribeEvent
-    public static void registerClientPayload(RegisterClientPayloadHandlersEvent event) {
-        Network.registerHandler(
-                (type, consumer) -> event.register(type,
-                        ((payload, context) -> consumer.accept(payload)))
         );
     }
 

@@ -9,6 +9,7 @@ import kawun.new_treasure_maps.utils.Pixels;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 
@@ -16,6 +17,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Optional;
 
 
@@ -23,12 +25,17 @@ public class MapTextureManager {
 
 
     public static Int2ObjectMap<DynamicTexture> maps = new Int2ObjectOpenHashMap<>();
+    public static HashSet<FoldType> backTextureInit = new HashSet<>();
     public static Int2ObjectMap<Pixels> unsetted_pixels = new Int2ObjectOpenHashMap<>();
 
 
 
     public static Identifier getTextureIdentifier(int id) {
         return Utils.identifier("map" + id);
+    }
+
+    public static Identifier getBackTextureIdentifier(FoldType type) {
+        return Utils.identifier("map_" + type.texture);
     }
 
 
@@ -63,15 +70,19 @@ public class MapTextureManager {
     }
 
 
-    public static Identifier createNewBackTexture(FoldType type) {
+    public static Identifier getBackTexture(FoldType type) {
+        if (backTextureInit.contains(type)) {
+            return getBackTextureIdentifier(type);
+        }
         NativeImage image = loadTexture(type.texture);
         if (image == null) {
             return Identifier.withDefaultNamespace("textures/map/map_background.png");
         }
         DynamicTexture texture = new DynamicTexture(() -> "treasuremap_" + type.texture, image);
 
-        Identifier identifier = Utils.identifier("map_" + type.texture);
+        Identifier identifier = getBackTextureIdentifier(type);
         Minecraft.getInstance().getTextureManager().register(identifier, texture);
+        backTextureInit.add(type);
         return identifier;
     }
 
@@ -160,6 +171,23 @@ public class MapTextureManager {
         int b = (b2 * a + b1 * (255 - a)) / 255;
 
         return (255 << 24) | (r << 16) | (g << 8) | b;
+    }
+
+
+
+    public static void clear() {
+        unsetted_pixels.clear();
+
+        TextureManager manager = Minecraft.getInstance().getTextureManager();
+        for (int id : maps.keySet()) {
+            manager.release(getTextureIdentifier(id));
+        }
+        maps.clear();
+
+        for (FoldType type : backTextureInit) {
+            manager.release(getBackTextureIdentifier(type));
+        }
+        backTextureInit.clear();
     }
 
 

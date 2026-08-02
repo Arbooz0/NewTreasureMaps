@@ -64,41 +64,7 @@ public class PerspectiveMapCreate extends BaseMapCreate {
 
 
     public Pixels findMapLocation(Vector2i from) {
-        HashSet<BlockPos> positions = getNearestStructure(from);
-        positions.removeIf(pos -> from.distanceSquared(pos.getX(), pos.getZ()) < 3600);
-
         BlockPos.MutableBlockPos mPos = new BlockPos.MutableBlockPos();
-
-        if (!positions.isEmpty()) {
-            for (BlockPos pos : positions) {
-                for (int i = 0; i < 5; i++) {
-                    Vector2i add = Utils.getRandomPoint(10, 20);
-                    int x = pos.getX() + add.x;
-                    int z = pos.getZ() + add.y;
-                    int y = getFloor(x, z);
-                    if (y == INVALID_HEIGHT) {
-                        continue;
-                    }
-                    y -= 3;
-
-                    mPos.set(x, y, z);
-                    if (!canPlaceChest(mPos)) {
-                        continue;
-                    }
-
-                    Vector2i dir = normalizeVector(new Vector2i(add));
-                    Vec3 rayFrom = new Vec3(x + 0.5, y + 4.5, z + 0.5);
-                    Vec3 rayTo = rayFrom.add(dir.x * 2, 5, dir.y * 2);
-                    if (rayCast(rayFrom, rayTo)) {
-                        continue;
-                    }
-
-                    createChest(mPos);
-                    mPos.set(x, y + 3, z);
-                    return renderMap(rayTo, new Vec3(-dir.x, -1, -dir.y), mPos);
-                }
-            }
-        }
 
         ArrayList<Vector2i> chunkCheked = new ArrayList<>();
         Vector2i chunkStart = new Vector2i(from.x >> 4, from.y >> 4);
@@ -179,35 +145,6 @@ public class PerspectiveMapCreate extends BaseMapCreate {
         }
 
         return null;
-    }
-
-
-    public HashSet<BlockPos> getNearestStructure(Vector2i from) {
-        final int startX = from.x >> 4;
-        final int startZ = from.y >> 4;
-        final int r = 8;
-        HashSet<BlockPos> positions = new HashSet<>();
-
-        for (int x = -r; x <= r; x++) {
-            for (int z = -r; z <= r; z++) {
-                ChunkAccess chunk = level.getChunk(startX + x, startZ + z, ChunkStatus.STRUCTURE_STARTS, false);
-                if (chunk == null) {
-                    continue;
-                }
-
-                for (Map.Entry<Structure, StructureStart> entry : chunk.getAllStarts().entrySet()) {
-                    BoundingBox box = entry.getValue().getBoundingBox();
-                    if (box.maxY() < 50) {
-                        continue;
-                    }
-
-                    positions.add(box.getCenter());
-                }
-
-            }
-        }
-
-        return positions;
     }
 
 
@@ -349,16 +286,6 @@ public class PerspectiveMapCreate extends BaseMapCreate {
 
         return pixels;
     }
-
-
-
-    private static Vector2i normalizeVector(Vector2i vector) {
-        vector.x = vector.x >= 0 ? 1 : -1;
-        vector.y = vector.y >= 0 ? 1 : -1;
-        return vector;
-    }
-
-
 
 
 

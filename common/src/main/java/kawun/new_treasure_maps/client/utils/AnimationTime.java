@@ -21,7 +21,11 @@ public class AnimationTime {
         this(duration, false, 0);
     }
 
-    public AnimationTime(float duration, boolean isReverse, float offset) {
+    public AnimationTime(float duration, boolean isReverse) {
+        this(duration, isReverse, 0);
+    }
+
+    private AnimationTime(float duration, boolean isReverse, float offset) {
         this.duration = duration;
         this.isReverse = isReverse;
         this.offset = offset;
@@ -43,8 +47,8 @@ public class AnimationTime {
         }
 
         t = (float) Math.sin(time * Math.PI / 2.0f);
-        part1 = (float) Math.sin(Math.min(t * 2, 1) * Math.PI / 2.0f);
-        part2 = (float) Math.sin(Math.max((t - 0.5f) * 2, 0) * Math.PI / 2.0f);
+        part1 = (float) Math.sin(Math.min(t * 1.666f, 1) * Math.PI / 2.0f);
+        part2 = (float) Math.sin(Math.max((t - 0.6f) * 2.5, 0) * Math.PI / 2.0f);
         partTransition = (float) Math.sin(Math.max((part1 - 0.8f) * 5, 0) * Math.PI / 2.0f);
 
     }

@@ -1,8 +1,9 @@
 package kawun.new_treasure_maps;
 
 
-import kawun.new_treasure_maps.utils.TimePassed;
+import kawun.new_treasure_maps.items.TreasureMap;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 
@@ -20,8 +21,23 @@ public class NewTreasureMaps {
 
 
     public static void serverStarted(MinecraftServer server) {
+        Constants.LOG.info("Server started");
         NewTreasureMaps.server = server;
         server.addTickable(NewTreasureMaps::tick);
+    }
+
+
+    public static void serverStopped() {
+        Constants.LOG.info("Server stopped");
+        tasks.clear();
+        TreasureMap.clear();
+        server = null;
+    }
+
+
+    public static void playerLeaved(ServerPlayer player) {
+        Constants.LOG.info("Player leave: " + player);
+        TreasureMap.playerLeaved(player);
     }
 
 
@@ -55,33 +71,5 @@ public class NewTreasureMaps {
 
     public interface Task {
         boolean run();
-    }
-
-
-
-
-
-
-
-    public static byte compress(int rgb) {
-        int r = (rgb >> 16) & 0xFF;
-        int g = (rgb >> 8)  & 0xFF;
-        int b =  rgb        & 0xFF;
-        int r3 = r >> 5;
-        int g3 = g >> 5;
-        int b2 = b >> 6;
-        int packed = (r3 << 5) | (g3 << 2) | b2;
-        return (byte) packed;
-    }
-
-    public static int decompress(byte compressed) {
-        int c = compressed & 0xFF;
-        int r3 = (c >> 5) & 0x07;
-        int g3 = (c >> 2) & 0x07;
-        int b2 =  c       & 0x03;
-        int r = (r3 * 255) / 7;
-        int g = (g3 * 255) / 7;
-        int b = (b2 * 255) / 3;
-        return (r << 16) | (g << 8) | b;
     }
 }
