@@ -7,13 +7,13 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public enum MapType {
-    NONE(0),
-    DOTTED_LINE(1),
-    LANDMARKS(2),
-    COLORED(3),
-    PERSPECTIVE(4),
-    SIDE_VIEW(5),
-    TEST(6);
+    NONE,
+    TEST, // После удаление изменить random()
+    PERSPECTIVE,
+    DOTTED_LINE,
+    LANDMARKS,
+    COLORED,
+    SIDE_VIEW;
 
     private final byte id;
     private static final MapType[] BY_ID = values();
@@ -24,8 +24,8 @@ public enum MapType {
     );
 
 
-    MapType(int id) {
-        this.id = (byte) id;
+    MapType() {
+        this.id = (byte) ordinal();
     }
 
     public byte getId() {
@@ -35,4 +35,10 @@ public enum MapType {
     public static MapType byId(byte id) {
         return id >= 0 && id < BY_ID.length ? BY_ID[id] : NONE;
     }
+
+    public static MapType random(int level) {
+        int skip = (level == 0) ? 3 : 2; // После удаления TEST убавить на 1
+        return BY_ID[(int) (Math.random() * (BY_ID.length - skip)) + skip];
+    }
+
 }

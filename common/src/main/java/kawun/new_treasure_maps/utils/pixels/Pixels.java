@@ -1,4 +1,4 @@
-package kawun.new_treasure_maps.utils;
+package kawun.new_treasure_maps.utils.pixels;
 
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
@@ -6,32 +6,27 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 
 
-public class Pixels {
+public class Pixels extends PixelsBase {
 
 
-    public int width;
-    public int height;
     public byte[] pixels;
 
     public ConvertColor converter;
-    public ArrayList<CopyImage> copyImages;
 
 
     public Pixels(int size) {
-        this.width = size;
-        this.height = size;
+        super(size, size);
         this.pixels = new byte[size * size];
     }
 
     public Pixels(int width, int height, byte[] pixels) {
-        this.width = width;
-        this.height = height;
+        super(width, height);
         this.pixels = pixels;
     }
 
     public Pixels(byte[] pixels) {
-        this.width = (int) Math.sqrt(pixels.length);
-        this.height = this.width;
+        int size = (int) Math.sqrt(pixels.length);
+        super(size, size);
         this.pixels = pixels;
     }
 
@@ -58,6 +53,7 @@ public class Pixels {
     }
 
 
+    @Override
     public int getPixel(int index) {
         return converter.convert(pixels[index]);
     }
@@ -100,13 +96,6 @@ public class Pixels {
         }
     }
 
-    public void addCopyImage(String texture, int x, int y) {
-        if (copyImages == null) {
-            copyImages = new ArrayList<>();
-        }
-        copyImages.add(new CopyImage(texture, x, y));
-    }
-
 
     public interface ConvertColor {
         int convert(byte color);
@@ -115,8 +104,4 @@ public class Pixels {
     public interface BlendColor {
         byte blend(byte bg, byte fg);
     }
-
-
-    public record CopyImage(String texture, int x, int y){};
-
 }

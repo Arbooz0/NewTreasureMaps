@@ -3,8 +3,8 @@ package kawun.new_treasure_maps.maps;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
-import kawun.new_treasure_maps.utils.Pixels;
-import kawun.new_treasure_maps.utils.PixelsLoader;
+import kawun.new_treasure_maps.utils.pixels.Pixels;
+import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,9 +14,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -25,7 +22,6 @@ import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 
 
 public class PerspectiveMapCreate extends BaseMapCreate {

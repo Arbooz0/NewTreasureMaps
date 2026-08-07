@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://cx0ohw7u1iqe2"]
+
+[ext_resource type="Script" uid="uid://cyo7qj1qaovt" path="res://scene/noise_generator/noise_generator.gd" id="1_itvp7"]
+
+[sub_resource type="Gradient" id="Gradient_qbdty"]
+colors = PackedColorArray(0.7, 0.7, 0.7, 1, 0.95, 0.95, 0.95, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8vrlf"]
+noise_type = 4
+frequency = 0.1
+fractal_lacunarity = 1.5
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1vivr"]
+width = 256
+height = 256
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_8vrlf")
+color_ramp = SubResource("Gradient_qbdty")
+
+[sub_resource type="Gradient" id="Gradient_itvp7"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kpcyp"]
+width = 256
+height = 256
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_8vrlf")
+color_ramp = SubResource("Gradient_itvp7")
+
+[node name="NoiseGenerator" type="Control" unique_id=1671985137]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_itvp7")
+
+[node name="HBox" type="HBoxContainer" parent="." unique_id=1897920671]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 50
+
+[node name="Noise" type="TextureRect" parent="HBox" unique_id=815959050]
+layout_mode = 2
+texture = SubResource("NoiseTexture2D_1vivr")
+
+[node name="NoiseBorder" type="TextureRect" parent="HBox" unique_id=1023226763]
+layout_mode = 2
+texture = SubResource("NoiseTexture2D_kpcyp")
+
+[node name="BorderResult" type="TextureRect" parent="HBox" unique_id=921528541]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+
+[node name="Result" type="TextureRect" parent="HBox" unique_id=1305809780]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2

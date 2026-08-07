@@ -1,7 +1,8 @@
-package kawun.new_treasure_maps.utils;
+package kawun.new_treasure_maps.utils.pixels;
 
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
+import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.server.packs.resources.Resource;
 import org.jspecify.annotations.Nullable;
 

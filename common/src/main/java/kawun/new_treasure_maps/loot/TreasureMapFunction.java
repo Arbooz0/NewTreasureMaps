@@ -56,7 +56,7 @@ public class TreasureMapFunction extends LootItemConditionalFunction {
         }
         Vector2i pos = new Vector2i((int) lootPos.x, (int) lootPos.z);
         Constants.LOG.info("Loot pos: " + lootPos + " " + pos.toString(new DecimalFormat()));
-        itemStack = Maps.createMap(MapType.COLORED, pos, context.getLevel(), lootLevel);
+        itemStack = Maps.createMap(MapType.random(lootLevel), pos, context.getLevel(), lootLevel);
         return itemStack;
     }
 }

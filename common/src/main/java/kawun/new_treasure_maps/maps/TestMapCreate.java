@@ -4,7 +4,7 @@ package kawun.new_treasure_maps.maps;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
-import kawun.new_treasure_maps.utils.Pixels;
+import kawun.new_treasure_maps.utils.pixels.Pixels;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.world.level.ChunkPos;

@@ -44,7 +44,7 @@ public class Maps {
             case COLORED -> new ColoredMapCreate();
             case LANDMARKS -> new LandmarksMapCreate();
             case PERSPECTIVE -> new PerspectiveMapCreate();
-            case SIDE_VIEW -> null;
+            case SIDE_VIEW -> new SideViewMapCreate();
             case TEST -> new TestMapCreate();
         };
         if (map != null) {

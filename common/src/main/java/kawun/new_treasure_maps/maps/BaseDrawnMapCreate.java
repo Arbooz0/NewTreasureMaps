@@ -3,13 +3,12 @@ package kawun.new_treasure_maps.maps;
 import it.unimi.dsi.fastutil.bytes.*;
 import it.unimi.dsi.fastutil.ints.Int2ByteMap;
 import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
-import kawun.new_treasure_maps.utils.Pixels;
-import kawun.new_treasure_maps.utils.PixelsLoader;
+import kawun.new_treasure_maps.utils.pixels.Pixels;
+import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.biome.Biome;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 

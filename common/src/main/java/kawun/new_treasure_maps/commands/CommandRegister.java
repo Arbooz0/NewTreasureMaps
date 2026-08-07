@@ -19,7 +19,23 @@ public class CommandRegister {
                 //PoseCommand::get_command,
                 ChestLootCommand::get_command
         );
+        registerCommands(dispatcher, commands);
+    }
 
+
+    public static void registerClient(CommandDispatcher<CommandSourceStack> dispatcher) {
+        List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands = List.of(
+                ClientTestCommand::get_command
+        );
+        registerCommands(dispatcher, commands);
+    }
+
+
+
+    private static void registerCommands(
+            CommandDispatcher<CommandSourceStack> dispatcher,
+            List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands
+    ) {
         LiteralArgumentBuilder<CommandSourceStack> base_command = Commands.literal(Constants.MOD_ID);
 
         for (Supplier<LiteralArgumentBuilder<CommandSourceStack>> supplier : commands) {
@@ -29,6 +45,5 @@ public class CommandRegister {
         }
 
         dispatcher.register(base_command);
-
     }
 }

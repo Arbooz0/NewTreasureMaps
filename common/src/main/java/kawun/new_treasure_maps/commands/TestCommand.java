@@ -1,12 +1,15 @@
 package kawun.new_treasure_maps.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.utils.TimePassed;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.BitStorage;
@@ -21,7 +24,7 @@ public class TestCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get_command() {
         return Commands.literal("test")
-                                .then(Commands.argument("type", IntegerArgumentType.integer())
+                                .then(Commands.argument("text", StringArgumentType.string())
                                     .executes(TestCommand::execute));
     }
 
@@ -34,14 +37,9 @@ public class TestCommand {
         int x = player.getBlockX();
         int z = player.getBlockZ();
 
-        int type = IntegerArgumentType.getInteger(context, "type");
+        String text = StringArgumentType.getString(context, "text");
 
-        /*TimePassed time = new TimePassed();
-        time.start();
-
-
-
-        time.end("Time");*/
+        Constants.LOG.info("Texture " + text + ": " + MapTextureManager.loadBlockTexture(Identifier.parse(text)));
 
         return 1;
     }

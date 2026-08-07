@@ -5,20 +5,33 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.enums.FoldType;
-import kawun.new_treasure_maps.utils.Pixels;
+import kawun.new_treasure_maps.utils.TimePassed;
+import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.Utils;
+import kawun.new_treasure_maps.utils.pixels.PixelsBase;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Native;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 
 public class MapTextureManager {
@@ -26,7 +39,7 @@ public class MapTextureManager {
 
     public static Int2ObjectMap<DynamicTexture> maps = new Int2ObjectOpenHashMap<>();
     public static HashSet<FoldType> backTextureInit = new HashSet<>();
-    public static Int2ObjectMap<Pixels> unsetted_pixels = new Int2ObjectOpenHashMap<>();
+    public static Int2ObjectMap<PixelsBase> unsettedPixels = new Int2ObjectOpenHashMap<>();
 
 
 
@@ -52,6 +65,45 @@ public class MapTextureManager {
     }
 
 
+    public static @Nullable NativeImage loadBlockTexture(Identifier id) {
+        Block block = BuiltInRegistries.BLOCK.getValue(id);
+        BlockState state = block.defaultBlockState();
+        TextureAtlasSprite texture = Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state).sprite();
+
+        String path = texture.contents().name().getPath();
+        if (block == Blocks.GRASS_BLOCK) {
+            path = "block/grass_block_top";
+        }
+
+        Identifier idTexture = Identifier.parse("textures/" + path + ".png");
+
+        Optional<Resource> res = Minecraft.getInstance().getResourceManager().getResource(idTexture);
+        if (res.isPresent()) {
+            try (InputStream stream = res.get().open()) {
+                NativeImage image = NativeImage.read(stream);
+                NativeImage newImage = new NativeImage(8, 8, true);
+                image.resizeSubRectTo(0, 0, 8, 8, newImage);
+                image.close();
+                BlockTintSource tint = Minecraft.getInstance().getBlockColors().getTintSource(state, 0);
+                if (tint != null) {
+                    int color = block == Blocks.WATER ? 0xFF2068EF : tint.color(state);
+                    for (int x = 0; x < 8; x++) {
+                        for (int y = 0; y < 8; y++) {
+                            newImage.setPixel(x, y, ARGB.multiply(newImage.getPixel(x, y), color));
+                        }
+                    }
+                }
+                return newImage;
+            } catch (Exception e) {
+                Constants.LOG.error("Error load texture " + idTexture + ": " + e.getMessage());
+            }
+        } else {
+            Constants.LOG.info("No find " + idTexture);
+        }
+        return null;
+    }
+
+
     public static Identifier createNewTexture(int id, FoldType type) {
         NativeImage image = loadTexture(type.texture);
         if (image == null) {
@@ -62,9 +114,11 @@ public class MapTextureManager {
         Identifier identifier = getTextureIdentifier(id);
         Minecraft.getInstance().getTextureManager().register(identifier, texture);
         maps.put(id, texture);
-        if (unsetted_pixels.containsKey(id)) {
-            insertPixels(id, unsetted_pixels.get(id));
-            unsetted_pixels.remove(id);
+        if (unsettedPixels.containsKey(id)) {
+            TimePassed time = new TimePassed();
+            insertPixels(id, unsettedPixels.get(id));
+            time.end("Insert pixels " + id);
+            unsettedPixels.remove(id);
         }
         return identifier;
     }
@@ -87,9 +141,9 @@ public class MapTextureManager {
     }
 
 
-    public static void insertPixels(int id, Pixels pixels) {
+    public static void insertPixels(int id, PixelsBase pixels) {
         if (!maps.containsKey(id)) {
-            unsetted_pixels.put(id, pixels);
+            unsettedPixels.put(id, pixels);
             return;
         }
 
@@ -99,10 +153,23 @@ public class MapTextureManager {
         int x_offset = 22;
         int y_offset = 22;
 
+        int[] skipY = new int[256];
+        skipY[1] = 10;
+        for (int i = 1; i < 256; i++) {
+            skipY[i] = Math.clamp((int) (Math.random() * 7 - 3) + skipY[i - 1], 0, 15);
+        }
+        int lastStartX = 10;
+
         for (int y = 0; y < 256; y++) {
-            for (int x = 0; x < 256; x++) {
+            int startX = Math.clamp((int) (Math.random() * 7 - 3) + lastStartX, 0, 15);
+
+            for (int x = startX; x < 256 - startX; x++) {
+                if (y < skipY[x]) {
+                    continue;
+                }
                 int color = pixels.getPixel(x + y * 256);
                 int alpha = (color >> 24) & 0xFF;
+                alpha -= (int) (Math.random() * 50 + 20);
                 if (alpha != 255) {
                     if (alpha < 10) {
                         continue;
@@ -176,7 +243,7 @@ public class MapTextureManager {
 
 
     public static void clear() {
-        unsetted_pixels.clear();
+        unsettedPixels.clear();
 
         TextureManager manager = Minecraft.getInstance().getTextureManager();
         for (int id : maps.keySet()) {

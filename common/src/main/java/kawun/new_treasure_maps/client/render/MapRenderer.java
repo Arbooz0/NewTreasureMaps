@@ -380,7 +380,8 @@ public class MapRenderer {
         backRenders.clear();
         openMaps.clear();
         animationsTime.clear();
-        lastPlayersMap.clear();
+        lastPlayersMap.get(HumanoidArm.RIGHT).clear();
+        lastPlayersMap.get(HumanoidArm.LEFT).clear();
         lastMainItem = null;
         lastOffItem = null;
         hideHand = null;

@@ -49,15 +49,15 @@ public class TreasureMap extends Item {
             return;
         }
 
+        if (slot == null || slot.getType() != EquipmentSlot.Type.HAND) {
+            return;
+        }
+
         tick++;
         if (tick < 10) {
             return;
         }
         tick = 0;
-
-        if (slot == null || slot.getType() != EquipmentSlot.Type.HAND) {
-            return;
-        }
 
         if (owner instanceof ServerPlayer ownerPlayer) {
             MapComponent data = itemStack.get(Items.MAP_COMPONENT);

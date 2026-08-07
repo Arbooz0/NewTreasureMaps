@@ -1,8 +1,8 @@
 package kawun.new_treasure_maps.maps;
 
 
-import kawun.new_treasure_maps.utils.Pixels;
-import kawun.new_treasure_maps.utils.PixelsLoader;
+import kawun.new_treasure_maps.utils.pixels.Pixels;
+import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
