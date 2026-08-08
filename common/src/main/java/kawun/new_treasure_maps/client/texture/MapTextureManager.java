@@ -11,7 +11,6 @@ import kawun.new_treasure_maps.utils.Utils;
 import kawun.new_treasure_maps.utils.pixels.PixelsBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockTintSource;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -24,14 +23,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Native;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 
 public class MapTextureManager {
@@ -40,6 +36,9 @@ public class MapTextureManager {
     public static Int2ObjectMap<DynamicTexture> maps = new Int2ObjectOpenHashMap<>();
     public static HashSet<FoldType> backTextureInit = new HashSet<>();
     public static Int2ObjectMap<PixelsBase> unsettedPixels = new Int2ObjectOpenHashMap<>();
+    public static NativeImage noiseTransparency = null;
+    public static NativeImage noiseBlackout = null;
+    public static NativeImage mask = null;
 
 
 
@@ -104,6 +103,25 @@ public class MapTextureManager {
     }
 
 
+    public static void loadNoiseTransparency() {
+        if (noiseTransparency == null) {
+            noiseTransparency = loadTexture("noise_transparency");
+        }
+    }
+
+    public static void loadNoiseBlackout() {
+        if (noiseBlackout == null) {
+            noiseBlackout = loadTexture("noise_blackout");
+        }
+    }
+
+    public static void loadMask() {
+        if (mask == null) {
+            mask = loadTexture("mask");
+        }
+    }
+
+
     public static Identifier createNewTexture(int id, FoldType type) {
         NativeImage image = loadTexture(type.texture);
         if (image == null) {
@@ -149,34 +167,26 @@ public class MapTextureManager {
 
         DynamicTexture texture = maps.get(id);
         NativeImage image = texture.getPixels();
+        loadNoiseTransparency();
+        loadNoiseBlackout();
+        loadMask();
 
-        int x_offset = 22;
-        int y_offset = 22;
-
-        int[] skipY = new int[256];
-        skipY[1] = 10;
-        for (int i = 1; i < 256; i++) {
-            skipY[i] = Math.clamp((int) (Math.random() * 7 - 3) + skipY[i - 1], 0, 15);
-        }
-        int lastStartX = 10;
+        int x_offset = 4;
+        int y_offset = 4;
 
         for (int y = 0; y < 256; y++) {
-            int startX = Math.clamp((int) (Math.random() * 7 - 3) + lastStartX, 0, 15);
-
-            for (int x = startX; x < 256 - startX; x++) {
-                if (y < skipY[x]) {
+            for (int x = 0; x < 256; x++) {
+                if (!getMask(x, y)) {
                     continue;
                 }
                 int color = pixels.getPixel(x + y * 256);
-                int alpha = (color >> 24) & 0xFF;
-                alpha -= (int) (Math.random() * 50 + 20);
-                if (alpha != 255) {
-                    if (alpha < 10) {
-                        continue;
-                    }
-                    int bg = image.getPixel(x + x_offset, y + y_offset);
-                    color = blendColor(bg, color, alpha);
+                int alpha = (int) (((color >> 24) & 0xFF) * getNoise(x, y));
+                if (alpha < 10) {
+                    continue;
                 }
+                color = ARGB.scaleRGB(color, getNoise2(x, y));
+                int bg = image.getPixel(x + x_offset, y + y_offset);
+                color = blendColor(bg, color, alpha);
                 image.setPixel(x + x_offset, y + y_offset, color);
             }
         }
@@ -214,13 +224,26 @@ public class MapTextureManager {
         }
 
         try {
-            image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/map.png"));
+            image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/map.png")); // TEST
         } catch (IOException e) {
             System.err.println("ERROR SAVE: " + e.getMessage());
         }
 
         texture.upload();
 
+    }
+
+
+    public static float getNoise(int x, int y) {
+        return noiseTransparency == null ? 1 : (noiseTransparency.getPixel(x, y) & 0xFF) / 255.0f;
+    }
+
+    public static float getNoise2(int x, int y) {
+        return noiseBlackout == null ? 1 : (noiseBlackout.getPixel(x, y) & 0xFF) / 255.0f;
+    }
+
+    public static boolean getMask(int x, int y) {
+        return mask == null || (mask.getPixel(x / 4, y / 4) & 0xFF) != 0;
     }
 
 
@@ -255,6 +278,15 @@ public class MapTextureManager {
             manager.release(getBackTextureIdentifier(type));
         }
         backTextureInit.clear();
+
+        if (noiseTransparency != null) {
+            noiseTransparency.close();
+            noiseTransparency = null;
+        }
+        if (mask != null) {
+            mask.close();
+            mask = null;
+        }
     }
 
 

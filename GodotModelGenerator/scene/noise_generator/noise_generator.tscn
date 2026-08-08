@@ -3,27 +3,35 @@
 [ext_resource type="Script" uid="uid://cyo7qj1qaovt" path="res://scene/noise_generator/noise_generator.gd" id="1_itvp7"]
 
 [sub_resource type="Gradient" id="Gradient_qbdty"]
-colors = PackedColorArray(0.7, 0.7, 0.7, 1, 0.95, 0.95, 0.95, 1)
+offsets = PackedFloat32Array(0.1, 0.5)
+colors = PackedColorArray(0.45, 0.45, 0.45, 1, 0.75, 0.75, 0.75, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_8vrlf"]
-noise_type = 4
-frequency = 0.1
-fractal_lacunarity = 1.5
+noise_type = 3
+frequency = 0.04
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1vivr"]
 width = 256
-height = 256
+height = 1280
 generate_mipmaps = false
 noise = SubResource("FastNoiseLite_8vrlf")
 color_ramp = SubResource("Gradient_qbdty")
 
 [sub_resource type="Gradient" id="Gradient_itvp7"]
+offsets = PackedFloat32Array(0.2, 0.4)
+colors = PackedColorArray(0.8, 0.8, 0.8, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_itvp7"]
+noise_type = 3
+seed = 1
+frequency = 0.1
+fractal_octaves = 2
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kpcyp"]
 width = 256
-height = 256
+height = 1280
 generate_mipmaps = false
-noise = SubResource("FastNoiseLite_8vrlf")
+noise = SubResource("FastNoiseLite_itvp7")
 color_ramp = SubResource("Gradient_itvp7")
 
 [node name="NoiseGenerator" type="Control" unique_id=1671985137]
@@ -35,24 +43,40 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_itvp7")
 
-[node name="HBox" type="HBoxContainer" parent="." unique_id=1897920671]
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1976471333]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 theme_override_constants/separation = 50
 
-[node name="Noise" type="TextureRect" parent="HBox" unique_id=815959050]
+[node name="HBox" type="HBoxContainer" parent="VBox" unique_id=1897920671]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="Noise" type="TextureRect" parent="VBox/HBox" unique_id=815959050]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 texture = SubResource("NoiseTexture2D_1vivr")
+expand_mode = 1
 
-[node name="NoiseBorder" type="TextureRect" parent="HBox" unique_id=1023226763]
-layout_mode = 2
-texture = SubResource("NoiseTexture2D_kpcyp")
-
-[node name="BorderResult" type="TextureRect" parent="HBox" unique_id=921528541]
+[node name="Result" type="TextureRect" parent="VBox/HBox" unique_id=1305809780]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 
-[node name="Result" type="TextureRect" parent="HBox" unique_id=1305809780]
+[node name="HBox2" type="HBoxContainer" parent="VBox" unique_id=1108824380]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="Noise2" type="TextureRect" parent="VBox/HBox2" unique_id=2118838713]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+texture = SubResource("NoiseTexture2D_kpcyp")
+expand_mode = 1
+
+[node name="Result2" type="TextureRect" parent="VBox/HBox2" unique_id=412271893]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
