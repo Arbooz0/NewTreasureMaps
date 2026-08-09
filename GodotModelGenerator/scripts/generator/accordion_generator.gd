@@ -8,6 +8,11 @@ func get_name() -> String:
 	return "accordion"
 
 
+func _get_scale() -> float:
+	return 0.18
+
+
+
 
 func _anim_pos(pos: Vector2i, uv: Vector2, init_pos: Vector3) -> Vector3:
 	var to: Vector3 = init_pos

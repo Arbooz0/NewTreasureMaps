@@ -20,6 +20,11 @@ func _get_size() -> Vector2:
 
 
 
+func _get_scale() -> float:
+	return 1
+
+
+
 func get_name() -> String:
 	return "base"
 
@@ -28,8 +33,8 @@ func get_name() -> String:
 func _init_grid():
 	var size: Vector2 = init_grid.size
 	var start: Vector2 = Vector2(size.x / -2 + 0.5, size.y / 2 - 0.5)
-	for y in size.x:
-		for x in size.y:
+	for y in size.y:
+		for x in size.x:
 			var pos: Vector3 = Vector3(start.x + x, start.y - y, 0)
 			init_grid.set_pos(x, y, _init_grid_pos(Vector2i(x, y), pos))
 	
@@ -48,8 +53,8 @@ func _init_grid_pos(pos: Vector2i, value: Vector3) -> Vector3:
 func update():
 	var size: Vector2 = init_grid.size
 	var start: Vector2 = Vector2(size.x / -2 + 0.5, size.y / 2 - 0.5)
-	for y in size.x:
-		for x in size.y:
+	for y in size.y:
+		for x in size.x:
 			var uv: Vector2 = Vector2(x, y) / (size - Vector2.ONE)
 			grid.set_pos(x, y, _anim_pos(Vector2i(x, y), uv, init_grid.get_pos(x, y)))
 

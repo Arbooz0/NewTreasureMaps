@@ -14,6 +14,7 @@ func save(converter: Conventer):
 	DirAccess.make_dir_absolute(DIR_SAVE)
 	
 	var generator: Generator = converter.generator
+	converter.scale = generator._get_scale()
 	
 	var filename: String = generator.get_name() + "." + EXTENSION
 	var path: String = DIR_SAVE + filename

@@ -4,7 +4,8 @@ extends Node
 
 enum Type {
 	NONE,
-	ACCORDION
+	ACCORDION,
+	SCROLL
 }
 
 
@@ -88,11 +89,14 @@ func init():
 	match type:
 		Type.ACCORDION:
 			generator = AccordionGenerator.new()
+		Type.SCROLL:
+			generator = ScrollGenerator.new()
 		_:
 			generator = Generator.new()
 	
 	converter.generator = generator
-	update()
+	if mesh:
+		update()
 
 
 
