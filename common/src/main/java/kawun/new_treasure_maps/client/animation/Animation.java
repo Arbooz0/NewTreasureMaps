@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.HumanoidArm;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 
 public abstract class Animation {
@@ -101,6 +103,13 @@ public abstract class Animation {
 
     public float lerp(float a, float b, float t) {
         return a + (b - a) * t;
+    }
+
+
+    public void lerpMatrix(Matrix4f m1, Matrix4f m2, float t) {
+        Vector3f pos = m1.getTranslation(new Vector3f()).lerp(m2.getTranslation(new Vector3f()), t);
+        Quaternionf rot = m1.getNormalizedRotation(new Quaternionf()).slerp(m2.getNormalizedRotation(new Quaternionf()), t);
+        m1.translationRotateScale(pos, rot, m2.getScale(new Vector3f()));
     }
 
 

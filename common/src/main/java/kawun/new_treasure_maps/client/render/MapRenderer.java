@@ -165,8 +165,6 @@ public class MapRenderer {
             anim = 1 - time.part2;
         }
 
-        //poseStack.mulPose(PoseCommand.pose.pose());
-
         renderMap(poseStack, data, submitNodeCollector, lightCoords, anim);
 
     }

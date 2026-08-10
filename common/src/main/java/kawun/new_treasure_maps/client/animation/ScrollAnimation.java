@@ -6,36 +6,33 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class AccordionAnimation extends Animation {
-
-
+public class ScrollAnimation extends Animation {
 
     public static final Matrix4f rightMapMatrix = new Matrix4f(
+            0.00f,  0.00f,  0.50f,  0.00f,
             -0.50f,  0.00f,  0.00f,  0.00f,
-            0.00f,  0.00f, -0.50f,  0.00f,
             0.00f, -0.50f,  0.00f,  0.00f,
-            -0.38f,  0.65f,  -0.05f,  1.00f
+            -0.38f,  0.72f, -0.00f,  1.00f
     );
     public static final Matrix4f leftMapMatrix = new Matrix4f(
+            0.00f,  0.00f,  0.50f,  0.00f,
             -0.50f,  0.00f,  0.00f,  0.00f,
-            0.00f,  0.00f, -0.50f,  0.00f,
             0.00f, -0.50f,  0.00f,  0.00f,
-            0.38f,  0.65f,  -0.05f,  1.00f
+            0.38f,  0.72f, -0.00f,  1.00f
     );
 
     public static final Matrix4f rightMapThirdPersonMatrix = new Matrix4f(
+            0.00f,  0.00f,  0.40f,  0.00f,
             -0.40f,  0.00f,  0.00f,  0.00f,
-            0.00f,  0.00f, -0.40f,  0.00f,
             0.00f, -0.40f,  0.00f,  0.00f,
-            -0.038f,  0.55f,  -0.05f,  1.00f
+            -0.038f,  0.62f, -0.00f,  1.00f
     );
     public static final Matrix4f leftMapThirdPersonMatrix = new Matrix4f(
+            0.00f,  0.00f,  0.40f,  0.00f,
             -0.40f,  0.00f,  0.00f,  0.00f,
-            0.00f,  0.00f, -0.40f,  0.00f,
             0.00f, -0.40f,  0.00f,  0.00f,
-            0.038f,  0.55f,  -0.05f,  1.00f
+            0.038f,  0.62f, -0.00f,  1.00f
     );
-
 
 
     @Override
@@ -50,10 +47,7 @@ public class AccordionAnimation extends Animation {
 
 
     @Override
-    protected void animate(
-    ) {
-        poseStack.mulPose(Axis.XP.rotationDegrees(time.part2 * 3));
-
+    protected void animate() {
         Vector3f pos1 = animateArmFirstPerson(arm.getOpposite()).getTranslation(new Vector3f());
 
         Matrix4f matrixArm = animateArmFirstPerson(arm);
@@ -61,21 +55,24 @@ public class AccordionAnimation extends Animation {
 
         float scale = 0.5f + time.part2 * 0.05f;
         poseStack.scale(scale, scale, scale);
-        poseStack.mulPose(Axis.XP.rotationDegrees(-8.0F));
-        poseStack.last().pose().setTranslation(pos1.add(pos2).mul(0.5f));
-        poseStack.translate(0, time.part2 * 0.12f, 0);
+        float t = 1 - Math.min(time.part2 * 10, 1) / 2.0f;
+        poseStack.last().pose().setTranslation(pos1.lerp(pos2, t));
         poseStack.last().pose().lerp(matrixArm, 1 - time.partTransition);
     }
+
 
     private Matrix4f animateArmFirstPerson(HumanoidArm arm) {
         poseStack.pushPose();
         poseStack.pushPose();
 
         float invert = getInvert(arm);
-        poseStack.translate(invert * time.part2 * 0.08f, -0.5f + (invert * 0.0001f) + (time.part2 * 0.08f), -0.2f - (time.part2 * 0.2f));
-        poseStack.mulPose(Axis.YP.rotationDegrees( 180));
-        poseStack.mulPose(Axis.XP.rotationDegrees( 90 - (time.part2 * 30)));
-        poseStack.mulPose(Axis.ZP.rotationDegrees( invert * (-28 + (time.part2 * 38))));
+        poseStack.mulPose(Axis.XP.rotationDegrees(10));
+        poseStack.translate(invert * 0.4f, -0.5f, -0.2f - (time.part2 * 0.15f));
+        poseStack.mulPose(Axis.YP.rotationDegrees( 90));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-90));
+        poseStack.translate((-0.25f - (0.1f * time.part2)) + (0.2f - (0.15f * time.part2)) * invert, 0, 0);
+        poseStack.mulPose(Axis.XP.rotationDegrees( -30 * invert));
+        poseStack.mulPose(Axis.ZP.rotationDegrees( invert * (-10 + (time.part2 * 30))));
         Matrix4f matrix = poseStack.last().pose();
 
         poseStack.popPose();
@@ -84,7 +81,13 @@ public class AccordionAnimation extends Animation {
             poseStack.translate(0, (1 - time.part1) * -0.5f, 0);
         }
         applyDefaultArmPose(arm);
-        poseStack.last().pose().lerp(matrix, time.part1);
+
+        if (time.part1 == 1) {
+            poseStack.last().pose().set(matrix);
+        } else {
+            Matrix4f m = poseStack.last().pose();
+            lerpMatrix(m, matrix, time.part1);
+        }
 
         applyHand(arm);
         poseStack.mulPose(getMapOffsetInHand(arm));
@@ -98,6 +101,7 @@ public class AccordionAnimation extends Animation {
 
 
 
+
     @Override
     protected void animateThirdPerson() {
         if (time.partTransition == 0) {
@@ -107,14 +111,26 @@ public class AccordionAnimation extends Animation {
             poseStack.pushPose();
             translateToHand(arm.getOpposite());
             poseStack.mulPose(getMapOffsetThirdPerson(arm.getOpposite()));
-            Matrix4f matrix = poseStack.last().pose();
+            Vector3f pos1 = poseStack.last().pose().getTranslation(new Vector3f());
             poseStack.popPose();
 
+            poseStack.pushPose();
             translateToHand(arm);
             poseStack.mulPose(getMapOffsetThirdPerson(arm));
-            poseStack.last().pose().lerp(matrix, time.partTransition / 2);
-        }
+            Matrix4f matrix = poseStack.last().pose();
+            Vector3f pos2 = matrix.getTranslation(new Vector3f());
+            poseStack.popPose();
 
+            float scale = 0.4f;
+            poseStack.scale(scale, scale, scale);
+            float t = 1 - Math.min(time.part2 * 10, 1) / 2.0f;
+            poseStack.last().pose().setTranslation(pos1.lerp(pos2, t));
+            poseStack.mulPose(Axis.XP.rotation(Math.min(getHeadRotationX(), 0.5f) - 1.5f + (float) (Math.PI * 0.5)));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+            poseStack.translate(0, 0, -0.2f);
+
+            poseStack.last().pose().lerp(matrix, 1 - time.partTransition);
+        }
     }
 
     @Override
@@ -127,12 +143,15 @@ public class AccordionAnimation extends Animation {
         float invert = getInvert(arm);
 
         Matrix3f rot = new Matrix3f();
-        rot.rotateLocalZ(lerp(-0.55f, 0.15f, time.part2) * invert);
-        rot.rotateLocalX(Math.min(getHeadRotationX(), 0.7f) - 1.5f - (invert * 0.001f));
+        rot.rotateLocalZ(-0.55f * invert);
+        rot.rotateLocalX(Math.min(getHeadRotationX(), 0.5f) - 1.5f - 0.6f * invert * time.part2);
+        rot.rotateY((float) (Math.PI / -2.0) * time.part1);
+
         Vector3f newAngles = rot.getEulerAnglesZYX(new Vector3f());
 
         lerpArm(arm, newAngles.x, newAngles.y, newAngles.z, time.part1);
+
+        getArm(arm).y -= time.part2 * invert * 0.8f;
+        getArm(arm).z -= time.part2;
     }
-
-
 }

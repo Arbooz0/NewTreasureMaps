@@ -34,7 +34,7 @@ public class MapTextureManager {
 
 
     public static Int2ObjectMap<DynamicTexture> maps = new Int2ObjectOpenHashMap<>();
-    public static HashSet<FoldType> backTextureInit = new HashSet<>();
+    public static HashSet<String> backTextureInit = new HashSet<>();
     public static Int2ObjectMap<PixelsBase> unsettedPixels = new Int2ObjectOpenHashMap<>();
     public static NativeImage noiseTransparency = null;
     public static NativeImage noiseBlackout = null;
@@ -46,8 +46,8 @@ public class MapTextureManager {
         return Utils.identifier("map" + id);
     }
 
-    public static Identifier getBackTextureIdentifier(FoldType type) {
-        return Utils.identifier("map_" + type.texture);
+    public static Identifier getBackTextureIdentifier(String texture) {
+        return Utils.identifier("map_" + texture);
     }
 
 
@@ -123,7 +123,7 @@ public class MapTextureManager {
 
 
     public static Identifier createNewTexture(int id, FoldType type) {
-        NativeImage image = loadTexture(type.texture);
+        NativeImage image = loadTexture(type.getTexture());
         if (image == null) {
             return Identifier.withDefaultNamespace("textures/map/map_background.png");
         }
@@ -143,18 +143,18 @@ public class MapTextureManager {
 
 
     public static Identifier getBackTexture(FoldType type) {
-        if (backTextureInit.contains(type)) {
-            return getBackTextureIdentifier(type);
+        if (backTextureInit.contains(type.lastTexture)) {
+            return getBackTextureIdentifier(type.lastTexture);
         }
-        NativeImage image = loadTexture(type.texture);
+        NativeImage image = loadTexture(type.lastTexture);
         if (image == null) {
             return Identifier.withDefaultNamespace("textures/map/map_background.png");
         }
-        DynamicTexture texture = new DynamicTexture(() -> "treasuremap_" + type.texture, image);
+        DynamicTexture texture = new DynamicTexture(() -> "treasuremap_" + type.lastTexture, image);
 
-        Identifier identifier = getBackTextureIdentifier(type);
+        Identifier identifier = getBackTextureIdentifier(type.lastTexture);
         Minecraft.getInstance().getTextureManager().register(identifier, texture);
-        backTextureInit.add(type);
+        backTextureInit.add(type.lastTexture);
         return identifier;
     }
 
@@ -172,7 +172,7 @@ public class MapTextureManager {
         loadMask();
 
         int x_offset = 4;
-        int y_offset = 4;
+        int y_offset = image.getHeight() - 260;
 
         for (int y = 0; y < 256; y++) {
             for (int x = 0; x < 256; x++) {
@@ -274,14 +274,18 @@ public class MapTextureManager {
         }
         maps.clear();
 
-        for (FoldType type : backTextureInit) {
-            manager.release(getBackTextureIdentifier(type));
+        for (String texture : backTextureInit) {
+            manager.release(getBackTextureIdentifier(texture));
         }
         backTextureInit.clear();
 
         if (noiseTransparency != null) {
             noiseTransparency.close();
             noiseTransparency = null;
+        }
+        if (noiseBlackout != null) {
+            noiseBlackout.close();
+            noiseBlackout = null;
         }
         if (mask != null) {
             mask.close();

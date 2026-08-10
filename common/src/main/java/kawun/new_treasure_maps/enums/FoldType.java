@@ -4,16 +4,18 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import kawun.new_treasure_maps.client.animation.AccordionAnimation;
 import kawun.new_treasure_maps.client.animation.Animation;
+import kawun.new_treasure_maps.client.animation.ScrollAnimation;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public enum FoldType{
 
-    ACCORDION(0,"square2", "accordion", new AccordionAnimation()),
-    SCROLL(1,"tall", "scroll", null);
+    ACCORDION(0,"square", "accordion", new AccordionAnimation()),
+    SCROLL(1,"tall", "scroll", new ScrollAnimation());
 
     private final byte id;
-    public final String texture;
+    private final String texture;
+    public String lastTexture;
     public final String model;
     public final Animation animation;
     private static final FoldType[] BY_ID = values();
@@ -39,7 +41,12 @@ public enum FoldType{
     }
 
     public static FoldType random() {
-        return ACCORDION;
+        return SCROLL;
         //return BY_ID[(byte) (Math.random() * BY_ID.length)];
+    }
+
+    public String getTexture() {
+        lastTexture = texture + ((int) (Math.random() * 2) + 1);
+        return lastTexture;
     }
 }
