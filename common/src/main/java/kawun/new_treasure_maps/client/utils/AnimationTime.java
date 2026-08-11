@@ -37,7 +37,6 @@ public class AnimationTime {
             return;
         }
         float time = ((System.currentTimeMillis() - startTime) / 1000.0f) / duration + offset;
-        //time = time % 1.0f;
         if (time >= 1) {
             time = 1;
             isEnd = true;

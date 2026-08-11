@@ -35,7 +35,7 @@ public class Maps {
 
     public static ItemStack createMap(MapType type, Vector2i pos, ServerLevel level, int lootLevel) {
         int id = FreeID.getFreeID();
-        ItemStack itemStack = Items.newTreasureMap(id);
+        ItemStack itemStack = Items.newTreasureMap(id, type);
 
         TimePassed time = new TimePassed();
         BaseMapCreate map = switch (type) {

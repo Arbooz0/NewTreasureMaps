@@ -1,0 +1,5 @@
+{
+  "item.new_treasure_maps.treasure_map": "Treasure map",
+  "new_treasure_maps.tip_perspective": "The treasure is located within a 50 block radius of the chest where the map was found",
+  "new_treasure_maps.tip_dotted_line": "The path starts from the chest where the map was taken. The distance between the lines is one block."
+}

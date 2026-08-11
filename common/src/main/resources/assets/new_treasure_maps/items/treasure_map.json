@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "new_treasure_maps:item/treasure_map"
+  }
+}

@@ -41,8 +41,7 @@ public enum FoldType{
     }
 
     public static FoldType random() {
-        return SCROLL;
-        //return BY_ID[(byte) (Math.random() * BY_ID.length)];
+        return BY_ID[(byte) (Math.random() * BY_ID.length)];
     }
 
     public String getTexture() {

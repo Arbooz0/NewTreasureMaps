@@ -1,6 +1,7 @@
 package kawun.new_treasure_maps.items;
 
 import kawun.new_treasure_maps.enums.FoldType;
+import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -47,9 +48,9 @@ public class Items {
     }
 
 
-    public static ItemStack newTreasureMap(int id) {
+    public static ItemStack newTreasureMap(int id, MapType type) {
         ItemStack itemStack = new ItemStack(TREASURE_MAP);
-        itemStack.set(MAP_COMPONENT, new MapComponent(id, FoldType.random()));
+        itemStack.set(MAP_COMPONENT, new MapComponent(id, FoldType.random(), type));
         return itemStack;
     }
 

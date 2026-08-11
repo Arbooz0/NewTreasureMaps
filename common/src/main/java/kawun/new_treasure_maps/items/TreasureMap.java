@@ -22,6 +22,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TreasureMap extends Item {
 
@@ -39,7 +42,6 @@ public class TreasureMap extends Item {
 
 
     public TreasureMap(Properties properties) {
-        Constants.LOG.info("NEW TreasureMap: " + properties.toString());
         super(properties);
     }
 
@@ -82,6 +84,23 @@ public class TreasureMap extends Item {
         }
 
         return InteractionResult.CONSUME;
+    }
+
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        MapComponent data = itemStack.get(Items.MAP_COMPONENT);
+        if (data == null) {
+            return;
+        }
+        String key = switch (data.mapType()) {
+            case DOTTED_LINE -> "new_treasure_maps.tip_dotted_line";
+            case PERSPECTIVE -> "new_treasure_maps.tip_perspective";
+            default -> "";
+        };
+        if (!key.isEmpty()) {
+            builder.accept(Component.translatable(key));
+        }
     }
 
 
@@ -149,7 +168,9 @@ public class TreasureMap extends Item {
 
         public void toggleOpen(ServerPlayer playerOpen) {
             isOpen = !isOpen;
-            playersReceived.put(playerOpen, isOpen);
+            if (playersReceived.containsKey(playerOpen)) {
+                playersReceived.put(playerOpen, isOpen);
+            }
 
             for (Object2BooleanMap.Entry<ServerPlayer> entry : playersReceived.object2BooleanEntrySet()) {
                 if (isOpen != entry.getBooleanValue()) {
