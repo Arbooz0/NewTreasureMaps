@@ -5,14 +5,35 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "new_treasure_maps:random_loot",
-          "max_rarity": 3,
-          "count_items": {
-            "min": 10,
-            "max": 20
-          },
-          "count_multiplier": 1,
-          "luck": 10
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/random1",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/golds"
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/potions"
+        }
+      ]
+    },
+    {
+      "rolls": {
+        "min": 3,
+        "max": 4
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:cobweb",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 2
+            }
+          ]
         }
       ]
     }

@@ -8,11 +8,12 @@ import net.minecraft.network.codec.StreamCodec;
 
 public enum MapType {
     NONE,
-    TEST, // После удаление изменить random()
     PERSPECTIVE,
     DOTTED_LINE,
-    LANDMARKS,
+    DRAWN,
+    AREA_DRAWN,
     COLORED,
+    AREA_COLORED,
     SIDE_VIEW;
 
     private final byte id;
@@ -37,7 +38,7 @@ public enum MapType {
     }
 
     public static MapType random(int level) {
-        int skip = (level == 0) ? 3 : 2; // После удаления TEST убавить на 1
+        int skip = (level == 0) ? 2 : 1;
         return BY_ID[(int) (Math.random() * (BY_ID.length - skip)) + skip];
     }
 

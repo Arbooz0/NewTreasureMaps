@@ -1,5 +1,6 @@
 package kawun.new_treasure_maps.utils.pixels;
 
+import net.minecraft.world.level.material.MapColor;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
@@ -93,6 +94,17 @@ public class Pixels extends PixelsBase {
             for (int x = 0; x < size; x++) {
                 setPixelSafe(startX + x, startY + y, color);
             }
+        }
+    }
+
+
+    public void drawCircle(Vector2i center, int radius, byte color) {
+        for (int i = 0; i < 360; i++) {
+            double a = Math.toRadians(i);
+            int x = (int) Math.round(Math.cos(a) * radius);
+            int y = (int) Math.round(Math.sin(a) * radius);
+            double r = Math.sqrt(x * x + y * y);
+            setPixelSafe(center.x + x, center.y + y, color);
         }
     }
 

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "min": 20,
+        "max": 25
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potion"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:splash_potion"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lingering_potion"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:set_random_potion"
+        }
+      ]
+    }
+  ]
+}

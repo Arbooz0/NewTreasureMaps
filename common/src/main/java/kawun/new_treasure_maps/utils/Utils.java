@@ -42,6 +42,13 @@ public class Utils {
     }
 
 
+    public static Vector2i getRandomVector(double maxRadius) {
+        double offset = Math.random() * (maxRadius - (maxRadius / 5.0)) + (maxRadius / 10.0);
+        double angle = Math.random() * Math.TAU;
+        return new Vector2i((int) (Math.cos(angle) * offset), (int) (Math.sin(angle) * offset));
+    }
+
+
 
     public static ServerPlayer getLocalPlayer() {
         return NewTreasureMaps.server.getPlayerList().getPlayers().getFirst();

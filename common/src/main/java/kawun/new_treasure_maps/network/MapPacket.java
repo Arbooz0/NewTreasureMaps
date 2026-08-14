@@ -1,8 +1,6 @@
 package kawun.new_treasure_maps.network;
 
 import io.netty.buffer.ByteBuf;
-import kawun.new_treasure_maps.Constants;
-import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.maps.*;
 import kawun.new_treasure_maps.utils.TimePassed;
@@ -32,11 +30,12 @@ public record MapPacket(int id, MapType mapType, byte[] bytes) implements Custom
         TimePassed time = new TimePassed();
         switch (packet.mapType) {
             case DOTTED_LINE -> DottedLineMapCreate.clientHandle(packet);
-            case COLORED -> ColoredMapCreate.clientHandle(packet);
-            case LANDMARKS -> LandmarksMapCreate.clientHandle(packet);
+            case COLORED -> BaseColoredMapCreate.clientHandle(packet);
+            case AREA_COLORED -> AreaColoredMapCreate.clientHandle(packet);
+            case DRAWN -> BaseDrawnMapCreate.clientHandle(packet);
+            case AREA_DRAWN -> AreaDrawnMapCreate.clientHandle(packet);
             case PERSPECTIVE -> PerspectiveMapCreate.clientHandle(packet);
             case SIDE_VIEW -> SideViewMapCreate.clientHandle(packet);
-            case TEST -> TestMapCreate.clientHandle(packet);
         }
         time.end("Client handle " + packet.id + " " + packet.mapType);
     }

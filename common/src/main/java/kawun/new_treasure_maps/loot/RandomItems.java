@@ -37,7 +37,7 @@ public class RandomItems {
         int[] rarities = new int[4];
         int[] types = new int[Type.values().length];
 
-        HashSet<Identifier> recipe = new HashSet<>();
+        /*HashSet<Identifier> recipe = new HashSet<>();
 
         Collection<RecipeHolder<?>> recipes = NewTreasureMaps.server.getRecipeManager().getRecipes();
         for (RecipeHolder recipeHolder : recipes) {
@@ -65,7 +65,7 @@ public class RandomItems {
             }
         } catch (Exception e) {
             Constants.LOG.error("ERROR LOAD LOOT TABLE: " + e.getMessage());
-        }
+        }*/
 
         for (Item item : BuiltInRegistries.ITEM) {
             if (item == Items.TREASURE_MAP) {
@@ -73,55 +73,57 @@ public class RandomItems {
             }
 
             Identifier id = BuiltInRegistries.ITEM.getKey(item);
-            boolean vanilla = id.getNamespace().equals("minecraft");
+            if (id.getNamespace().equals("minecraft")) {
+                continue;
+            }
+            ItemStack itemStack = item.getDefaultInstance();
 
             Type type = Type.ITEMS;
 
-            if (item instanceof BlockItem blockItem) {
-                Block block = blockItem.getBlock();
-                if (block.getLootTable().isEmpty()) {
-                    //if (!vanilla) {Constants.LOG.info("No has drop: " + item);}
-                    continue;
-                }
-                if (block instanceof StairBlock) {
-                    continue;
-                } else if (block instanceof SlabBlock) {
-                    continue;
-                } else if (block instanceof FenceBlock) {
-                    continue;
-                } else if (block instanceof FenceGateBlock) {
-                    continue;
-                } else if (block instanceof WallBlock) {
-                    continue;
-                } else if (block instanceof TrapDoorBlock) {
-                    continue;
-                } else if (block instanceof DoorBlock) {
-                    continue;
-                }
-                type = Type.BLOCK;
-
+            if (isWeapon(itemStack)) {
+                type = Type.WEAPON;
+                //if (!vanilla) {Constants.LOG.info("WEAPON: " + item);}
+            } else if (isArmor(itemStack)) {
+                type = Type.ARMOR;
+                //if (!vanilla) {Constants.LOG.info("ARMOR: " + item);}
+            } else if (isFood(itemStack)) {
+                type = Type.FOOD;
+                //if (!vanilla) {Constants.LOG.info("FOOD: " + item);}
             } else {
-                ItemStack itemStack = item.getDefaultInstance();
-                if (isWeapon(itemStack)) {
-                    type = Type.WEAPON;
-                    //if (!vanilla) {Constants.LOG.info("WEAPON: " + item);}
-                } else if (isArmor(itemStack)) {
-                    type = Type.ARMOR;
-                    //if (!vanilla) {Constants.LOG.info("ARMOR: " + item);}
-                } else if (isFood(itemStack)) {
-                    type = Type.FOOD;
-                    //if (!vanilla) {Constants.LOG.info("FOOD: " + item);}
-                } else {
-                    if (!recipe.contains(id) && !loots.contains(item)) {
-                        //if (!vanilla) {Constants.LOG.info("No loot and recipe: " + item);}
+                if (item instanceof BlockItem blockItem) {
+                    Block block = blockItem.getBlock();
+                    if (block.getLootTable().isEmpty()) {
+                        //if (!vanilla) {Constants.LOG.info("No has drop: " + item);}
                         continue;
                     }
+                    if (block instanceof StairBlock) {
+                        continue;
+                    } else if (block instanceof SlabBlock) {
+                        continue;
+                    } else if (block instanceof FenceBlock) {
+                        continue;
+                    } else if (block instanceof FenceGateBlock) {
+                        continue;
+                    } else if (block instanceof WallBlock) {
+                        continue;
+                    } else if (block instanceof TrapDoorBlock) {
+                        continue;
+                    } else if (block instanceof DoorBlock) {
+                        continue;
+                    }
+                    type = Type.BLOCK;
+
+                } else {
+                    /*if (!recipe.contains(id) && !loots.contains(item)) {
+                        //if (!vanilla) {Constants.LOG.info("No loot and recipe: " + item);}
+                        continue;
+                    }*/
                 }
             }
 
             types[type.ordinal()] += 1;
 
-            Rarity rarity = item.getDefaultInstance().getRarity();
+            Rarity rarity = itemStack.getRarity();
             rarities[rarity.ordinal()] += 1;
             int w = switch (rarity) {
                 case COMMON -> 100;
@@ -129,11 +131,17 @@ public class RandomItems {
                 case RARE -> 25;
                 case EPIC -> 10;
             };
-            if (!vanilla) {
-                w /= 2;
-            }
-            items.add(new ItemEntry(item, w, w, rarity.ordinal(), type, vanilla));
+
+            items.add(new ItemEntry(item, w, w, rarity.ordinal(), type));
         }
+
+        items.sort((i1, i2) -> {
+            if (i1.type == i2.type) {
+                return 0;
+            } else {
+                return (i1.type.ordinal() > i2.type.ordinal()) ? 1 : -1;
+            }
+        });
 
         Constants.LOG.info("TOTAL ITEMS: " + items.size() + "/" + BuiltInRegistries.ITEM.size());
         Constants.LOG.info("Rarities: " + Arrays.toString(rarities));
@@ -233,17 +241,15 @@ public class RandomItems {
         public final int defaultWeight;
         public final int rarity;
         public final Type type;
-        public final boolean vanilla;
 
         public int weight;
 
 
-        public ItemEntry(Item item, int defaultWeight, int weight, int rarity, Type type, boolean vanilla) {
+        public ItemEntry(Item item, int defaultWeight, int weight, int rarity, Type type) {
             this.item = item;
             this.defaultWeight = defaultWeight;
             this.rarity = rarity;
             this.type = type;
-            this.vanilla = vanilla;
 
             this.weight = weight;
         }

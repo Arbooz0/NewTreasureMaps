@@ -1,16 +1,26 @@
 package kawun.new_treasure_maps.maps;
 
 
+import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 
-public class LandmarksMapCreate extends BaseDrawnMapCreate {
+public class DrawnMapCreate extends BaseDrawnMapCreate {
+
 
     @Override
-    protected void modifyPixels(Pixels pixels) {
+    public void start() {
+        isBigCross = true;
+        checkAirOverChest = true;
+        placeTree = true;
+        super.start();
+    }
+
+    @Override
+    protected byte[] modify(Pixels pixels) {
         Pixels cross = PixelsLoader.getTexture("cross");
         if (cross != null) {
             pixels.drawImage(crossPos, cross);
@@ -123,8 +133,13 @@ public class LandmarksMapCreate extends BaseDrawnMapCreate {
             }
         }
 
+        return pixels.pixels;
     }
 
+    @Override
+    public MapType getMapType() {
+        return MapType.DRAWN;
+    }
 
 
 }

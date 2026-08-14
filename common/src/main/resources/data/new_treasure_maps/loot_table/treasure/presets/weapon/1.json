@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:tag",
+          "name": "new_treasure_maps:weapon1",
+          "expand": true,
+          "weight": 7
+        },
+        {
+          "type": "minecraft:tag",
+          "name": "new_treasure_maps:weapon2",
+          "expand": true,
+          "weight": 3
+        },
+        {
+          "type": "minecraft:tag",
+          "name": "new_treasure_maps:weapon3",
+          "expand": true,
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

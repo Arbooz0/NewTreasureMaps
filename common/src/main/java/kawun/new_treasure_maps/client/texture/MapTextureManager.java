@@ -203,19 +203,23 @@ public class MapTextureManager {
 
                 for (int y = 0; y < h; y++) {
                     for (int x = 0; x < w; x++) {
-                        int tX = copyImage.x() + x_offset + x;
-                        int tY = copyImage.y() + y_offset + y;
+                        try {
+                            int tX = copyImage.x() + x_offset + x;
+                            int tY = copyImage.y() + y_offset + y;
 
-                        int color = i.getPixel(x, y);
-                        int alpha = (color >> 24) & 0xFF;
-                        if (alpha != 255) {
-                            if (alpha < 10) {
-                                continue;
+                            int color = i.getPixel(x, y);
+                            int alpha = (color >> 24) & 0xFF;
+                            if (alpha != 255) {
+                                if (alpha < 10) {
+                                    continue;
+                                }
+                                int bg = image.getPixel(tX, tY);
+                                color = blendColor(bg, color, alpha);
                             }
-                            int bg = image.getPixel(tX, tY);
-                            color = blendColor(bg, color, alpha);
+                            image.setPixel(tX, tY, color);
+                        } catch (Exception _) {
+
                         }
-                        image.setPixel(tX, tY, color);
                     }
                 }
 

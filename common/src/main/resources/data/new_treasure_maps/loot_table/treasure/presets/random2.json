@@ -1,0 +1,51 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 4,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/item/2"
+        }
+      ]
+    },
+    {
+      "rolls": 4,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/block/2"
+        }
+      ]
+    },
+    {
+      "rolls": 4,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/food/2"
+        }
+      ]
+    },
+    {
+      "rolls": 3,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/armor/2"
+        }
+      ]
+    },
+    {
+      "rolls": 3,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/weapon/2"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "new_treasure_maps:treasure/presets/random2"
+}

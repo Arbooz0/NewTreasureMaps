@@ -7,8 +7,11 @@ import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.utils.TimePassed;
+import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +19,10 @@ import net.minecraft.util.BitStorage;
 import net.minecraft.util.Mth;
 import net.minecraft.util.SimpleBitStorage;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+
+import java.util.Optional;
 
 public class TestCommand {
 
@@ -34,33 +41,25 @@ public class TestCommand {
         ServerPlayer player = source.getPlayer();
         ServerLevel level = source.getLevel();
         ItemStack itemStack = player.getMainHandItem();
+        BlockPos.MutableBlockPos pos = player.blockPosition().mutable();
         int x = player.getBlockX();
         int z = player.getBlockZ();
 
         String text = StringArgumentType.getString(context, "text");
 
-        Constants.LOG.info("Texture " + text + ": " + MapTextureManager.loadBlockTexture(Identifier.parse(text)));
+        Optional<StructureTemplate> optional = level.getStructureManager().get(Utils.identifier(text));
+        if (optional.isEmpty()) {
+            return 0;
+        }
+
+        StructureTemplate structureTemplate = optional.get();
+        Vec3i size = structureTemplate.getSize();
+        pos.move(size.getX() / -2, 0, size.getZ() / -2);
+
+        structureTemplate.placeInWorld(level, pos, pos, new StructurePlaceSettings(), level.getRandom(), 2);
 
         return 1;
     }
-
-
-
-    public static int getHeight(long[] rawData, int x, int z, ServerLevel level) {
-        int heightBits = Mth.ceillog2(level.getHeight() + 1);
-        BitStorage data = new SimpleBitStorage(heightBits, 256);
-
-        long[] rawData2 = data.getRaw();
-        if (rawData.length == rawData2.length) {
-            System.arraycopy(rawData, 0, rawData2, 0, rawData.length);
-        } else {
-            Constants.LOG.info("Length !=");
-        }
-
-        return data.get(x + z * 16) + level.getMinY();
-    }
-
-
 
 
 

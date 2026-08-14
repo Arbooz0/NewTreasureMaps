@@ -11,9 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector2i;
-import org.jspecify.annotations.Nullable;
-
-import java.awt.*;
 
 
 public class Maps {
@@ -42,10 +39,11 @@ public class Maps {
             case NONE -> null;
             case DOTTED_LINE -> new DottedLineMapCreate();
             case COLORED -> new ColoredMapCreate();
-            case LANDMARKS -> new LandmarksMapCreate();
+            case AREA_COLORED -> new AreaColoredMapCreate();
+            case DRAWN -> new DrawnMapCreate();
+            case AREA_DRAWN -> new AreaDrawnMapCreate();
             case PERSPECTIVE -> new PerspectiveMapCreate();
             case SIDE_VIEW -> new SideViewMapCreate();
-            case TEST -> new TestMapCreate();
         };
         if (map != null) {
             map.setContext(pos, level, id, lootLevel);

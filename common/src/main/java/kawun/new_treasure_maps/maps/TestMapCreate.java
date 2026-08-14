@@ -51,16 +51,7 @@ public class TestMapCreate extends BaseMapCreate {
             }
         }
 
-        save(MapType.TEST, pixels.pixels);
-    }
-
-
-
-
-    public static void clientHandle(MapPacket packet) {
-        Pixels pixels = new Pixels(packet.bytes());
-        pixels.converter = MapColor::getColorFromPackedId;
-        MapTextureManager.insertPixels(packet.id(), pixels);
+        save(MapType.COLORED, pixels.pixels);
     }
 
 }

@@ -42,6 +42,8 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
     Vector2i crossPos;
     int step = 0;
 
+    boolean placeTree = false;
+
 
 
     @Override
@@ -52,10 +54,15 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
         }
 
         canChestUnderWater = false;
+
         BlockPos chestBlockPos = getChestPos();
         if (chestBlockPos == null) {
             Utils.sendErrorCreateMap();
             return;
+        }
+        placeCross(chestBlockPos, false);
+        if (placeTree) {
+            addStructure(chestBlockPos.offset(-1, 4, 0), "tree");
         }
         createChest(chestBlockPos);
 
@@ -73,7 +80,11 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
     }
 
 
-    protected abstract void modifyPixels(Pixels pixels);
+    protected abstract byte[] modify(Pixels pixels);
+
+
+    public abstract MapType getMapType();
+
 
 
 
@@ -221,11 +232,9 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
             }
         }
 
-        modifyPixels(pixels);
+        save(getMapType(), modify(pixels));
 
         PixelsLoader.clearCache();
-
-        save(MapType.LANDMARKS, pixels.pixels);
     }
 
 
@@ -330,7 +339,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
         PixelsLoader.clearCache();
 
-        save(MapType.LANDMARKS, pixels.pixels);
+        save(MapType.DRAWN, pixels.pixels);
     }
 
 

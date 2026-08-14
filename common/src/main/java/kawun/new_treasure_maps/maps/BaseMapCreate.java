@@ -6,6 +6,7 @@ import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -25,6 +26,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
@@ -45,7 +48,9 @@ public abstract class BaseMapCreate {
     public int lootLevel = 0;
 
     public boolean canChestUnderWater = true;
-    private int attemptChestFind = 0;
+    public boolean checkAirOverChest = false;
+    public boolean checkPlaceCross = false;
+    public boolean isBigCross = false;
 
 
     public void setContext(Vector2i fromPosition, ServerLevel level, int id, int lootLevel) {
@@ -76,7 +81,6 @@ public abstract class BaseMapCreate {
 
 
     public boolean canPlaceChest(BlockPos center) {
-        attemptChestFind++;
         BlockPos.MutableBlockPos pos = center.mutable();
         for (int x = -2; x <= 2; x++) {
             for (int y = -2; y <= 2; y++) {
@@ -89,6 +93,27 @@ public abstract class BaseMapCreate {
                         }
                     } else {
                         if (!state.is(BlockTags.OVERWORLD_CARVER_REPLACEABLES)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public boolean checkAir(BlockPos center) {
+        BlockPos.MutableBlockPos pos = center.mutable();
+        int count = 0;
+        for (int x = -2; x <= 2; x++) {
+            for (int y = 0; y <= 5; y++) {
+                for (int z = -2; z <= 2; z++) {
+                    pos.set(center.getX() + x, center.getY() + y, center.getZ() + z);
+                    BlockState state = level.getBlockState(pos);
+                    if (!state.is(BlockTags.AIR)) {
+                        count++;
+                        if (count > 10) {
                             return false;
                         }
                     }
@@ -117,7 +142,7 @@ public abstract class BaseMapCreate {
             }
         }
 
-        Constants.LOG.info("No find place chest, attempt: " + attemptChestFind);
+        Constants.LOG.info("No find place chest");
 
         return null;
     }
@@ -150,6 +175,18 @@ public abstract class BaseMapCreate {
             int y = getFloor(pos.getX(), pos.getZ());
             if (y == INVALID_HEIGHT) {
                 continue;
+            }
+
+            if (checkAirOverChest) {
+                pos.setY(y + 1);
+                if (!checkAir(pos)) {
+                    Utils.sendPos(pos, "More blocks");
+                    continue;
+                }
+            }
+
+            if (checkPlaceCross) {
+                if (!placeCross(pos, true));
             }
 
             pos.setY(y - 3);
@@ -214,7 +251,7 @@ public abstract class BaseMapCreate {
             }
         }
         Constants.LOG.info("Chest pos: " + center);
-        Utils.sendPos(center.above(3), "Chest pos (Attempt: " + attemptChestFind + ")");
+        Utils.sendPos(center.above(3), "Chest pos");
     }
 
 
@@ -284,6 +321,55 @@ public abstract class BaseMapCreate {
     }
 
 
+
+    public void addStructure(BlockPos pos, String id) {
+        Optional<StructureTemplate> optional = level.getStructureManager().get(Utils.identifier(id));
+        if (optional.isEmpty()) {
+            return;
+        }
+
+        StructureTemplate structureTemplate = optional.get();
+        Vec3i size = structureTemplate.getSize();
+        pos = pos.offset(size.getX() / -2, 0, size.getZ() / -2);
+
+        structureTemplate.placeInWorld(level, pos, pos, new StructurePlaceSettings(), level.getRandom(), 2);
+    }
+
+
+
+    public boolean placeCross(BlockPos center, boolean isCheckOnly) {
+        BlockPos.MutableBlockPos pos = center.mutable();
+        int l = isBigCross ? 2 : 1;
+        int count = 0;
+        for (int x = -l; x <= l; x++) {
+            for (int z = -l; z <= l; z++) {
+                if (Math.abs(x) != Math.abs(z)) {
+                    continue;
+                }
+                pos.setX(center.getX() + x);
+                pos.setZ(center.getZ() + z);
+                pos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos) - 1);
+                BlockState blockState = level.getBlockState(pos);
+                if (blockState.is(BlockTags.OVERWORLD_CARVER_REPLACEABLES)) {
+                    if (!isCheckOnly) {
+                        level.setBlock(pos, Blocks.RED_SAND.defaultBlockState(), 2);
+                    }
+                } else {
+                    if (isCheckOnly) {
+                        count++;
+                        if (isBigCross) {
+                            if (count > 2) {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
 
 

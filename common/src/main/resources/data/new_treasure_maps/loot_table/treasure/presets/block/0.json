@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "new_treasure_maps:tag",
+          "name": "new_treasure_maps:block1",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "new_treasure_maps:set_count",
+              "count": {
+                "min": 10,
+                "max": 50
+              }
+            }
+          ]
+        },
+        {
+          "type": "new_treasure_maps:tag",
+          "name": "new_treasure_maps:block2",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "new_treasure_maps:set_count",
+              "count": {
+                "min": 2,
+                "max": 20
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

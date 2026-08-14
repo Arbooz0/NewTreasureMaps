@@ -4,16 +4,14 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import kawun.new_treasure_maps.Constants;
-import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.client.render.MapRenderer;
-import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.network.Network;
 import kawun.new_treasure_maps.network.OpenMapPacket;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -21,22 +19,17 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class TreasureMap extends Item {
 
-
+    public static final int colorDescription = ARGB.color(173, 130, 102);
     public static Int2ObjectOpenHashMap<Tracker> trackers = new Int2ObjectOpenHashMap<>();
     private int tick = 0;
 
@@ -96,10 +89,12 @@ public class TreasureMap extends Item {
         String key = switch (data.mapType()) {
             case DOTTED_LINE -> "new_treasure_maps.tip_dotted_line";
             case PERSPECTIVE -> "new_treasure_maps.tip_perspective";
+            case DRAWN -> "new_treasure_maps.tip_drawn";
+            case AREA_DRAWN, AREA_COLORED -> "new_treasure_maps.tip_area";
             default -> "";
         };
         if (!key.isEmpty()) {
-            builder.accept(Component.translatable(key));
+            builder.accept(Component.translatable(key).withColor(colorDescription));
         }
     }
 

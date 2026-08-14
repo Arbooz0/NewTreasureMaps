@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "new_treasure_maps:random_loot",
+          "max_rarity": 3,
+          "count_items": {
+            "min": 15,
+            "max": 25
+          },
+          "count_multiplier": 1.2,
+          "luck": 20
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "function": "minecraft:enchant_with_levels",
+      "levels": 50
+    }
+  ],
+  "random_sequence": "new_treasure_maps:treasure/2"
+}

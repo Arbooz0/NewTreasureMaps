@@ -5,14 +5,26 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "new_treasure_maps:random_loot",
-          "max_rarity": 3,
-          "count_items": {
-            "min": 15,
-            "max": 25
-          },
-          "count_multiplier": 1.2,
-          "luck": 20
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/random2"
+        }
+      ]
+    },
+    {
+      "rolls": {
+        "min": 2,
+        "max": 3
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:cobweb",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 2
+            }
+          ]
         }
       ]
     }
