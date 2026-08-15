@@ -21,11 +21,6 @@ public class DrawnMapCreate extends BaseDrawnMapCreate {
 
     @Override
     protected byte[] modify(Pixels pixels) {
-        Pixels cross = PixelsLoader.getTexture("cross");
-        if (cross != null) {
-            pixels.drawImage(crossPos, cross);
-        }
-
         fromPosition.sub(start, fromPosition).div(4);
         Vector2f dir = new Vector2f(crossPos.sub(fromPosition, new Vector2i()));
         float len = dir.length();
@@ -131,6 +126,15 @@ public class DrawnMapCreate extends BaseDrawnMapCreate {
                 lastPos2.set(lastPos);
                 lastPos.set(x, y);
             }
+        }
+
+        Pixels img = PixelsLoader.getTexture("custom_tree");
+        if (img != null) {
+            pixels.drawImage(crossPos, img, 0.5f, 1.2f, false, null);
+        }
+        img = PixelsLoader.getTexture("cross");
+        if (img != null) {
+            pixels.drawImage(crossPos, img);
         }
 
         return pixels.pixels;

@@ -1,6 +1,61 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "new_treasure_maps:item/treasure_map"
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "when": "PERSPECTIVE",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/perspective_map"
+        }
+      },
+      {
+        "when": "DOTTED_LINE",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/dotted_line_map"
+        }
+      },
+      {
+        "when": "DRAWN",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/drawn_map"
+        }
+      },
+      {
+        "when": "AREA_DRAWN",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/area_drawn_map"
+        }
+      },
+      {
+        "when": "COLORED",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/colored_map"
+        }
+      },
+      {
+        "when": "AREA_COLORED",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/area_colored_map"
+        }
+      },
+      {
+        "when": "SIDE_VIEW",
+        "model": {
+          "type": "minecraft:model",
+          "model": "new_treasure_maps:item/side_view_map"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "new_treasure_maps:item/treasure_map"
+    },
+    "property": "new_treasure_maps:map_type"
   }
 }

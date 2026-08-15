@@ -66,9 +66,6 @@ public class RandomLootEntry extends LootPoolSingletonContainer {
             int maxCount = itemStack.getMaxStackSize();
             if (maxCount > 1) {
                 float max = maxCount / (entry.rarity / 2.0f + 1);
-                if (!entry.vanilla) {
-                    max /= 2.0f;
-                }
                 itemStack.setCount(Math.clamp((int) ((Math.random() * max + 1) * countMultiplier), 1, maxCount));
             }
             output.accept(itemStack);
