@@ -11,7 +11,7 @@ import net.minecraft.commands.Commands;
 public class CreateMapCommand {
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> get_command() {
+    public static LiteralArgumentBuilder<CommandSourceStack> getCommand() {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("create_map");
 
         for (MapType type : MapType.values()) {

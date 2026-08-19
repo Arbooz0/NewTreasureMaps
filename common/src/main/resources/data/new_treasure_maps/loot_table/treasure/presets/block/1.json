@@ -6,36 +6,35 @@
       "entries": [
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:block1",
-          "weight": 7,
+          "name": "block0",
+          "weight": 20,
           "functions": [
             {
               "function": "new_treasure_maps:set_count",
               "count": {
                 "min": 10,
-                "max": 50
+                "max": 40
               }
             }
           ]
         },
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:block2",
-          "weight": 3,
+          "name": "block1",
+          "weight": 6,
           "functions": [
             {
               "function": "new_treasure_maps:set_count",
               "count": {
                 "min": 5,
-                "max": 32
+                "max": 15
               }
             }
           ]
         },
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:block3",
-          "expand": true,
+          "type": "new_treasure_maps:tag",
+          "name": "block2",
           "weight": 1
         }
       ]

@@ -29,7 +29,7 @@ public class TestCommand {
 
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> get_command() {
+    public static LiteralArgumentBuilder<CommandSourceStack> getCommand() {
         return Commands.literal("test")
                                 .then(Commands.argument("text", StringArgumentType.string())
                                     .executes(TestCommand::execute));

@@ -22,7 +22,7 @@ public class LootTableModify {
                 .add(LootItem.lootTableItem(Items.TREASURE_MAP))
                 .apply(TreasureMapFunction.builder(0))
                 .when(LocationCheck.checkLocation(LocationPredicate.Builder.inDimension(Level.OVERWORLD)))
-                .when(LootItemRandomChanceCondition.randomChance(0.5f));
+                .when(LootItemRandomChanceCondition.randomChance(0.1f));
     }
 
 

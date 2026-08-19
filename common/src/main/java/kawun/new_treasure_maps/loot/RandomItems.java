@@ -8,7 +8,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.*;
@@ -20,52 +19,47 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class RandomItems {
 
-    public static ArrayList<ItemEntry> items = null;
+    public static HashMap<Type, ArrayList<Item>> items = null;
 
     public static void init() {
         if (items != null) {
             return;
         }
 
-        items = new ArrayList<>();
+        items = new HashMap<>();
+        for (Type type : Type.values()) {
+            items.put(type, new ArrayList<>());
+        }
 
-        int[] rarities = new int[4];
         int[] types = new int[Type.values().length];
 
-        /*HashSet<Identifier> recipe = new HashSet<>();
+        HashSet<Identifier> recipe = new HashSet<>();
 
         Collection<RecipeHolder<?>> recipes = NewTreasureMaps.server.getRecipeManager().getRecipes();
         for (RecipeHolder recipeHolder : recipes) {
             Identifier id = recipeHolder.id().identifier();
-            recipe.add(id);
+            if (!id.getNamespace().equals("minecraft")) {
+                recipe.add(id);
+            }
         }
 
         HashSet<Item> loots = new HashSet<>();
 
         try {
             for (Holder.Reference<LootTable> lootTableReference : NewTreasureMaps.server.reloadableRegistries().lookup().lookupOrThrow(Registries.LOOT_TABLE).listElements().toList()) {
-                Field poolsField = LootTable.class.getDeclaredField("pools");
-                poolsField.setAccessible(true);
-                List<LootPool> pools = (List<LootPool>) poolsField.get(lootTableReference.value());
-
-                for (LootPool pool : pools) {
-                    Field entriesField = LootPool.class.getDeclaredField("entries");
-                    entriesField.setAccessible(true);
-                    List<LootPoolEntryContainer> entries = (List<LootPoolEntryContainer>) entriesField.get(pool);
-
-                    for (LootPoolEntryContainer entry : entries) {
+                for (LootPool pool : lootTableReference.value().pools) {
+                    for (LootPoolEntryContainer entry : pool.entries) {
                         processEntry(entry, loots);
                     }
                 }
             }
         } catch (Exception e) {
             Constants.LOG.error("ERROR LOAD LOOT TABLE: " + e.getMessage());
-        }*/
+        }
 
         for (Item item : BuiltInRegistries.ITEM) {
             if (item == Items.TREASURE_MAP) {
@@ -77,23 +71,26 @@ public class RandomItems {
                 continue;
             }
             ItemStack itemStack = item.getDefaultInstance();
+            if (itemStack.getRarity() != Rarity.COMMON) {
+                continue;
+            }
 
-            Type type = Type.ITEMS;
+            Type type = Type.ITEM;
 
             if (isWeapon(itemStack)) {
                 type = Type.WEAPON;
-                //if (!vanilla) {Constants.LOG.info("WEAPON: " + item);}
+                Constants.LOG.info("WEAPON: " + item);
             } else if (isArmor(itemStack)) {
                 type = Type.ARMOR;
-                //if (!vanilla) {Constants.LOG.info("ARMOR: " + item);}
+                Constants.LOG.info("ARMOR: " + item);
             } else if (isFood(itemStack)) {
                 type = Type.FOOD;
-                //if (!vanilla) {Constants.LOG.info("FOOD: " + item);}
+                Constants.LOG.info("FOOD: " + item);
             } else {
                 if (item instanceof BlockItem blockItem) {
                     Block block = blockItem.getBlock();
                     if (block.getLootTable().isEmpty()) {
-                        //if (!vanilla) {Constants.LOG.info("No has drop: " + item);}
+                        Constants.LOG.info("No has drop: " + item);
                         continue;
                     }
                     if (block instanceof StairBlock) {
@@ -114,37 +111,18 @@ public class RandomItems {
                     type = Type.BLOCK;
 
                 } else {
-                    /*if (!recipe.contains(id) && !loots.contains(item)) {
-                        //if (!vanilla) {Constants.LOG.info("No loot and recipe: " + item);}
+                    if (!recipe.contains(id) && !loots.contains(item)) {
+                        Constants.LOG.info("No loot and recipe: " + item);
                         continue;
-                    }*/
+                    }
                 }
             }
 
             types[type.ordinal()] += 1;
 
-            Rarity rarity = itemStack.getRarity();
-            rarities[rarity.ordinal()] += 1;
-            int w = switch (rarity) {
-                case COMMON -> 100;
-                case UNCOMMON -> 50;
-                case RARE -> 25;
-                case EPIC -> 10;
-            };
-
-            items.add(new ItemEntry(item, w, w, rarity.ordinal(), type));
+            items.get(type).add(item);
         }
 
-        items.sort((i1, i2) -> {
-            if (i1.type == i2.type) {
-                return 0;
-            } else {
-                return (i1.type.ordinal() > i2.type.ordinal()) ? 1 : -1;
-            }
-        });
-
-        Constants.LOG.info("TOTAL ITEMS: " + items.size() + "/" + BuiltInRegistries.ITEM.size());
-        Constants.LOG.info("Rarities: " + Arrays.toString(rarities));
         Constants.LOG.info("Types: ");
         for (int i = 0; i < types.length; i++) {
             Constants.LOG.info(Type.values()[i] + ": " + types[i]);
@@ -152,66 +130,40 @@ public class RandomItems {
     }
 
 
-    public static @Nullable ItemEntry getRandomItem(Type type, int maxRarity, int luck) {
+    public static @Nullable Item getRandomItem(String name) {
         init();
 
-        int totalWeight = 0;
-
-        ArrayList<ItemEntry> filtered = new ArrayList<>();
-        for (ItemEntry entry : items) {
-            if (entry.type != type) {
-                continue;
-            }
-            if (entry.rarity > maxRarity) {
-                continue;
-            }
-            entry.calculateWeight(luck);
-            if (entry.weight > 0) {
-                filtered.add(entry);
-                totalWeight += entry.weight;
-            }
-        }
-
-        if (totalWeight == 0) {
+        Type type = Type.map.get(name);
+        if (type == null) {
+            Constants.LOG.error("No has type " + name);
             return null;
         }
 
-        int value = (int) (Math.random() * totalWeight);
-
-        for (ItemEntry entry : filtered) {
-            value -= entry.weight;
-            if (value < 0) {
-                return entry;
-            }
+        if (Math.random() > type.percent) {
+            return null;
         }
 
-        return items.getLast();
+        ArrayList<Item> list = items.get(type);
+        if (list.isEmpty()) {
+            return null;
+        }
+
+        return list.get((int) (Math.random() * list.size()));
     }
 
 
 
 
-    private static void processEntry(LootPoolEntryContainer entry, HashSet<Item> loots) throws Exception {
+    private static void processEntry(LootPoolEntryContainer entry, HashSet<Item> loots) {
         if (entry instanceof LootItem lootItem) {
-            Field itemField = LootItem.class.getDeclaredField("item");
-            itemField.setAccessible(true);
-            Holder<Item> itemHolder = (Holder<Item>) itemField.get(lootItem);
-            loots.add(itemHolder.value());
+            loots.add(lootItem.item.value());
         } else if (entry instanceof CompositeEntryBase compositeEntry) {
-            Field childrenField = CompositeEntryBase.class.getDeclaredField("children");
-            childrenField.setAccessible(true);
-            List<LootPoolEntryContainer> children = (List<LootPoolEntryContainer>) childrenField.get(compositeEntry);
-
-            for (LootPoolEntryContainer entryContainer : children) {
+            for (LootPoolEntryContainer entryContainer : compositeEntry.children) {
                 processEntry(entryContainer, loots);
             }
 
         } else if (entry instanceof TagEntry tagEntry) {
-            Field tagField = TagEntry.class.getDeclaredField("tag");
-            tagField.setAccessible(true);
-            TagKey<Item> tagKey = (TagKey<Item>) tagField.get(tagEntry);
-
-            BuiltInRegistries.ITEM.get(tagKey).ifPresent(holders -> {
+            BuiltInRegistries.ITEM.get(tagEntry.tag).ifPresent(holders -> {
                 for (Holder<Item> holder : holders) {
                     loots.add(holder.value());
                 }
@@ -234,87 +186,23 @@ public class RandomItems {
 
 
 
-
-    public static class ItemEntry {
-
-        public final Item item;
-        public final int defaultWeight;
-        public final int rarity;
-        public final Type type;
-
-        public int weight;
-
-
-        public ItemEntry(Item item, int defaultWeight, int weight, int rarity, Type type) {
-            this.item = item;
-            this.defaultWeight = defaultWeight;
-            this.rarity = rarity;
-            this.type = type;
-
-            this.weight = weight;
-        }
-
-        public void calculateWeight(int luck) {
-            if (luck == 0) {
-                weight = defaultWeight;
-            } else {
-                weight = defaultWeight + (rarity - 2) * luck;
-            }
-        }
-    };
-
-
-
     public enum Type {
-        ARMOR(3),
-        WEAPON(3),
-        FOOD(6),
-        ITEMS(9),
-        BLOCK(8);
+        ARMOR(0.02f),
+        WEAPON(0.02f),
+        FOOD(0.2f),
+        ITEM(0.1f),
+        BLOCK(0.1f);
 
-        public final int weight;
-        public static int totalWeight = 0; // 29
+        public final float percent;
+        public static HashMap<String, Type> map = new HashMap<>();
 
-        Type(int weight) {
-            this.weight = weight;
+        Type(float percent) {
+            this.percent = percent;
         }
-
-
-        public static Type[] getRandomTypes(int count) {
-            Type[] types = new Type[count];
-            int index = 0;
-            float m = count / (float) totalWeight;
-
-            for (Type type : values()) {
-                int countType;
-                if (type == BLOCK) {
-                    countType = types.length - index;
-                } else {
-                    float c = type.weight * m;
-                    if (Math.random() < (c % 1.0f)) {
-                        countType = (int) Math.ceil(c);
-                    } else {
-                        countType = (int) Math.floor(c);
-                    }
-                }
-
-                if (countType == 0) {
-                    continue;
-                }
-
-                for (int i = 0; i < countType; i++) {
-                    types[index] = type;
-                    index++;
-                }
-            }
-
-            return types;
-        }
-
 
         static {
             for (Type type : values()) {
-                totalWeight += type.weight;
+                map.put(type.name().toLowerCase(), type);
             }
         }
     }

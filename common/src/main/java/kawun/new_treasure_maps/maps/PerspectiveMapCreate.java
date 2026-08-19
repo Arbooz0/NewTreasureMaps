@@ -175,12 +175,10 @@ public class PerspectiveMapCreate extends BaseMapCreate {
         for (int y = 0; y < 256; y++) {
             for (int x = 0; x < 256; x++) {
                 Vec3 rayDir = dir.add(right.scale((x - 128) / 200.0)).add(up.scale((y - 128) / -200.0)).normalize();
-
-                Vec3 from2 = from.add(right.scale((x - 128) / 50.0)).add(up.scale((y - 128) / -50.0));
-                Vec3 to = from2.add(rayDir.scale(18));
+                Vec3 to = from.add(rayDir.scale(18));
 
                 ClipContext context = new ClipContext(
-                        from2, to,
+                        from, to,
                         ClipContext.Block.COLLIDER,
                         ClipContext.Fluid.NONE,
                         CollisionContext.empty()

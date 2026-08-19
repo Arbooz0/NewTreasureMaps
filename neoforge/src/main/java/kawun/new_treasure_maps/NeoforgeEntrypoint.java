@@ -31,10 +31,6 @@ public class NeoforgeEntrypoint {
 
     public NeoforgeEntrypoint(IEventBus eventBus, Dist dist) {
         NewTreasureMaps.init();
-
-        Constants.LOG.info("+----------------+");
-        Constants.LOG.info("Load: " + dist);
-        Constants.LOG.info("+----------------+");
     }
 
 

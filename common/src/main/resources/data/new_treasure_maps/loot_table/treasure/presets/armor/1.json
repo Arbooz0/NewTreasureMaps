@@ -5,21 +5,18 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:armor1",
-          "expand": true,
-          "weight": 7
+          "type": "new_treasure_maps:tag",
+          "name": "armor0",
+          "weight": 20
         },
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:armor2",
-          "expand": true,
-          "weight": 3
+          "type": "new_treasure_maps:tag",
+          "name": "armor1",
+          "weight": 6
         },
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:armor3",
-          "expand": true,
+          "type": "new_treasure_maps:tag",
+          "name": "armor2",
           "weight": 1
         }
       ]

@@ -21,7 +21,7 @@ import net.minecraft.world.item.component.SeededContainerLoot;
 public class ChestLootCommand {
 
 
-    public static LiteralArgumentBuilder<CommandSourceStack> get_command() {
+    public static LiteralArgumentBuilder<CommandSourceStack> getCommand() {
         return Commands.literal("chest_loot")
                 .then(Commands.argument("rarity", IntegerArgumentType.integer(0, 2)).executes(ChestLootCommand::execute)
                         .then(Commands.argument("is_map", BoolArgumentType.bool()).executes(ChestLootCommand::execute)));

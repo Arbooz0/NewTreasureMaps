@@ -6,8 +6,8 @@
       "entries": [
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:food1",
-          "weight": 7,
+          "name": "food0",
+          "weight": 20,
           "functions": [
             {
               "function": "new_treasure_maps:set_count",
@@ -20,8 +20,8 @@
         },
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:food2",
-          "weight": 3,
+          "name": "food1",
+          "weight": 6,
           "functions": [
             {
               "function": "new_treasure_maps:set_count",
@@ -33,9 +33,8 @@
           ]
         },
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:food3",
-          "expand": true,
+          "type": "new_treasure_maps:tag",
+          "name": "food2",
           "weight": 1
         }
       ]

@@ -1,0 +1,12 @@
+{
+  "values": [
+    "minecraft:diamond_ore",
+    "minecraft:deepslate_diamond_ore",
+    "minecraft:diamond_block",
+    "minecraft:emerald_block",
+    "minecraft:turtle_egg",
+    "minecraft:conduit",
+    "minecraft:lodestone",
+    "minecraft:sniffer_egg"
+  ]
+}

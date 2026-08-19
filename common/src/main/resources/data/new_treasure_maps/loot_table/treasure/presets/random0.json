@@ -45,6 +45,21 @@
           "value": "new_treasure_maps:treasure/presets/weapon/0"
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/banner"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.5
+        }
+      ]
     }
   ],
   "random_sequence": "new_treasure_maps:treasure/presets/random0"

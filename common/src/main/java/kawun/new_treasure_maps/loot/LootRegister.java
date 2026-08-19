@@ -13,7 +13,6 @@ public class LootRegister {
 
 
     public static void registerLootEntry(BiConsumer<Identifier, MapCodec<? extends LootPoolEntryContainer>> consumer) {
-        consumer.accept(Utils.identifier("random_loot"), RandomLootEntry.CODEC);
         consumer.accept(Utils.identifier("tag"), TagRandomEntry.CODEC);
     }
 

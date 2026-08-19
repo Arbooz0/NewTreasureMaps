@@ -5,15 +5,13 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:weapon1",
-          "expand": true,
+          "type": "new_treasure_maps:tag",
+          "name": "weapon0",
           "weight": 10
         },
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:weapon2",
-          "expand": true,
+          "type": "new_treasure_maps:tag",
+          "name": "weapon1",
           "weight": 1
         }
       ]

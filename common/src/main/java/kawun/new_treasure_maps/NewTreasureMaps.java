@@ -1,6 +1,7 @@
 package kawun.new_treasure_maps;
 
 
+import kawun.new_treasure_maps.config.ConfigManager;
 import kawun.new_treasure_maps.items.TreasureMap;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +17,7 @@ public class NewTreasureMaps {
 
 
     public static void init() {
-
+        ConfigManager.load();
     }
 
 

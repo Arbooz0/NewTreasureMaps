@@ -7,7 +7,7 @@
         {
           "type": "minecraft:loot_table",
           "value": "new_treasure_maps:treasure/presets/random1",
-          "weight": 20
+          "weight": 15
         },
         {
           "type": "minecraft:loot_table",
@@ -16,6 +16,26 @@
         {
           "type": "minecraft:loot_table",
           "value": "new_treasure_maps:treasure/presets/potions"
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/books"
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/mushrooms"
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/ores"
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/sea"
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/tnt"
         }
       ]
     },

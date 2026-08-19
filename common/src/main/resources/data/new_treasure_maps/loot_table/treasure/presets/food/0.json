@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:food1",
+          "name": "food0",
           "weight": 10,
           "functions": [
             {
@@ -20,7 +20,7 @@
         },
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:food2",
+          "name": "food1",
           "weight": 1,
           "functions": [
             {

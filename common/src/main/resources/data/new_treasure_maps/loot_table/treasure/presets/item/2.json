@@ -6,22 +6,21 @@
       "entries": [
         {
           "type": "new_treasure_maps:tag",
-          "name": "new_treasure_maps:items2",
+          "name": "item1",
           "weight": 5,
           "functions": [
             {
               "function": "new_treasure_maps:set_count",
               "count": {
-                "min": 5,
-                "max": 32
+                "min": 8,
+                "max": 15
               }
             }
           ]
         },
         {
-          "type": "minecraft:tag",
-          "name": "new_treasure_maps:items3",
-          "expand": true,
+          "type": "new_treasure_maps:tag",
+          "name": "item2",
           "weight": 1
         }
       ]
