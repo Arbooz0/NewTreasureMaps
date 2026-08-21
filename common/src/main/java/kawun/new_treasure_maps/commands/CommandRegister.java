@@ -15,17 +15,8 @@ public class CommandRegister {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands = List.of(
                 ConfigCommand::getCommand,
-                TestCommand::getCommand,
                 CreateMapCommand::getCommand,
                 ChestLootCommand::getCommand
-        );
-        registerCommands(dispatcher, commands);
-    }
-
-
-    public static void registerClient(CommandDispatcher<CommandSourceStack> dispatcher) {
-        List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands = List.of(
-                ClientTestCommand::getCommand
         );
         registerCommands(dispatcher, commands);
     }
@@ -36,7 +27,8 @@ public class CommandRegister {
             CommandDispatcher<CommandSourceStack> dispatcher,
             List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands
     ) {
-        LiteralArgumentBuilder<CommandSourceStack> baseCommand = Commands.literal(Constants.MOD_ID);
+        LiteralArgumentBuilder<CommandSourceStack> baseCommand = Commands.literal(Constants.MOD_ID)
+                .requires(Commands.hasPermission(Commands.LEVEL_ADMINS));
 
         for (Supplier<LiteralArgumentBuilder<CommandSourceStack>> supplier : commands) {
             LiteralArgumentBuilder<CommandSourceStack> command = supplier.get();

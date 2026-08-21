@@ -31,7 +31,10 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
     public static final String[] ALL_STRUCTURES = new String[]{
             "pillager_outpost",
             "village_plains",
-            "village_taiga"
+            "village_taiga",
+            "village_desert",
+            "village_savanna",
+            "village_snowy",
     };
 
     byte[] biomes = new byte[65536];
@@ -48,7 +51,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
     @Override
     public void start() {
-        if (false) { // TEST
+        if (true) { // TEST
             spriteSheet();
             return;
         }
@@ -57,7 +60,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
         BlockPos chestBlockPos = getChestPos();
         if (chestBlockPos == null) {
-            Utils.sendErrorCreateMap();
+            errorGenerate();
             return;
         }
         placeCross(chestBlockPos, false);

@@ -43,7 +43,7 @@ public class SideViewMapCreate extends BaseMapCreate {
     public void start() {
         BlockPos chestPos = findPlaceChest();
         if (chestPos == null) {
-            Utils.sendErrorCreateMap();
+            errorGenerate();
             return;
         }
         createChest(chestPos);
@@ -319,7 +319,7 @@ public class SideViewMapCreate extends BaseMapCreate {
             image.close();
         }
 
-        pixels.addCopyImage("cross", bytes[0] & 0xFF - 5, bytes[1] & 0xFF - 5);
+        pixels.addCopyImage("cross", bytes[0] & 0xFF - 5, bytes[1] & 0xFF - 5, false);
 
         MapTextureManager.insertPixels(packet.id(), pixels);
     }

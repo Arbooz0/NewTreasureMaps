@@ -2,7 +2,11 @@ package kawun.new_treasure_maps.maps;
 
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
+import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.enums.MapType;
+import kawun.new_treasure_maps.items.Items;
+import kawun.new_treasure_maps.items.MapComponent;
+import kawun.new_treasure_maps.items.TreasureMap;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
@@ -15,6 +19,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -76,6 +81,12 @@ public abstract class BaseMapCreate {
 
     public void save(MapType type, byte[] bytes) {
         new MapSavedData(mapId, type, bytes).save();
+    }
+
+
+    public void errorGenerate() {
+        TreasureMap.errorMaps.add(mapId);
+        Utils.sendErrorCreateMap();
     }
 
 
@@ -180,7 +191,6 @@ public abstract class BaseMapCreate {
             if (checkAirOverChest) {
                 pos.setY(y + 1);
                 if (!checkAir(pos)) {
-                    Utils.sendPos(pos, "More blocks");
                     continue;
                 }
             }
@@ -251,7 +261,6 @@ public abstract class BaseMapCreate {
             }
         }
         Constants.LOG.info("Chest pos: " + center);
-        Utils.sendPos(center.above(3), "Chest pos");
     }
 
 

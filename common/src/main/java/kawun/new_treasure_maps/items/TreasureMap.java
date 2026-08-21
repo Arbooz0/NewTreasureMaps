@@ -1,10 +1,12 @@
 package kawun.new_treasure_maps.items;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.render.MapRenderer;
+import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.Network;
 import kawun.new_treasure_maps.network.OpenMapPacket;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -31,6 +34,7 @@ public class TreasureMap extends Item {
 
     public static final int colorDescription = ARGB.color(173, 130, 102);
     public static Int2ObjectOpenHashMap<Tracker> trackers = new Int2ObjectOpenHashMap<>();
+    public static IntOpenHashSet errorMaps = new IntOpenHashSet();
     private int tick = 0;
 
 
@@ -59,7 +63,12 @@ public class TreasureMap extends Item {
             if (data == null) {
                 return;
             }
-            getTracker(data.id()).update(level, ownerPlayer);
+            if (errorMaps.contains(data.id())) {
+                errorMaps.remove(data.id());
+                data = data.toNone();
+                itemStack.set(Items.MAP_COMPONENT, data);
+            }
+            getTracker(data.id()).update(level, ownerPlayer, data.mapType() == MapType.NONE);
         }
     }
 
@@ -128,7 +137,7 @@ public class TreasureMap extends Item {
         }
 
 
-        public void update(ServerLevel level, ServerPlayer ownerPlayer) {
+        public void update(ServerLevel level, ServerPlayer ownerPlayer, boolean isNone) {
             for (ServerPlayer player : getPlayersNearPlayer(level, ownerPlayer, 10)) {
 
                 if (playersReceived.containsKey(player)) {
@@ -137,17 +146,24 @@ public class TreasureMap extends Item {
                         sendOpen(player);
                     }
                 } else {
-                    MapSavedData savedData = MapSavedData.load(id);
-                    if (savedData != null) {
-                        savedData.sendToPlayer(player);
+                    if (isNone) {
                         playersReceived.put(player, isOpen);
                         if (isOpen) {
                             sendOpen(player);
                         }
-                        Constants.LOG.info("Send MapData " + id + " to " + player);
                     } else {
-                        Constants.LOG.error("No contains MapData " + id);
-                        break;
+                        MapSavedData savedData = MapSavedData.load(id);
+                        if (savedData != null) {
+                            savedData.sendToPlayer(player);
+                            playersReceived.put(player, isOpen);
+                            if (isOpen) {
+                                sendOpen(player);
+                            }
+                            Constants.LOG.info("Send MapData " + id + " to " + player);
+                        } else {
+                            Constants.LOG.error("No contains MapData " + id);
+                            break;
+                        }
                     }
                 }
 

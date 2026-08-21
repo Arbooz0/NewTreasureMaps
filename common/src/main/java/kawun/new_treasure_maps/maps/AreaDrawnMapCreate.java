@@ -50,7 +50,7 @@ public class AreaDrawnMapCreate extends BaseDrawnMapCreate {
         bytes = Arrays.copyOf(bytes, bytes.length - 2);
 
         Pixels pixels = new Pixels(bytes);
-        pixels.addCopyImage("red_circle_small", x - 10, y - 10);
+        pixels.addCopyImage("red_circle_small", x - 10, y - 10, false);
         pixels.converter = BaseDrawnMapCreate::convertColor;
         MapTextureManager.insertPixels(packet.id(), pixels);
     }

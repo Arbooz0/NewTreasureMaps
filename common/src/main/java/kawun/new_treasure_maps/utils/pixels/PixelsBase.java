@@ -22,14 +22,14 @@ public abstract class PixelsBase {
     public abstract int getPixel(int index);
 
 
-    public void addCopyImage(String texture, int x, int y) {
+    public void addCopyImage(String texture, int x, int y, boolean applyNoise) {
         if (copyImages == null) {
             copyImages = new ArrayList<>();
         }
-        copyImages.add(new CopyImage(texture, x, y));
+        copyImages.add(new CopyImage(texture, x, y, applyNoise));
     }
 
 
 
-    public record CopyImage(String texture, int x, int y){};
+    public record CopyImage(String texture, int x, int y, boolean applyNoise){};
 }

@@ -15,6 +15,9 @@ public class CreateMapCommand {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("create_map");
 
         for (MapType type : MapType.values()) {
+            if (type == MapType.NONE) {
+                continue;
+            }
             command.then(Commands.literal(type.name().toLowerCase()).executes(
                     context -> execute(type, context)
             ));

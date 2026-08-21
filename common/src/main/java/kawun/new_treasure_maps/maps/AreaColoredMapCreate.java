@@ -54,7 +54,7 @@ public class AreaColoredMapCreate extends BaseColoredMapCreate {
         bytes = Arrays.copyOf(bytes, bytes.length - 2);
 
         Pixels pixels = new Pixels(bytes);
-        pixels.addCopyImage("red_circle", x - 50, y - 50);
+        pixels.addCopyImage("red_circle", x - 50, y - 50, false);
         pixels.converter = MapColor::getColorFromPackedId;
         MapTextureManager.insertPixels(packet.id(), pixels);
     }

@@ -19,7 +19,8 @@
         },
         {
           "type": "minecraft:loot_table",
-          "value": "new_treasure_maps:treasure/presets/books"
+          "value": "new_treasure_maps:treasure/presets/books",
+          "weight": 2
         },
         {
           "type": "minecraft:loot_table",
@@ -27,11 +28,13 @@
         },
         {
           "type": "minecraft:loot_table",
-          "value": "new_treasure_maps:treasure/presets/ores"
+          "value": "new_treasure_maps:treasure/presets/ores",
+          "weight": 2
         },
         {
           "type": "minecraft:loot_table",
-          "value": "new_treasure_maps:treasure/presets/sea"
+          "value": "new_treasure_maps:treasure/presets/sea",
+          "weight": 2
         },
         {
           "type": "minecraft:loot_table",
@@ -54,6 +57,26 @@
               "count": 2
             }
           ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:skeleton_skull",
+          "functions": [
+            {
+              "function": "new_treasure_maps:pirate_name"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.4
         }
       ]
     }

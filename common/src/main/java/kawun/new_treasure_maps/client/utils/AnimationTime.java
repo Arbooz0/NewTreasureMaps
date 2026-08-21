@@ -1,7 +1,5 @@
 package kawun.new_treasure_maps.client.utils;
 
-import kawun.new_treasure_maps.Constants;
-
 public class AnimationTime {
 
 
@@ -16,19 +14,19 @@ public class AnimationTime {
     public float partTransition = 0;
     public boolean isEnd = false;
 
+    public boolean playedSound = false;
+
 
     public AnimationTime(float duration) {
         this(duration, false, 0);
-    }
-
-    public AnimationTime(float duration, boolean isReverse) {
-        this(duration, isReverse, 0);
     }
 
     private AnimationTime(float duration, boolean isReverse, float offset) {
         this.duration = duration;
         this.isReverse = isReverse;
         this.offset = offset;
+        update();
+        needPlaySound();
     }
 
 
@@ -56,5 +54,24 @@ public class AnimationTime {
     public AnimationTime reverse() {
         float time = Math.min(((System.currentTimeMillis() - startTime) / 1000.0f) / duration + offset, 1);
         return new AnimationTime(duration, !isReverse, 1 - time);
+    }
+
+
+    public boolean needPlaySound() {
+        if (playedSound) {
+            return false;
+        }
+        if (isReverse) {
+            if (t < 0.9f) {
+                playedSound = true;
+                return true;
+            }
+        } else {
+            if (t > 0.48f) {
+                playedSound = true;
+                return true;
+            }
+        }
+        return false;
     }
 }

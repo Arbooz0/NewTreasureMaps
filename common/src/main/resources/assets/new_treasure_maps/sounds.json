@@ -1,0 +1,17 @@
+{
+  "unroll1": {
+    "sounds": [
+      "new_treasure_maps:unroll1"
+    ]
+  },
+  "unroll2": {
+    "sounds": [
+      "new_treasure_maps:unroll2"
+    ]
+  },
+  "unroll3": {
+    "sounds": [
+      "new_treasure_maps:unroll3"
+    ]
+  }
+}

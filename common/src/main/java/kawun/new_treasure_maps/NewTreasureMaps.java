@@ -22,14 +22,12 @@ public class NewTreasureMaps {
 
 
     public static void serverStarted(MinecraftServer server) {
-        Constants.LOG.info("Server started");
         NewTreasureMaps.server = server;
         server.addTickable(NewTreasureMaps::tick);
     }
 
 
     public static void serverStopped() {
-        Constants.LOG.info("Server stopped");
         tasks.clear();
         TreasureMap.clear();
         server = null;
@@ -37,7 +35,6 @@ public class NewTreasureMaps {
 
 
     public static void playerLeaved(ServerPlayer player) {
-        Constants.LOG.info("Player leave: " + player);
         TreasureMap.playerLeaved(player);
     }
 

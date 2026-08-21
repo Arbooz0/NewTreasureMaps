@@ -209,6 +209,9 @@ public class MapTextureManager {
 
                             int color = i.getPixel(x, y);
                             int alpha = (color >> 24) & 0xFF;
+                            if (copyImage.applyNoise()) {
+                                alpha = (int) (alpha * getNoise(copyImage.x() + x, copyImage.y() + y));
+                            }
                             if (alpha != 255) {
                                 if (alpha < 10) {
                                     continue;
@@ -227,11 +230,11 @@ public class MapTextureManager {
             }
         }
 
-        try {
+        /*try {
             image.writeToFile(Paths.get("C:/Users/Admin/Downloads/test/map.png")); // TEST
         } catch (IOException e) {
             System.err.println("ERROR SAVE: " + e.getMessage());
-        }
+        }*/
 
         texture.upload();
 

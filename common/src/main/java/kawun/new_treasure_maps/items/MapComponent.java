@@ -13,4 +13,9 @@ public record MapComponent(int id, FoldType foldType, MapType mapType) {
             MapType.CODEC.optionalFieldOf("map_type", MapType.NONE).forGetter(MapComponent::mapType)
     ).apply(builder, MapComponent::new));
 
+
+    public MapComponent toNone() {
+        return new MapComponent(id, foldType, MapType.NONE);
+    }
+
 }

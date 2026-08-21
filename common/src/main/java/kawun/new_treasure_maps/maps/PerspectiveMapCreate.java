@@ -41,6 +41,7 @@ public class PerspectiveMapCreate extends BaseMapCreate {
 
         Pixels pixels = findMapLocation(fromPosition);
         if (pixels == null) {
+            errorGenerate();
             return;
         }
 

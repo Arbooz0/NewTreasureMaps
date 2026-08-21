@@ -24,7 +24,7 @@ public abstract class BaseColoredMapCreate extends BaseMapCreate {
     public void start() {
         BlockPos chestBlockPos = findPlaceChest(3, 6);
         if (chestBlockPos == null) {
-            Utils.sendErrorCreateMap();
+            errorGenerate();
             return;
         }
         createChest(chestBlockPos);

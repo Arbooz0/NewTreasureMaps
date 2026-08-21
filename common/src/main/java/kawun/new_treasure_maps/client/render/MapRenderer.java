@@ -4,14 +4,13 @@ import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.animation.Animation;
-import kawun.new_treasure_maps.client.model.MapModelGenerator;
 import kawun.new_treasure_maps.client.model.Model;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.client.utils.AnimationTime;
@@ -19,17 +18,26 @@ import kawun.new_treasure_maps.client.utils.HandHelper;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.items.MapComponent;
+import kawun.new_treasure_maps.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector2f;
 
 import java.util.HashMap;
 
@@ -62,6 +70,7 @@ public class MapRenderer {
     public static InteractionHand hideHand = null;
     public static float hideTime = 0;
     public static InteractionHand handStartAnimation = null;
+    public static int soundIndex = 0;
 
 
 
@@ -114,6 +123,10 @@ public class MapRenderer {
             poseStack.mulPose(animation.getMapOffsetInHand(arm));
         } else {
             time.update();
+
+            if (time.needPlaySound()) {
+                playSound();
+            }
 
             hideHand = getOppositeHand(hand);
             if (player.getItemInHand(hand) != itemStack) {
@@ -202,6 +215,9 @@ public class MapRenderer {
             poseStack.mulPose(animation.getMapOffsetThirdPerson(arm));
         } else {
             time.update();
+            if (time.needPlaySound()) {
+                playSound(state.x, state.y, state.z);
+            }
             anim = 1 - time.part2;
             animation.animateThirdPerson(poseStack, submitNodeCollector, arm, time, model, state, lightCoords);
             if (time.isEnd && time.isReverse) {
@@ -243,12 +259,71 @@ public class MapRenderer {
         RenderType backRenderType = getBackRenderType(data.id(), data.foldType());
 
         submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
-            MapModelGenerator.update(model, pose, vertexConsumer, light, anim, true);
+            renderModel(model, pose, vertexConsumer, light, anim, true);
         });
 
         submitNodeCollector.submitCustomGeometry(poseStack, backRenderType, (pose, vertexConsumer) -> {
-            MapModelGenerator.update(model, pose, vertexConsumer, light, anim, false);
+            renderModel(model, pose, vertexConsumer, light, anim, false);
         });
+    }
+
+
+    public static void renderModel(
+            Model model, PoseStack.Pose pose, VertexConsumer vertexConsumer, int lightCoords, float t, boolean front
+    ) {
+        if (t > 0.3f) {
+            float w = 1 - (t - 0.3f) / 5;
+            int block = (int) (LightCoordsUtil.block(lightCoords) * w);
+            int sky = (int) (LightCoordsUtil.sky(lightCoords) * w);
+            lightCoords = LightCoordsUtil.pack(block, sky);
+        }
+
+        for (int j = 0; j < model.countVertex; j++) {
+            int i = front ? model.countVertex - j - 1 : j;
+            Vector2f uv = model.getUV(i);
+            vertexConsumer
+                    .addVertex(pose, model.getVertex(i, t))
+                    .setColor(-1)
+                    .setUv(uv.x, uv.y)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(lightCoords)
+                    .setNormal(pose, model.getNormal(i, t).mul(front ? 1 : -1));
+        }
+    }
+
+
+    public static void playSound() {
+        playSound(1);
+    }
+
+
+    public static void playSound(double x, double y, double z) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        float d = (float) (Math.sqrt(player.distanceToSqr(x, y, z)) / 15.0);
+        playSound(0.9f - d);
+    }
+
+
+    public static void playSound(float volume) {
+        soundIndex++;
+        if (soundIndex > 3) {
+            soundIndex = 1;
+        }
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
+                Utils.identifier("unroll" + soundIndex),
+                SoundSource.PLAYERS,
+                volume,
+                1,
+                SoundInstance.createUnseededRandom(),
+                false,
+                0,
+                SoundInstance.Attenuation.NONE,
+                0, 0, 0,
+                true
+        ));
     }
 
 
@@ -276,7 +351,6 @@ public class MapRenderer {
         if (ids.containsKey(model)) {
             int id = ids.removeInt(model);
             animationsTime.remove(id);
-            Constants.LOG.info("Remove " + id);
         }
     }
 

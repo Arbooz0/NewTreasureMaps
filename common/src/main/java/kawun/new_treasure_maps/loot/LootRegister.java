@@ -20,6 +20,7 @@ public class LootRegister {
     public static void registerLootFunction(BiConsumer<Identifier, MapCodec<? extends LootItemFunction>> consumer) {
         consumer.accept(Utils.identifier("treasure_map"), TreasureMapFunction.CODEC);
         consumer.accept(Utils.identifier("set_count"), SetCountFunction.CODEC);
+        consumer.accept(Utils.identifier("pirate_name"), PirateNameFunction.CODEC);
     }
 
 

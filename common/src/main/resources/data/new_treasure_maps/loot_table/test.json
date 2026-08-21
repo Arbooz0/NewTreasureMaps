@@ -1,92 +1,14 @@
 {
   "pools": [
     {
-      "rolls": 1,
+      "rolls": 27,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:suspicious_stew",
+          "name": "minecraft:skeleton_skull",
           "functions": [
             {
-              "function": "minecraft:set_stew_effect",
-              "effects": [
-                {
-                  "type": "minecraft:absorption",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:breath_of_the_nautilus",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:conduit_power",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:dolphins_grace",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:fire_resistance",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:glowing",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:haste",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:health_boost",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:hero_of_the_village",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:instant_health",
-                  "duration": 10
-                },
-                {
-                  "type": "minecraft:invisibility",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:jump_boost",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:levitation",
-                  "duration": 3
-                },
-                {
-                  "type": "minecraft:luck",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:night_vision",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:regeneration",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:resistance",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:saturation",
-                  "duration": 60
-                },
-                {
-                  "type": "minecraft:slow_falling",
-                  "duration": 60
-                }
-              ]
+              "function": "new_treasure_maps:pirate_name"
             }
           ]
         }

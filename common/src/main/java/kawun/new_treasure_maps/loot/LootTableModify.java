@@ -21,7 +21,7 @@ public class LootTableModify {
         return LootPool.lootPool()
                 .add(LootItem.lootTableItem(Items.TREASURE_MAP))
                 .apply(TreasureMapFunction.builder(0))
-                .when(LocationCheck.checkLocation(LocationPredicate.Builder.inDimension(Level.OVERWORLD)))
+                .when(TreasureCondition.build())
                 .when(LootItemRandomChanceCondition.randomChance(0.1f));
     }
 

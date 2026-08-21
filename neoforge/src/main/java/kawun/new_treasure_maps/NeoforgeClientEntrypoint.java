@@ -37,12 +37,6 @@ public class NeoforgeClientEntrypoint {
     }
 
 
-    @SubscribeEvent
-    public static void registerCommand(RegisterClientCommandsEvent event) {
-        CommandRegister.registerClient(event.getDispatcher());
-    }
-
-
 
 
 }

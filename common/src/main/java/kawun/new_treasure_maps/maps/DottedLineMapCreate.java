@@ -27,7 +27,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
     public void start() {
         BlockPos chestPos = findPlaceChest(3, 5);
         if (chestPos == null) {
-            Utils.sendErrorCreateMap();
+            errorGenerate();
             return;
         }
 
@@ -51,7 +51,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
     public static Pixels createImage(byte[] bytes) {
         Pixels image = new Pixels(256);
         image.converter = DottedLineMapCreate::convertColor;
-        image.addCopyImage("compass", bytes[2] & 0xFF, bytes[3] & 0xFF);
+        image.addCopyImage("compass", bytes[2] & 0xFF, bytes[3] & 0xFF, true);
 
         Vector2i start = new Vector2i(bytes[0] & 0xFF, bytes[1] & 0xFF);
         Vector2i pos = new Vector2i(start);
@@ -175,10 +175,10 @@ public class DottedLineMapCreate extends BaseMapCreate {
         bytes[1] = (byte) start.y;
 
         HashMap<Vector2i, Double> distToCorner = new HashMap<>();
-        distToCorner.put(new Vector2i(32, 32), 256.0);
-        distToCorner.put(new Vector2i(224, 32), 256.0);
-        distToCorner.put(new Vector2i(32, 224), 256.0);
-        distToCorner.put(new Vector2i(224, 224), 256.0);
+        distToCorner.put(new Vector2i(46, 46), 256.0);
+        distToCorner.put(new Vector2i(210, 46), 256.0);
+        distToCorner.put(new Vector2i(46, 210), 256.0);
+        distToCorner.put(new Vector2i(210, 210), 256.0);
         nowClient.set(start);
 
         int i = 4;
