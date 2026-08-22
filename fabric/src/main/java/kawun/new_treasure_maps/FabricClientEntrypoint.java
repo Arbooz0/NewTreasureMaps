@@ -1,13 +1,11 @@
 package kawun.new_treasure_maps;
 
 import kawun.new_treasure_maps.client.NewTreasureMapsClient;
-import kawun.new_treasure_maps.commands.CommandRegister;
+import kawun.new_treasure_maps.items.TreasureMap;
 import kawun.new_treasure_maps.network.Network;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 public class FabricClientEntrypoint implements ClientModInitializer {
 
@@ -19,5 +17,6 @@ public class FabricClientEntrypoint implements ClientModInitializer {
 
         ClientPlayConnectionEvents.DISCONNECT.register((c, m) -> NewTreasureMapsClient.clientLeaved());
 
+        TreasureMap.splitToolTip = true;
     }
 }

@@ -47,20 +47,6 @@ public class RandomItems {
             }
         }
 
-        HashSet<Item> loots = new HashSet<>();
-
-        try {
-            for (Holder.Reference<LootTable> lootTableReference : NewTreasureMaps.server.reloadableRegistries().lookup().lookupOrThrow(Registries.LOOT_TABLE).listElements().toList()) {
-                for (LootPool pool : lootTableReference.value().pools) {
-                    for (LootPoolEntryContainer entry : pool.entries) {
-                        processEntry(entry, loots);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Constants.LOG.error("ERROR LOAD LOOT TABLE: " + e.getMessage());
-        }
-
         for (Item item : BuiltInRegistries.ITEM) {
             if (item == Items.TREASURE_MAP) {
                 continue;
@@ -111,8 +97,8 @@ public class RandomItems {
                     type = Type.BLOCK;
 
                 } else {
-                    if (!recipe.contains(id) && !loots.contains(item)) {
-                        Constants.LOG.info("No loot and recipe: " + item);
+                    if (!recipe.contains(id)) {
+                        Constants.LOG.info("No recipe: " + item);
                         continue;
                     }
                 }
@@ -149,26 +135,6 @@ public class RandomItems {
         }
 
         return list.get((int) (Math.random() * list.size()));
-    }
-
-
-
-
-    private static void processEntry(LootPoolEntryContainer entry, HashSet<Item> loots) {
-        if (entry instanceof LootItem lootItem) {
-            loots.add(lootItem.item.value());
-        } else if (entry instanceof CompositeEntryBase compositeEntry) {
-            for (LootPoolEntryContainer entryContainer : compositeEntry.children) {
-                processEntry(entryContainer, loots);
-            }
-
-        } else if (entry instanceof TagEntry tagEntry) {
-            BuiltInRegistries.ITEM.get(tagEntry.tag).ifPresent(holders -> {
-                for (Holder<Item> holder : holders) {
-                    loots.add(holder.value());
-                }
-            });
-        }
     }
 
 

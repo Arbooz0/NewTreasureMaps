@@ -77,15 +77,29 @@ public abstract class BaseMapCreate {
     public abstract void start();
 
 
+    public abstract MapType getMapType();
 
 
-    public void save(MapType type, byte[] bytes) {
-        new MapSavedData(mapId, type, bytes).save();
+
+
+    public void save(byte[] bytes) {
+        new MapSavedData(mapId, getMapType(), bytes).save();
     }
 
 
     public void errorGenerate() {
-        TreasureMap.errorMaps.add(mapId);
+        if (getMapType() != MapType.COLORED && getMapType() != MapType.SIDE_VIEW) {
+            BaseMapCreate map;
+            if (Math.random() < 0.5) {
+                map = new ColoredMapCreate();
+            } else {
+                map = new SideViewMapCreate();
+            }
+            TreasureMap.changeType.put(mapId, map.getMapType());
+            map.setContext(fromPosition, level, mapId, lootLevel);
+        } else {
+            TreasureMap.changeType.put(mapId, MapType.NONE);
+        }
         Utils.sendErrorCreateMap();
     }
 
@@ -216,6 +230,9 @@ public abstract class BaseMapCreate {
         }
         int y = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
         BlockState state = chunk.getBlockState(new BlockPos(x, y, z));
+        if (state.is(BlockTags.ICE)) {
+            return INVALID_HEIGHT;
+        }
         if (state.getBlock() == Blocks.WATER) {
             if (canChestUnderWater) {
                 y = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);

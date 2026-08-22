@@ -35,9 +35,14 @@ public class DottedLineMapCreate extends BaseMapCreate {
 
         byte[] bytes = generateLines(new Vector2i(chestPos.getX() - fromPosition.x, chestPos.getZ() - fromPosition.y));
 
-        save(MapType.DOTTED_LINE, bytes);
+        save(bytes);
     }
 
+
+    @Override
+    public MapType getMapType() {
+        return MapType.DOTTED_LINE;
+    }
 
 
     public static void clientHandle(MapPacket packet) {

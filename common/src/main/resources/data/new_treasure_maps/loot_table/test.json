@@ -4,13 +4,8 @@
       "rolls": 27,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:skeleton_skull",
-          "functions": [
-            {
-              "function": "new_treasure_maps:pirate_name"
-            }
-          ]
+          "type": "minecraft:loot_table",
+          "value": "new_treasure_maps:treasure/presets/item/0"
         }
       ]
     }

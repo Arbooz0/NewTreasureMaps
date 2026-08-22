@@ -65,9 +65,13 @@ public class SideViewMapCreate extends BaseMapCreate {
         bytes[0] = (byte) crossPos.x;
         bytes[1] = (byte) crossPos.y;
 
-        save(MapType.SIDE_VIEW, bytes);
+        save(bytes);
     }
 
+    @Override
+    public MapType getMapType() {
+        return MapType.SIDE_VIEW;
+    }
 
 
     private @Nullable BlockPos findPlaceChest() {

@@ -21,6 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 
@@ -45,10 +46,13 @@ public class PerspectiveMapCreate extends BaseMapCreate {
             return;
         }
 
-        save(MapType.PERSPECTIVE, pixels.pixels);
+        save(pixels.pixels);
     }
 
-
+    @Override
+    public MapType getMapType() {
+        return MapType.PERSPECTIVE;
+    }
 
 
     public static void clientHandle(MapPacket packet) {
@@ -63,16 +67,24 @@ public class PerspectiveMapCreate extends BaseMapCreate {
     public Pixels findMapLocation(Vector2i from) {
         BlockPos.MutableBlockPos mPos = new BlockPos.MutableBlockPos();
 
-        ArrayList<Vector2i> chunkCheked = new ArrayList<>();
         Vector2i chunkStart = new Vector2i(from.x >> 4, from.y >> 4);
 
-        for (int j = 0; j < 10; j++) {
-            Vector2i chunkPos = Utils.getRandomPoint(2, 4).add(chunkStart);
-            if (chunkCheked.contains(chunkPos)) {
-                continue;
-            }
-            chunkCheked.add(chunkPos);
+        ArrayList<Vector2i> list = new ArrayList<>();
 
+        for (int y = -2; y <= 2; y++) {
+            for (int x = -2; x <= 2; x++) {
+                Vector2i p = new Vector2i(x, y);
+                long l = p.lengthSquared();
+                if (l > 0 && l < 8) {
+                    list.add(p.add(chunkStart));
+                }
+            }
+        }
+
+        Collections.shuffle(list);
+        list.subList(10, list.size()).clear();
+
+        for (Vector2i chunkPos : list) {
             ChunkAccess chunk = level.getChunk(chunkPos.x, chunkPos.y, ChunkStatus.FULL, false);
             if (chunk == null) {
                 continue;

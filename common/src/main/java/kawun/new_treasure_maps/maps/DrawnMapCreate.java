@@ -21,7 +21,7 @@ public class DrawnMapCreate extends BaseDrawnMapCreate {
 
     @Override
     protected byte[] modify(Pixels pixels) {
-        fromPosition.sub(start, fromPosition).div(4);
+        Vector2i fromPosition = this.fromPosition.sub(start, new Vector2i()).div(4);
         Vector2f dir = new Vector2f(crossPos.sub(fromPosition, new Vector2i()));
         float len = dir.length();
         dir.normalize();

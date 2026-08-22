@@ -21,6 +21,7 @@
     "minecraft:gold_ingot",
     "minecraft:gold_nugget",
     "minecraft:iron_nugget",
-    "minecraft:copper_nugget"
+    "minecraft:copper_nugget",
+    "minecraft:diamond"
   ]
 }

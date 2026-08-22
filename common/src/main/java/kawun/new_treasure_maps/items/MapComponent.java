@@ -14,8 +14,8 @@ public record MapComponent(int id, FoldType foldType, MapType mapType) {
     ).apply(builder, MapComponent::new));
 
 
-    public MapComponent toNone() {
-        return new MapComponent(id, foldType, MapType.NONE);
+    public MapComponent changeType(MapType type) {
+        return new MapComponent(id, foldType, type);
     }
 
 }

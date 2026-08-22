@@ -5,6 +5,8 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.NewTreasureMaps;
+import kawun.new_treasure_maps.client.NewTreasureMapsClient;
 import kawun.new_treasure_maps.client.render.MapRenderer;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.Network;
@@ -32,9 +34,10 @@ import java.util.function.Consumer;
 
 public class TreasureMap extends Item {
 
+    public static boolean splitToolTip = false;
     public static final int colorDescription = ARGB.color(173, 130, 102);
     public static Int2ObjectOpenHashMap<Tracker> trackers = new Int2ObjectOpenHashMap<>();
-    public static IntOpenHashSet errorMaps = new IntOpenHashSet();
+    public static Int2ObjectOpenHashMap<MapType> changeType = new Int2ObjectOpenHashMap<>();
     private int tick = 0;
 
 
@@ -63,9 +66,8 @@ public class TreasureMap extends Item {
             if (data == null) {
                 return;
             }
-            if (errorMaps.contains(data.id())) {
-                errorMaps.remove(data.id());
-                data = data.toNone();
+            if (changeType.containsKey(data.id())) {
+                data = data.changeType(changeType.remove(data.id()));
                 itemStack.set(Items.MAP_COMPONENT, data);
             }
             getTracker(data.id()).update(level, ownerPlayer, data.mapType() == MapType.NONE);
@@ -103,7 +105,21 @@ public class TreasureMap extends Item {
             default -> "";
         };
         if (!key.isEmpty()) {
-            builder.accept(Component.translatable(key).withColor(colorDescription));
+            if (splitToolTip) {
+                String line = "";
+                for (String word : Component.translatable(key).getString().split(" ")) {
+                    line += word + " ";
+                    if (line.length() > 30) {
+                        builder.accept(Component.literal(line).withColor(colorDescription));
+                        line = "";
+                    }
+                }
+                if (!line.isEmpty()) {
+                    builder.accept(Component.literal(line).withColor(colorDescription));
+                }
+            } else {
+                builder.accept(Component.translatable(key).withColor(colorDescription));
+            }
         }
     }
 
@@ -179,9 +195,9 @@ public class TreasureMap extends Item {
 
         public void toggleOpen(ServerPlayer playerOpen) {
             isOpen = !isOpen;
-            if (playersReceived.containsKey(playerOpen)) {
+            /*if (playersReceived.containsKey(playerOpen)) {
                 playersReceived.put(playerOpen, isOpen);
-            }
+            }*/
 
             for (Object2BooleanMap.Entry<ServerPlayer> entry : playersReceived.object2BooleanEntrySet()) {
                 if (isOpen != entry.getBooleanValue()) {

@@ -3,6 +3,10 @@ package kawun.new_treasure_maps.loot;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.utils.Utils;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.Validatable;
@@ -20,6 +24,9 @@ public class SetCountFunction extends LootItemConditionalFunction {
                     .and(NumberProviders.CODEC.fieldOf("count").forGetter(f -> f.count))
                     .apply(i, SetCountFunction::new)
     );
+
+    public static final TagKey<Item> tagSingleItems = TagKey.create(Registries.ITEM, Utils.identifier("single"));
+
     private final NumberProvider count;
 
     private SetCountFunction(List<LootItemCondition> predicates, NumberProvider count) {
@@ -40,6 +47,10 @@ public class SetCountFunction extends LootItemConditionalFunction {
 
     @Override
     public ItemStack run(ItemStack itemStack, LootContext context) {
+        if (itemStack.is(tagSingleItems)) {
+            itemStack.setCount(1);
+            return itemStack;
+        }
         int count = this.count.getInt(context);
         itemStack.setCount(Math.min(count, itemStack.getMaxStackSize()));
         return itemStack;

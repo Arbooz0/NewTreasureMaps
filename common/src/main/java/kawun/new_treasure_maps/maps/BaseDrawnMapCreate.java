@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.StructureTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.level.biome.Biome;
@@ -35,6 +36,10 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
             "village_desert",
             "village_savanna",
             "village_snowy",
+            "mansion",
+            "jungle_pyramid",
+            "desert_pyramid",
+            "ruined_portal",
     };
 
     byte[] biomes = new byte[65536];
@@ -51,7 +56,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
     @Override
     public void start() {
-        if (true) { // TEST
+        if (false) { // TEST
             spriteSheet();
             return;
         }
@@ -84,10 +89,6 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
 
     protected abstract byte[] modify(Pixels pixels);
-
-
-    public abstract MapType getMapType();
-
 
 
 
@@ -235,7 +236,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
             }
         }
 
-        save(getMapType(), modify(pixels));
+        save(modify(pixels));
 
         PixelsLoader.clearCache();
     }
@@ -292,8 +293,9 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
                 if (checkStructure && (x % 4 == 0)) {
                     String structureName = getStructure(pos.getX() >> 4, pos.getZ() >> 4, true);
                     if (!structureName.isEmpty()) {
-                        if (hasStructure(structureName)) {
-                            structures.put(new Vector2i(x + 2, y + 2), structureName);
+                        String texture = hasStructure(structureName);
+                        if (!texture.isEmpty()) {
+                            structures.put(new Vector2i(x + 2, y + 2), texture);
                         }
                     }
                 }
@@ -342,7 +344,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
         PixelsLoader.clearCache();
 
-        save(MapType.DRAWN, pixels.pixels);
+        save(pixels.pixels);
     }
 
 
@@ -417,13 +419,13 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
 
 
-    public static boolean hasStructure(String structureName) {
+    public static String hasStructure(String structureName) {
         for (String name : ALL_STRUCTURES) {
-            if (name.equals(structureName)) {
-                return true;
+            if (structureName.startsWith(name)) {
+                return name;
             }
         }
-        return false;
+        return "";
     }
 
 

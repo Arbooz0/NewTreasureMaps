@@ -36,14 +36,12 @@ public abstract class BaseColoredMapCreate extends BaseMapCreate {
 
         chestPos.sub(start, start);
 
-        save(getMapType(), modify(pixels, start, chestBlockPos));
+        save(modify(pixels, start, chestBlockPos));
     }
 
 
     protected abstract byte[] modify(Pixels pixels, Vector2i crossPos, BlockPos chestPos);
 
-
-    public abstract MapType getMapType();
 
 
     public static void clientHandle(MapPacket packet) {
