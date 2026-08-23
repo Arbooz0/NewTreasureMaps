@@ -1,16 +1,9 @@
 package kawun.new_treasure_maps.utils;
 
 import kawun.new_treasure_maps.Constants;
-import kawun.new_treasure_maps.NewTreasureMaps;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerPlayer;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
 
-import java.awt.*;
 
 public class Utils {
 
@@ -50,33 +43,8 @@ public class Utils {
 
 
 
-    public static ServerPlayer getLocalPlayer() {
-        return NewTreasureMaps.server.getPlayerList().getPlayers().getFirst();
-    }
-
-
-    public static void sendMessage(String text) {
-        getLocalPlayer().sendSystemMessage(Component.literal(text));
-    }
-
-
-
-    public static void sendPos(BlockPos pos) {
-        sendPos(pos, "Pos: ");
-    }
-
-
-    public static void sendPos(BlockPos pos, String text) {
-        String coords = pos.getX() + " " + pos.getY() + " " + pos.getZ();
-        getLocalPlayer().sendSystemMessage(Component.literal( text + ": " + coords)
-                .withStyle(s -> s.withClickEvent(new ClickEvent.RunCommand("/tp @s " + coords))));
-    }
-
-
     public static void sendErrorCreateMap() {
-        getLocalPlayer().sendSystemMessage(Component
-                .literal("Карта не сгенерировалась")
-                .withColor(new Color(188, 51, 69).getRGB()));
+        Constants.LOG.error("Map not generated");
     }
 
 }

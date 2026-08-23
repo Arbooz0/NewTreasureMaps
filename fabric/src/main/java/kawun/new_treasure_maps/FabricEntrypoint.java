@@ -6,7 +6,6 @@ import kawun.new_treasure_maps.loot.LootRegister;
 import kawun.new_treasure_maps.loot.LootTableModify;
 import kawun.new_treasure_maps.network.Network;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;

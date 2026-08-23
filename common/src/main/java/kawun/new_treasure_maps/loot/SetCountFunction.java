@@ -2,7 +2,6 @@ package kawun.new_treasure_maps.loot;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;

@@ -1,16 +1,9 @@
 package kawun.new_treasure_maps.maps;
 
 
-import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
-import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
-import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.MapColor;
 import org.joml.Vector2i;
 

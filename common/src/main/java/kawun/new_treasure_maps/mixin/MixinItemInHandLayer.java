@@ -2,7 +2,6 @@ package kawun.new_treasure_maps.mixin;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.render.MapRenderer;
 import kawun.new_treasure_maps.items.Items;
 import net.minecraft.client.model.ArmedModel;

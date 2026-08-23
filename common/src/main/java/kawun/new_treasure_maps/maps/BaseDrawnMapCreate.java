@@ -1,27 +1,28 @@
 package kawun.new_treasure_maps.maps;
 
-import it.unimi.dsi.fastutil.bytes.*;
+import it.unimi.dsi.fastutil.bytes.Byte2IntMap;
+import it.unimi.dsi.fastutil.bytes.Byte2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ByteMap;
 import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
-import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
+import kawun.new_treasure_maps.utils.Utils;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
-import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.tags.StructureTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.level.biome.Biome;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 
 public abstract class BaseDrawnMapCreate extends BaseMapCreate {
@@ -56,10 +57,6 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
     @Override
     public void start() {
-        if (false) { // TEST
-            spriteSheet();
-            return;
-        }
 
         canChestUnderWater = false;
 
@@ -302,49 +299,6 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
             }
         }
-    }
-
-
-    public void spriteSheet() {
-        Pixels pixels = new Pixels(256);
-        boolean isStructure = false;
-        int iTexture = 0;
-        int iVariation = 0;
-
-        for (int y = 25; y < 230; y+=25) {
-            for (int x = 25; x < 230; x+=25) {
-                String name = "";
-                if (isStructure) {
-                    if (iVariation < ALL_STRUCTURES.length) {
-                        name = ALL_STRUCTURES[iVariation];
-                        iVariation++;
-                    }
-                } else {
-                    TextureType type = TextureType.BY_ID[iTexture];
-                    iVariation++;
-                    name = type.texture + iVariation;
-
-                    if (iVariation >= type.count) {
-                        iTexture++;
-                        iVariation = 0;
-                        if (iTexture >= TextureType.BY_ID.length) {
-                            isStructure = true;
-                        }
-                    }
-                }
-
-                if (!name.isEmpty()) {
-                    Pixels texture = PixelsLoader.getTexture(name);
-                    if (texture != null) {
-                        pixels.drawImage(new Vector2i(x, y), texture);
-                    }
-                }
-            }
-        }
-
-        PixelsLoader.clearCache();
-
-        save(pixels.pixels);
     }
 
 

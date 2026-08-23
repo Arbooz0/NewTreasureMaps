@@ -1,7 +1,6 @@
 package kawun.new_treasure_maps.maps;
 
 
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
@@ -11,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.MapColor;
 import org.joml.Vector2i;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 
 

@@ -1,12 +1,9 @@
 package kawun.new_treasure_maps.items;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import kawun.new_treasure_maps.Constants;
-import kawun.new_treasure_maps.NewTreasureMaps;
-import kawun.new_treasure_maps.client.NewTreasureMapsClient;
 import kawun.new_treasure_maps.client.render.MapRenderer;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.Network;
@@ -28,7 +25,6 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -177,7 +173,6 @@ public class TreasureMap extends Item {
                             }
                             Constants.LOG.info("Send MapData " + id + " to " + player);
                         } else {
-                            Constants.LOG.error("No contains MapData " + id);
                             break;
                         }
                     }

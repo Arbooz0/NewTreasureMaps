@@ -3,20 +3,15 @@ package kawun.new_treasure_maps.loot;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.items.Items;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -56,6 +51,10 @@ public class RandomItems {
             if (id.getNamespace().equals("minecraft")) {
                 continue;
             }
+            if (id.getPath().contains("debug") || id.getPath().contains("test") || id.getPath().contains("creative")) {
+                continue;
+            }
+
             ItemStack itemStack = item.getDefaultInstance();
             if (itemStack.getRarity() != Rarity.COMMON) {
                 continue;
@@ -65,18 +64,14 @@ public class RandomItems {
 
             if (isWeapon(itemStack)) {
                 type = Type.WEAPON;
-                Constants.LOG.info("WEAPON: " + item);
             } else if (isArmor(itemStack)) {
                 type = Type.ARMOR;
-                Constants.LOG.info("ARMOR: " + item);
             } else if (isFood(itemStack)) {
                 type = Type.FOOD;
-                Constants.LOG.info("FOOD: " + item);
             } else {
                 if (item instanceof BlockItem blockItem) {
                     Block block = blockItem.getBlock();
                     if (block.getLootTable().isEmpty()) {
-                        Constants.LOG.info("No has drop: " + item);
                         continue;
                     }
                     if (block instanceof StairBlock) {
@@ -98,7 +93,6 @@ public class RandomItems {
 
                 } else {
                     if (!recipe.contains(id)) {
-                        Constants.LOG.info("No recipe: " + item);
                         continue;
                     }
                 }
@@ -155,7 +149,7 @@ public class RandomItems {
     public enum Type {
         ARMOR(0.02f),
         WEAPON(0.02f),
-        FOOD(0.2f),
+        FOOD(0.3f),
         ITEM(0.1f),
         BLOCK(0.1f);
 

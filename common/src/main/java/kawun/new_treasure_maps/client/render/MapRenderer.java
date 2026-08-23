@@ -12,27 +12,22 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import kawun.new_treasure_maps.client.animation.Animation;
 import kawun.new_treasure_maps.client.model.Model;
+import kawun.new_treasure_maps.client.sound.SoundManager;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
 import kawun.new_treasure_maps.client.utils.AnimationTime;
 import kawun.new_treasure_maps.client.utils.HandHelper;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.items.MapComponent;
-import kawun.new_treasure_maps.utils.Utils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -70,13 +65,11 @@ public class MapRenderer {
     public static InteractionHand hideHand = null;
     public static float hideTime = 0;
     public static InteractionHand handStartAnimation = null;
-    public static int soundIndex = 0;
 
 
 
     public static void render(
             AbstractClientPlayer player,
-            float xRot,
             InteractionHand hand,
             float attack,
             ItemStack itemStack,
@@ -125,7 +118,7 @@ public class MapRenderer {
             time.update();
 
             if (time.needPlaySound()) {
-                playSound();
+                SoundManager.playSound();
             }
 
             hideHand = getOppositeHand(hand);
@@ -216,7 +209,7 @@ public class MapRenderer {
         } else {
             time.update();
             if (time.needPlaySound()) {
-                playSound(state.x, state.y, state.z);
+                SoundManager.playSound(state.x, state.y, state.z);
             }
             anim = 1 - time.part2;
             animation.animateThirdPerson(poseStack, submitNodeCollector, arm, time, model, state, lightCoords);
@@ -289,41 +282,6 @@ public class MapRenderer {
                     .setLight(lightCoords)
                     .setNormal(pose, model.getNormal(i, t).mul(front ? 1 : -1));
         }
-    }
-
-
-    public static void playSound() {
-        playSound(1);
-    }
-
-
-    public static void playSound(double x, double y, double z) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
-        float d = (float) (Math.sqrt(player.distanceToSqr(x, y, z)) / 15.0);
-        playSound(0.9f - d);
-    }
-
-
-    public static void playSound(float volume) {
-        soundIndex++;
-        if (soundIndex > 3) {
-            soundIndex = 1;
-        }
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
-                Utils.identifier("unroll" + soundIndex),
-                SoundSource.PLAYERS,
-                volume,
-                1,
-                SoundInstance.createUnseededRandom(),
-                false,
-                0,
-                SoundInstance.Attenuation.NONE,
-                0, 0, 0,
-                true
-        ));
     }
 
 

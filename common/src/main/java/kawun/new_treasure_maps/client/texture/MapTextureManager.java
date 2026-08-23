@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.utils.TimePassed;
-import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.Utils;
+import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.pixels.PixelsBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockTintSource;
@@ -23,9 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -97,7 +95,7 @@ public class MapTextureManager {
                 Constants.LOG.error("Error load texture " + idTexture + ": " + e.getMessage());
             }
         } else {
-            Constants.LOG.info("No find " + idTexture);
+            Constants.LOG.error("No find " + idTexture);
         }
         return null;
     }

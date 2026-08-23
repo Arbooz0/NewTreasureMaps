@@ -51,7 +51,6 @@ public class NewTreasureMaps {
         long end = System.currentTimeMillis();
         end -= start; // passed
         totalTimeTask += (int) end;
-        Constants.LOG.info("Task running: " + end + " ms");
 
         if (isFinished) {
             tasks.removeFirst();

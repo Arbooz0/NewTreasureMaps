@@ -1,7 +1,6 @@
 package kawun.new_treasure_maps.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.render.MapRenderer;
 import kawun.new_treasure_maps.items.Items;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -64,7 +63,7 @@ public class MixinItemInHandRenderer {
         }
 
         poseStack.pushPose();
-        MapRenderer.render(player, xRot, hand, attack, itemStack, inverseArmHeight, poseStack, submitNodeCollector, lightCoords);
+        MapRenderer.render(player, hand, attack, itemStack, inverseArmHeight, poseStack, submitNodeCollector, lightCoords);
         poseStack.popPose();
 
         ci.cancel();

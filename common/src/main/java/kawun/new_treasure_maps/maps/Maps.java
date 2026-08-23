@@ -3,7 +3,6 @@ package kawun.new_treasure_maps.maps;
 import com.mojang.brigadier.context.CommandContext;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.items.Items;
-import kawun.new_treasure_maps.items.MapComponent;
 import kawun.new_treasure_maps.saveddata.FreeID;
 import kawun.new_treasure_maps.utils.TimePassed;
 import kawun.new_treasure_maps.utils.Utils;

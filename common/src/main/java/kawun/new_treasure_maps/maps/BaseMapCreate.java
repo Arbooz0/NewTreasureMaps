@@ -2,10 +2,7 @@ package kawun.new_treasure_maps.maps;
 
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
-import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.enums.MapType;
-import kawun.new_treasure_maps.items.Items;
-import kawun.new_treasure_maps.items.MapComponent;
 import kawun.new_treasure_maps.items.TreasureMap;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
 import kawun.new_treasure_maps.utils.Utils;
@@ -19,7 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -166,8 +162,6 @@ public abstract class BaseMapCreate {
                 return result;
             }
         }
-
-        Constants.LOG.info("No find place chest");
 
         return null;
     }

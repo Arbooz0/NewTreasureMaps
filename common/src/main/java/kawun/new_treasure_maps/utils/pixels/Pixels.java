@@ -1,10 +1,7 @@
 package kawun.new_treasure_maps.utils.pixels;
 
-import net.minecraft.world.level.material.MapColor;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
 
 
 public class Pixels extends PixelsBase {

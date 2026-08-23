@@ -5,7 +5,6 @@ import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
-import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;

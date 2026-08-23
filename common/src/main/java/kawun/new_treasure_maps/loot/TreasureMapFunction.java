@@ -6,7 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.maps.Maps;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
@@ -57,7 +56,6 @@ public class TreasureMapFunction extends LootItemConditionalFunction {
         }
 
         Vector2i pos = new Vector2i((int) Math.floor(lootPos.x), (int) Math.floor(lootPos.z));
-        Constants.LOG.info("Loot pos: " + lootPos + " " + pos.toString(new DecimalFormat()));
         itemStack = Maps.createMap(MapType.random(lootLevel), pos, context.getLevel(), lootLevel);
         return itemStack;
     }

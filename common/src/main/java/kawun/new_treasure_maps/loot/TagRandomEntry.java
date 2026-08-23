@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.config.ConfigManager;
-import kawun.new_treasure_maps.utils.TimePassed;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,12 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +60,7 @@ public class TagRandomEntry extends LootPoolSingletonContainer {
         if (optional.isPresent()) {
             output.accept(new ItemStack(optional.get()));
         } else {
-            Constants.LOG.info("No has tag " + name);
+            Constants.LOG.error("No has tag " + name);
         }
     }
 

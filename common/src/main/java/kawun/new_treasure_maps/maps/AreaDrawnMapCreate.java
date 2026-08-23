@@ -6,10 +6,6 @@ import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.utils.Utils;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
-import kawun.new_treasure_maps.utils.pixels.PixelsLoader;
-import net.minecraft.world.level.material.MapColor;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
 
 import java.util.Arrays;
 
