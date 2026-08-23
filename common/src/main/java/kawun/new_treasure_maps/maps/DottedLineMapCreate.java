@@ -23,7 +23,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
 
     @Override
     public void start() {
-        BlockPos chestPos = findPlaceChest(3, 4);
+        BlockPos chestPos = findPlaceChest(2, 2);
         if (chestPos == null) {
             errorGenerate();
             return;
@@ -69,27 +69,27 @@ public class DottedLineMapCreate extends BaseMapCreate {
         for (int i = 0; i < size; i++) {
             Vector2i dir = new Vector2i(bytes[i * 2 + 4], bytes[i * 2 + 5]);
             int len = Math.abs(dir.get(dir.maxComponent())) - 1;
-            normalizeVector(dir).mul(2);
+            normalizeVector(dir).mul(4);
 
             ArrayList<Vector2i> fill = new ArrayList<>();
 
             for (int j = 0; j < len; j++) {
-                image.fillSquare(pos.x - 1, pos.y - 1, 4, border);
+                image.fillSquare(pos.x - 1, pos.y - 1, 6, border);
                 fill.add(new Vector2i(pos));
                 pos.add(dir);
             }
 
             for (Vector2i p : fill) {
                 is_darker = !is_darker;
-                image.fillSquare(p.x, p.y, 2, is_darker ? color2 : color);
+                image.fillSquare(p.x, p.y, 4, is_darker ? color2 : color);
             }
             is_darker = !is_darker;
 
             pos.add(dir);
-            pos.add(dir.div(2));
+            pos.add(dir.div(4));
         }
 
-        image.fillSquare(start.x, start.y, 2, (byte) 4);
+        image.fillSquare(start.x, start.y, 4, (byte) 4);
 
         pos.x += 1;
         pos.y += 1;
@@ -132,7 +132,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
                 list.add(add);
                 now.add(add);
 
-                nowClient.add(add.mul(2, new Vector2i()));
+                nowClient.add(add.mul(4, new Vector2i()));
                 nowClient.add(dir);
             }
 
@@ -145,6 +145,9 @@ public class DottedLineMapCreate extends BaseMapCreate {
         }
 
         Vector2i left = vector.sub(now, new Vector2i());
+        nowClient.add(left.mul(4, new Vector2i()));
+        min.min(nowClient);
+        max.max(nowClient);
 
         if (left.x != 0) {
             if (Math.abs(left.x) < 7) {
@@ -191,7 +194,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
             bytes[i] = (byte) vec.y;
             i++;
 
-            nowClient.add(vec.mul(2));
+            nowClient.add(vec.mul(4));
             nowClient.add(normalizeVector(vec));
 
             distToCorner.forEach((pos, d) -> {

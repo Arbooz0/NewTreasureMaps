@@ -14,7 +14,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2i;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 
