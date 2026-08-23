@@ -15,8 +15,8 @@ public class ScrollAnimation extends Animation {
             -0.38f,  0.72f, -0.00f,  1.00f
     );
     public static final Matrix4f leftMapMatrix = new Matrix4f(
-            0.00f,  0.00f,  0.50f,  0.00f,
-            -0.50f,  0.00f,  0.00f,  0.00f,
+            0.00f,  0.00f,  -0.50f,  0.00f,
+            0.50f,  0.00f,  0.00f,  0.00f,
             0.00f, -0.50f,  0.00f,  0.00f,
             0.38f,  0.72f, -0.00f,  1.00f
     );
@@ -28,8 +28,8 @@ public class ScrollAnimation extends Animation {
             -0.038f,  0.62f, -0.00f,  1.00f
     );
     public static final Matrix4f leftMapThirdPersonMatrix = new Matrix4f(
-            0.00f,  0.00f,  0.40f,  0.00f,
-            -0.40f,  0.00f,  0.00f,  0.00f,
+            0.00f,  0.00f,  -0.40f,  0.00f,
+            0.40f,  0.00f,  0.00f,  0.00f,
             0.00f, -0.40f,  0.00f,  0.00f,
             0.038f,  0.62f, -0.00f,  1.00f
     );
@@ -66,13 +66,16 @@ public class ScrollAnimation extends Animation {
         poseStack.pushPose();
 
         float invert = getInvert(arm);
+        float invertLeft = getInvert(this.arm);
+
         poseStack.mulPose(Axis.XP.rotationDegrees(10));
         poseStack.translate(invert * 0.4f, -0.5f, -0.2f - (time.part2 * 0.15f));
-        poseStack.mulPose(Axis.YP.rotationDegrees( 90));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(-90));
-        poseStack.translate((-0.25f - (0.1f * time.part2)) + (0.2f - (0.15f * time.part2)) * invert, 0, 0);
-        poseStack.mulPose(Axis.XP.rotationDegrees( -30 * invert));
+        poseStack.mulPose(Axis.YP.rotationDegrees( 90 * invertLeft));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-90 * invertLeft));
+        poseStack.translate((-0.25f - (0.1f * time.part2)) * invertLeft + (0.2f - (0.15f * time.part2)) * invert, 0, 0);
+        poseStack.mulPose(Axis.XP.rotationDegrees( -30 * invert * invertLeft));
         poseStack.mulPose(Axis.ZP.rotationDegrees( invert * (-10 + (time.part2 * 30))));
+
         Matrix4f matrix = poseStack.last().pose();
 
         poseStack.popPose();
@@ -85,8 +88,7 @@ public class ScrollAnimation extends Animation {
         if (time.part1 == 1) {
             poseStack.last().pose().set(matrix);
         } else {
-            Matrix4f m = poseStack.last().pose();
-            lerpMatrix(m, matrix, time.part1);
+            lerpMatrix(poseStack.last().pose(), matrix, time.part1);
         }
 
         applyHand(arm);
@@ -141,17 +143,18 @@ public class ScrollAnimation extends Animation {
 
     private void animateArm(HumanoidArm arm) {
         float invert = getInvert(arm);
+        float invertLeft = getInvert(this.arm);
 
         Matrix3f rot = new Matrix3f();
         rot.rotateLocalZ(-0.55f * invert);
-        rot.rotateLocalX(Math.min(getHeadRotationX(), 0.5f) - 1.5f - 0.6f * invert * time.part2);
-        rot.rotateY((float) (Math.PI / -2.0) * time.part1);
+        rot.rotateLocalX(Math.min(getHeadRotationX(), 0.5f) - 1.5f - 0.6f * invert * time.part2 * invertLeft);
+        rot.rotateY((float) (Math.PI / -2.0) * time.part1 * invertLeft);
 
         Vector3f newAngles = rot.getEulerAnglesZYX(new Vector3f());
 
         lerpArm(arm, newAngles.x, newAngles.y, newAngles.z, time.part1);
 
-        getArm(arm).y -= time.part2 * invert * 0.8f;
+        getArm(arm).y -= time.part2 * invert * invertLeft * 0.8f;
         getArm(arm).z -= time.part2;
     }
 }
