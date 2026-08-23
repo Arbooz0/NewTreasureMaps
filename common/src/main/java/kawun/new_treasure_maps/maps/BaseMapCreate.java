@@ -63,7 +63,7 @@ public abstract class BaseMapCreate {
         this.level = level;
         this.mapId = id;
         this.lootLevel = Math.clamp(lootLevel, 0, 2);
-        Constants.LOG.info("New map " + id + ", level: " + lootLevel + ", pos: " + fromPosition.toString(new DecimalFormat()));
+        Constants.LOG.info("New map " + getMapType() + " " + id + ", level: " + lootLevel + ", pos: " + fromPosition.toString(new DecimalFormat()));
         NewTreasureMaps.addTask(this::waitTick);
     }
 
@@ -257,10 +257,14 @@ public abstract class BaseMapCreate {
                         if (blockEntity instanceof RandomizableContainerBlockEntity container) {
 
                             String path;
-                            if ((lootLevel < 2) && (Math.random() < 0.4)) {
-                                path = "treasure_map/" + (lootLevel + 1);
+                            if (getMapType() == MapType.PERSPECTIVE) {
+                                path = "treasure/2";
                             } else {
-                                path = "treasure/" + lootLevel;
+                                if ((lootLevel < 2) && (Math.random() < 0.4)) {
+                                    path = "treasure_map/" + (lootLevel + 1);
+                                } else {
+                                    path = "treasure/" + lootLevel;
+                                }
                             }
 
                             ResourceKey<LootTable> lootTableKey = ResourceKey.create(

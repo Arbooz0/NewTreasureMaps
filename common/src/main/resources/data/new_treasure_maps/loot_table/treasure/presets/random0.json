@@ -2,7 +2,7 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": 2,
+      "rolls": 3,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -11,7 +11,7 @@
       ]
     },
     {
-      "rolls": 2,
+      "rolls": 3,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -20,7 +20,7 @@
       ]
     },
     {
-      "rolls": 2,
+      "rolls": 3,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -29,7 +29,7 @@
       ]
     },
     {
-      "rolls": 1,
+      "rolls": 2,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "rolls": 1,
+      "rolls": 2,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -57,7 +57,7 @@
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.7
+          "chance": 0.8
         }
       ]
     }

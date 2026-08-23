@@ -22,7 +22,7 @@ public abstract class BaseColoredMapCreate extends BaseMapCreate {
 
     @Override
     public void start() {
-        BlockPos chestBlockPos = findPlaceChest(3, 6);
+        BlockPos chestBlockPos = findPlaceChest(6, 10);
         if (chestBlockPos == null) {
             errorGenerate();
             return;

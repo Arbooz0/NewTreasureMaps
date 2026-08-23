@@ -22,7 +22,7 @@ public class Utils {
 
 
     public static Vector2i getRandomPoint(int min, int max) {
-        int v1 = (int) (Math.random() * (max - min)) + min;
+        int v1 = getRandomRange(min, max);
         if (Math.random() > 0.5) {
             v1 *= -1;
         }

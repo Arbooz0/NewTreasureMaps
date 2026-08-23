@@ -7,7 +7,7 @@
         {
           "type": "minecraft:loot_table",
           "value": "new_treasure_maps:treasure/presets/random1",
-          "weight": 15
+          "weight": 10
         },
         {
           "type": "minecraft:loot_table",
@@ -76,7 +76,7 @@
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.4
+          "chance": 0.5
         }
       ]
     }

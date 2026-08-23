@@ -25,7 +25,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
 
     @Override
     public void start() {
-        BlockPos chestPos = findPlaceChest(3, 5);
+        BlockPos chestPos = findPlaceChest(3, 4);
         if (chestPos == null) {
             errorGenerate();
             return;

@@ -171,8 +171,8 @@ public class MapTextureManager {
         loadNoiseBlackout();
         loadMask();
 
-        int x_offset = 4;
-        int y_offset = image.getHeight() - 260;
+        int offsetX = 4;
+        int offsetY = image.getHeight() - 260;
 
         for (int y = 0; y < 256; y++) {
             for (int x = 0; x < 256; x++) {
@@ -185,9 +185,9 @@ public class MapTextureManager {
                     continue;
                 }
                 color = ARGB.scaleRGB(color, getNoise2(x, y));
-                int bg = image.getPixel(x + x_offset, y + y_offset);
+                int bg = image.getPixel(x + offsetX, y + offsetY);
                 color = blendColor(bg, color, alpha);
-                image.setPixel(x + x_offset, y + y_offset, color);
+                image.setPixel(x + offsetX, y + offsetY, color);
             }
         }
 
@@ -204,22 +204,25 @@ public class MapTextureManager {
                 for (int y = 0; y < h; y++) {
                     for (int x = 0; x < w; x++) {
                         try {
-                            int tX = copyImage.x() + x_offset + x;
-                            int tY = copyImage.y() + y_offset + y;
+                            int tX = copyImage.x() + x;
+                            int tY = copyImage.y() + y;
+                            if (!getMask(tX, tY)) {
+                                continue;
+                            }
 
                             int color = i.getPixel(x, y);
                             int alpha = (color >> 24) & 0xFF;
                             if (copyImage.applyNoise()) {
-                                alpha = (int) (alpha * getNoise(copyImage.x() + x, copyImage.y() + y));
+                                alpha = (int) (alpha * getNoise(tX, tY));
                             }
                             if (alpha != 255) {
                                 if (alpha < 10) {
                                     continue;
                                 }
-                                int bg = image.getPixel(tX, tY);
+                                int bg = image.getPixel(offsetX + tX, offsetY + tY);
                                 color = blendColor(bg, color, alpha);
                             }
-                            image.setPixel(tX, tY, color);
+                            image.setPixel(offsetX + tX, offsetY + tY, color);
                         } catch (Exception _) {
 
                         }

@@ -139,15 +139,15 @@ public class PerspectiveMapCreate extends BaseMapCreate {
                         continue;
                     }
 
-                    Vec3 rayFrom = new Vec3(x + 0.5, y + 4.5, z + 0.5);
-                    Vec3 rayTo = rayFrom.add(dir.x * -2, 5, dir.y * -2);
+                    Vec3 rayFrom = new Vec3(x + 0.25, y + 4.5, z + 0.25);
+                    Vec3 rayTo = rayFrom.add(dir.x * -6, 4, dir.y * -6);
                     if (rayCast(rayFrom, rayTo)) {
                         continue;
                     }
 
                     createChest(mPos);
                     mPos.set(x, y + 3, z);
-                    return renderMap(rayTo, new Vec3(dir.x, -1, dir.y), mPos);
+                    return renderMap(rayTo, new Vec3(dir.x, -0.5, dir.y), mPos);
                 }
             }
             
@@ -187,7 +187,7 @@ public class PerspectiveMapCreate extends BaseMapCreate {
 
         for (int y = 0; y < 256; y++) {
             for (int x = 0; x < 256; x++) {
-                Vec3 rayDir = dir.add(right.scale((x - 128) / 200.0)).add(up.scale((y - 128) / -200.0)).normalize();
+                Vec3 rayDir = dir.add(right.scale((x - 128) / 150.0)).add(up.scale((y - 128) / -150.0)).normalize();
                 Vec3 to = from.add(rayDir.scale(18));
 
                 ClipContext context = new ClipContext(
