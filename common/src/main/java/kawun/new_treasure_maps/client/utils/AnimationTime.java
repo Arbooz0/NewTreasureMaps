@@ -44,12 +44,18 @@ public class AnimationTime {
             time = 1 - time;
         }
 
-        t = (float) Math.sin(time * Math.PI / 2.0f);
-        part1 = (float) Math.sin(Math.min(t * 1.666f, 1) * Math.PI / 2.0f);
-        part2 = (float) Math.sin(Math.max((t - 0.6f) * 2.5, 0) * Math.PI / 2.0f);
-        partTransition = (float) Math.sin(Math.max((part1 - 0.8f) * 5, 0) * Math.PI / 2.0f);
-
+        t = sin(time);
+        part1 = sin(Math.min(t * 1.666f, 1));
+        part2 = sin(Math.max((t - 0.6f) * 2.5f, 0));
+        partTransition = sin(Math.max((part1 - 0.8f) * 5, 0));
     }
+
+
+    private float sin(float t) {
+        return (float) Math.sin(t * Math.PI / 2.0f);
+    }
+
+
 
     public AnimationTime reverse() {
         float time = Math.min(((System.currentTimeMillis() - startTime) / 1000.0f) / duration + offset, 1);

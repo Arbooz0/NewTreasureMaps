@@ -47,7 +47,12 @@ public class NewTreasureMaps {
         Task task = tasks.getFirst();
 
         long start = System.currentTimeMillis();
-        boolean isFinished = task.run();
+        boolean isFinished = true;
+        try {
+            isFinished = task.run();
+        } catch (Exception e) {
+            Constants.LOG.error("Error run task: " + e.getMessage());
+        }
         long end = System.currentTimeMillis();
         end -= start; // passed
         totalTimeTask += (int) end;
