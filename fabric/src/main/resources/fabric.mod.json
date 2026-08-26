@@ -7,9 +7,14 @@
     "authors": [
         "${mod_author}"
     ],
+    "contributors": [
+        "${credits}"
+    ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "homepage": "${url_homepage}",
+        "sources": "${url_sources}",
+        "issues": "${url_issues}",
+        "discord": "${url_discord}"
     },
     "license": "${license}",
     "icon": "assets/new_treasure_maps/icon.png",
@@ -31,9 +36,6 @@
         "fabric-api": "*",
         "minecraft": "~${minecraft_version}",
         "java": ">=${java_version}"
-    },
-    "suggests": {
-        "another-mod": "*"
     }
 }
   

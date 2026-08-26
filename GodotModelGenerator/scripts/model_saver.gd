@@ -29,19 +29,20 @@ func save(converter: Conventer):
 		converter.run()
 		
 		if frame == 0:
-			file.store_16(converter.vertex.size())
-			print("Count vertex: ", converter.vertex.size())
+			var uv_list: PackedVector2Array = converter.get_uv_quad()
+			file.store_16(uv_list.size())
+			print("Count vertex: ", uv_list.size())
 			
-			for uv: Vector2 in converter.uv:
+			for uv: Vector2 in uv_list:
 				file.store_8(roundi(uv.x * 255))
 				file.store_8(roundi(uv.y * 255))
 		
-		for pos: Vector3 in converter.vertex:
+		for pos: Vector3 in converter.get_vertex_quad():
 			file.store_8(roundi(pos.x * 127))
 			file.store_8(roundi(pos.y * 127))
 			file.store_8(roundi(pos.z * 127))
 		
-		for pos: Vector3 in converter.normal:
+		for pos: Vector3 in converter.get_normal_quad():
 			file.store_8(roundi(pos.x * 127))
 			file.store_8(roundi(pos.y * 127))
 			file.store_8(roundi(pos.z * 127))

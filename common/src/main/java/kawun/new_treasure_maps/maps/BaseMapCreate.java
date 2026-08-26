@@ -246,7 +246,7 @@ public abstract class BaseMapCreate {
                 for (int z = -1; z <= 1; z++) {
                     pos.set(center.getX() + x, center.getY() + y, center.getZ() + z);
                     if (x == 0 && y == 0 && z == 0) {
-                        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
+                        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 2);
                         BlockEntity blockEntity = level.getBlockEntity(pos);
                         if (blockEntity instanceof RandomizableContainerBlockEntity container) {
 
@@ -268,9 +268,9 @@ public abstract class BaseMapCreate {
                             container.setLootTable(lootTableKey);
                         }
                     } else if (y == -1) {
-                        level.setBlock(pos, Blocks.RED_SANDSTONE.defaultBlockState(), 3);
+                        level.setBlock(pos, Blocks.RED_SANDSTONE.defaultBlockState(), 2);
                     } else {
-                        level.setBlock(pos, Blocks.RED_SAND.defaultBlockState(), 3);
+                        level.setBlock(pos, Blocks.RED_SAND.defaultBlockState(), 2);
                     }
                 }
             }
@@ -376,7 +376,11 @@ public abstract class BaseMapCreate {
                 BlockState blockState = level.getBlockState(pos);
                 if (blockState.is(BlockTags.OVERWORLD_CARVER_REPLACEABLES)) {
                     if (!isCheckOnly) {
-                        level.setBlock(pos, Blocks.RED_SAND.defaultBlockState(), 2);
+                        if (blockState.is(Blocks.RED_SAND)) {
+                            level.setBlock(pos, Blocks.SAND.defaultBlockState(), 2);
+                        } else {
+                            level.setBlock(pos, Blocks.RED_SAND.defaultBlockState(), 2);
+                        }
                     }
                 } else {
                     if (isCheckOnly) {

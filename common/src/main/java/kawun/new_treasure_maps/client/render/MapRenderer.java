@@ -1,11 +1,7 @@
 package kawun.new_treasure_maps.client.render;
 
-import com.mojang.blaze3d.pipeline.DepthStencilState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -21,11 +17,10 @@ import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.items.MapComponent;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
@@ -37,23 +32,6 @@ import org.joml.Vector2f;
 import java.util.HashMap;
 
 public class MapRenderer {
-
-    private static final RenderPipeline.Snippet snippet = RenderPipeline
-            .builder(RenderPipelines.MATRICES_FOG_LIGHT_DIR_SNIPPET)
-            .withVertexShader("core/entity")
-            .withFragmentShader("core/entity")
-            .withSampler("Sampler0")
-            .withSampler("Sampler2")
-            .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.TRIANGLE_STRIP)
-            .withDepthStencilState(DepthStencilState.DEFAULT)
-            .buildSnippet();
-    private static final RenderPipeline pipeline = RenderPipeline.builder(snippet)
-            .withLocation("pipeline/treasure_map")
-            .withShaderDefine("ALPHA_CUTOUT", 0.1F)
-            .withShaderDefine("PER_FACE_LIGHTING")
-            .withSampler("Sampler1")
-            .withCull(true)
-            .build();
 
     public static Int2ObjectMap<RenderType> renders = new Int2ObjectOpenHashMap<>();
     public static Int2ObjectMap<RenderType> backRenders = new Int2ObjectOpenHashMap<>();
@@ -371,12 +349,7 @@ public class MapRenderer {
 
 
     public static RenderType newRenderType(Identifier texture) {
-        RenderSetup render_state = RenderSetup.builder(pipeline)
-                .withTexture("Sampler0", texture)
-                .useLightmap().useOverlay().affectsCrumbling()
-                .setOutline(RenderSetup.OutlineProperty.IS_OUTLINE).createRenderSetup();
-
-        return RenderType.create("treasure_map", render_state);
+        return RenderTypes.entityCutoutCull(texture);
     }
 
 
