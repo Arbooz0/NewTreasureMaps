@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinItemInHandRenderer {
 
 
-    private boolean popPose = false;
+    @Unique
+    private boolean newTreasureMaps$popPose = false;
 
     @Inject(at = @At("HEAD"), method = "renderArmWithItem", cancellable = true)
     private void renderArmWithItem(
@@ -34,9 +36,9 @@ public class MixinItemInHandRenderer {
           int lightCoords,
           CallbackInfo ci
     ) {
-        if (popPose) {
+        if (newTreasureMaps$popPose) {
             poseStack.popPose();
-            popPose = false;
+            newTreasureMaps$popPose = false;
         }
 
         if (hand == MapRenderer.hideHand) {
@@ -44,7 +46,7 @@ public class MixinItemInHandRenderer {
                 ci.cancel();
             } else {
                 if (hand == InteractionHand.MAIN_HAND) {
-                    popPose = true;
+                    newTreasureMaps$popPose = true;
                     poseStack.pushPose();
                 }
                 poseStack.translate(0, MapRenderer.hideTime * -0.5f, 0);

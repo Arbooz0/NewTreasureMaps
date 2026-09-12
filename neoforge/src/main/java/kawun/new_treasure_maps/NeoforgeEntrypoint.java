@@ -6,8 +6,10 @@ import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.loot.LootRegister;
 import kawun.new_treasure_maps.loot.LootTableModify;
 import kawun.new_treasure_maps.network.Network;
+import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -61,6 +63,9 @@ public class NeoforgeEntrypoint {
         }
         if (event.getRegistryKey().equals(Registries.LOOT_FUNCTION_TYPE)) {
             LootRegister.registerLootFunction((id, codec) -> event.register(Registries.LOOT_FUNCTION_TYPE, id, () -> codec));
+        }
+        if (event.getRegistryKey().equals(Registries.SOUND_EVENT)) {
+            event.register(Registries.SOUND_EVENT, Utils.identifier("pirate_cove"), () -> SoundEvent.createVariableRangeEvent(Utils.identifier("pirate_cove")));
         }
 
     }

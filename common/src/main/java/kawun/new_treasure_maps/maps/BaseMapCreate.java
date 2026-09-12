@@ -2,6 +2,7 @@ package kawun.new_treasure_maps.maps;
 
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
+import kawun.new_treasure_maps.commands.NextChestPosCommand;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.items.TreasureMap;
 import kawun.new_treasure_maps.saveddata.MapSavedData;
@@ -147,6 +148,10 @@ public abstract class BaseMapCreate {
 
 
     public @Nullable BlockPos findPlaceChest(int radiusChunkMin, int radiusChunkMax) {
+        if (NextChestPosCommand.pos != null) {
+            return NextChestPosCommand.getPos();
+        }
+
         ArrayList<Vector2i> chunkCheked = new ArrayList<>();
         Vector2i chunkStart = new Vector2i(fromPosition.x >> 4, fromPosition.y >> 4);
 

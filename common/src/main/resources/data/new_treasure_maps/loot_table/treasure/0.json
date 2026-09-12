@@ -101,6 +101,21 @@
           "chance": 0.3
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "new_treasure_maps:music_disc_pirate_cove"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.05
+        }
+      ]
     }
   ],
   "functions": [

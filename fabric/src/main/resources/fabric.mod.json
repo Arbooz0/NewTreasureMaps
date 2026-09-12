@@ -8,7 +8,8 @@
         "${mod_author}"
     ],
     "contributors": [
-        "${credits}"
+        "SkyMenay",
+        "URIY"
     ],
     "contact": {
         "homepage": "${url_homepage}",
@@ -36,6 +37,13 @@
         "fabric-api": "*",
         "minecraft": "~${minecraft_version}",
         "java": ">=${java_version}"
+    },
+    "custom": {
+        "modmenu": {
+            "links": {
+                "modmenu.discord": "${url_discord}"
+            }
+        }
     }
 }
   

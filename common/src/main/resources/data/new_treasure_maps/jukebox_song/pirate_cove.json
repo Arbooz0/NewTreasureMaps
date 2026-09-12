@@ -1,0 +1,8 @@
+{
+  "comparator_output": 15,
+  "description": {
+    "translate": "new_treasure_maps.pirate_cove"
+  },
+  "length_in_seconds": 57.0,
+  "sound_event": "new_treasure_maps:pirate_cove"
+}

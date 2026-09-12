@@ -9,6 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -18,6 +19,8 @@ public class Items {
 
 
     public static Item TREASURE_MAP;
+    public static Item MUSIC_DISC_PIRATE_COVE;
+
     public static DataComponentType<MapComponent> MAP_COMPONENT =
             DataComponentType.<MapComponent>builder().persistent(MapComponent.CODEC).build();
 
@@ -26,17 +29,16 @@ public class Items {
     public static void register(BiConsumer<Identifier, Item> consumer) {
         TREASURE_MAP = registerItem("treasure_map", TreasureMap::new, consumer,
                 new Item.Properties().stacksTo(1));
+
+        MUSIC_DISC_PIRATE_COVE = registerItem("music_disc_pirate_cove", Item::new, consumer,
+                new Item.Properties()
+                        .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG, Utils.identifier("pirate_cove")))
+                        .stacksTo(1).rarity(Rarity.UNCOMMON).overrideDescription("item.minecraft.music_disc_5"));
     }
 
 
     public static void registerComponents(BiConsumer<Identifier, DataComponentType<?>> consumer) {
         consumer.accept(Utils.identifier("map"), MAP_COMPONENT);
-    }
-
-
-
-    private static Item registerItem(String name, Function<Item.Properties, Item> func, BiConsumer<Identifier, Item> consumer) {
-        return registerItem(name, func, consumer, new Item.Properties());
     }
 
 

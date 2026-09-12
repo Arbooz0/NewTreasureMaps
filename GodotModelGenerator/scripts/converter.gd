@@ -5,7 +5,7 @@ extends RefCounted
 const TRIANGLE1: Array[Vector2i] = [Vector2i.ZERO, Vector2i.RIGHT, Vector2i.ONE]
 const TRIANGLE2: Array[Vector2i] = [Vector2i.ZERO, Vector2i.ONE, Vector2i.DOWN]
 
-var scale: float
+var scale: float = 1
 var generator: Generator
 
 var vertex: PackedVector3Array

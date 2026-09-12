@@ -1,11 +1,14 @@
 [gd_scene format=3 uid="uid://e3ti8sgeiyys"]
 
 [ext_resource type="Script" uid="uid://cpup0sv1mlyy0" path="res://scene/generator_scene.gd" id="1_hie7s"]
-[ext_resource type="Texture2D" uid="uid://cfeb878ax2nfs" path="res://test/ночной город.png" id="2_8ynvv"]
+[ext_resource type="Texture2D" uid="uid://v4hsnonhyt4i" path="res://test/perspective map scroll.png" id="2_hie7s"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqrab"]
+transparency = 2
+alpha_scissor_threshold = 1.0
+alpha_antialiasing_mode = 0
 cull_mode = 2
-albedo_texture = ExtResource("2_8ynvv")
+albedo_texture = ExtResource("2_hie7s")
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_fqrab"]
 

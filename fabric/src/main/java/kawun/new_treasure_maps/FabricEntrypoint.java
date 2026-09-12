@@ -5,14 +5,18 @@ import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.loot.LootRegister;
 import kawun.new_treasure_maps.loot.LootTableModify;
 import kawun.new_treasure_maps.network.Network;
+import kawun.new_treasure_maps.utils.Utils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.storage.loot.LootPool;
 
 public class FabricEntrypoint implements ModInitializer {
@@ -44,5 +48,7 @@ public class FabricEntrypoint implements ModInitializer {
                 tableBuilder.withPool(pool);
             }
         });
+
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Utils.identifier("pirate_cove"), SoundEvent.createVariableRangeEvent(Utils.identifier("pirate_cove")));
     }
 }

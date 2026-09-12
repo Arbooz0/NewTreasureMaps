@@ -16,6 +16,7 @@ public class CommandRegister {
         List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands = List.of(
                 ConfigCommand::getCommand,
                 CreateMapCommand::getCommand,
+                NextChestPosCommand::getCommand,
                 ChestLootCommand::getCommand
         );
         registerCommands(dispatcher, commands);

@@ -13,5 +13,14 @@
     "sounds": [
       "new_treasure_maps:unroll3"
     ]
+  },
+  "pirate_cove": {
+    "sounds": [
+      {
+        "name": "new_treasure_maps:pirate_cove",
+        "volume": 1,
+        "stream": true
+      }
+    ]
   }
 }

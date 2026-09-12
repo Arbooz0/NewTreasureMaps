@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://bf8d6a81dc2qi"]
+
+[ext_resource type="Script" uid="uid://buxmve7uvj20b" path="res://scene/render/render.gd" id="1_u2yq6"]
+[ext_resource type="Texture2D" uid="uid://v4hsnonhyt4i" path="res://test/perspective map scroll.png" id="2_1ya5k"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h8ss1"]
+transparency = 2
+alpha_scissor_threshold = 1.0
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("2_1ya5k")
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_u2yq6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8vrlf"]
+shading_mode = 0
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_1vivr"]
+material = SubResource("StandardMaterial3D_8vrlf")
+size = Vector2(10, 10)
+
+[sub_resource type="Animation" id="Animation_1ya5k"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_u2yq6"]
+resource_name = "anim"
+length = 4.0
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0.05, -0.25, 0, 0.53333336, -0.086075276, -0.02, -2.2333333, -0.038899943, 0, 0),
+"times": PackedFloat32Array(0, 4)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1ya5k"]
+_data = {
+&"RESET": SubResource("Animation_1ya5k"),
+&"anim": SubResource("Animation_u2yq6")
+}
+
+[node name="Render" type="Node3D" unique_id=287803464]
+script = ExtResource("1_u2yq6")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=813339026]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.6)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=960573140]
+material_override = SubResource("StandardMaterial3D_h8ss1")
+mesh = SubResource("ImmediateMesh_u2yq6")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1804801287]
+transform = Transform3D(0.9848078, 0.08682409, -0.15038376, 0, 0.8660254, 0.5, 0.1736482, -0.49240386, 0.85286856, 0, 50, 50)
+light_energy = 0.5
+shadow_enabled = true
+
+[node name="BG" type="MeshInstance3D" parent="." unique_id=1541674584]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -1.9451268)
+mesh = SubResource("PlaneMesh_1vivr")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=496957479]
+libraries/ = SubResource("AnimationLibrary_1ya5k")
