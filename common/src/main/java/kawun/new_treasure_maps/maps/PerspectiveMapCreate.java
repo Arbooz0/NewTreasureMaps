@@ -202,14 +202,14 @@ public class PerspectiveMapCreate extends BaseMapCreate {
                 }
 
                 BlockPos blockPos = result.getBlockPos();
-                double dist = from.distanceTo(blockPos.getCenter());
+                double dist = from.distanceTo(Vec3.atCenterOf(blockPos));
                 if (dist > 17) {
                     continue;
                 }
 
                 Vec3 pos = result.getLocation();
                 if (cross.equals(blockPos)) {
-                    double distToCenter = pos.distanceToSqr(blockPos.getCenter());
+                    double distToCenter = pos.distanceToSqr(Vec3.atCenterOf(blockPos));
                     if (distToCenter < nearestDist) {
                         nearestDist = distToCenter;
                         crossPos.x = x;

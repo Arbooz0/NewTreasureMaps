@@ -22,7 +22,7 @@ public class MixinItemInHandRenderer {
     @Unique
     private boolean newTreasureMaps$popPose = false;
 
-    @Inject(at = @At("HEAD"), method = "renderArmWithItem", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "submitArmWithItem", cancellable = true)
     private void renderArmWithItem(
           AbstractClientPlayer player,
           float frameInterp,
