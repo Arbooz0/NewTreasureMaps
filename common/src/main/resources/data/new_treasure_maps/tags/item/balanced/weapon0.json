@@ -9,8 +9,6 @@
     "minecraft:golden_shovel",
     "minecraft:golden_pickaxe",
     "minecraft:golden_axe",
-    "minecraft:golden_hoe",
-    "minecraft:wooden_spear",
-    "minecraft:golden_spear"
+    "minecraft:golden_hoe"
   ]
 }

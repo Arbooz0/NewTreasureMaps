@@ -12,8 +12,9 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -32,7 +33,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.joml.Vector2i;
-import org.jspecify.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -147,7 +147,7 @@ public abstract class BaseMapCreate {
 
 
 
-    public @Nullable BlockPos findPlaceChest(int radiusChunkMin, int radiusChunkMax) {
+    public BlockPos findPlaceChest(int radiusChunkMin, int radiusChunkMax) {
         if (NextChestPosCommand.pos != null) {
             return NextChestPosCommand.getPos();
         }
@@ -172,7 +172,7 @@ public abstract class BaseMapCreate {
     }
 
 
-    public @Nullable BlockPos findPlaceChestInChunk(int chunkX, int chunkZ) {
+    public BlockPos findPlaceChestInChunk(int chunkX, int chunkZ) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int random = (int) (Math.random() * 4);
 
@@ -302,21 +302,21 @@ public abstract class BaseMapCreate {
             return "";
         }
 
-        CompoundTag tag = optional.get().getCompoundOrEmpty("structures").getCompoundOrEmpty("starts");
+        CompoundTag tag = optional.get().getCompound("structures").getCompound("starts");
         if (tag.isEmpty()) {
             return "";
         }
 
-        for (Map.Entry<String, Tag> entry : tag.entrySet()) {
+        for (String key : tag.getAllKeys()) {
             if (onlyOnGround) {
-                CompoundTag data = ((CompoundTag) entry.getValue()).getListOrEmpty("Children").getCompoundOrEmpty(0);
+                CompoundTag data = ((ListTag) tag.getCompound(key).get("Children")).getCompound(0);
                 IntArrayTag aabb = (IntArrayTag) data.get("BB");
-                int y = aabb.get(4).value();
+                int y = aabb.get(4).getAsInt();
                 if (y < 60) {
                     continue;
                 }
             }
-            String[] name = entry.getKey().split(":", 2);
+            String[] name = key.split(":", 2);
             if (!name[0].equals("minecraft")) {
                 continue;
             }
@@ -337,7 +337,7 @@ public abstract class BaseMapCreate {
                 }
             }
 
-            Identifier identifier = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getKey(entry.getKey());
+            ResourceLocation identifier = level.registryAccess().registryOrThrow(Registries.STRUCTURE).getKey(entry.getKey());
             if (identifier == null) {
                 continue;
             }
@@ -377,7 +377,7 @@ public abstract class BaseMapCreate {
                 }
                 pos.setX(center.getX() + x);
                 pos.setZ(center.getZ() + z);
-                pos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos) - 1);
+                pos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) - 1);
                 BlockState blockState = level.getBlockState(pos);
                 if (blockState.is(BlockTags.OVERWORLD_CARVER_REPLACEABLES)) {
                     if (!isCheckOnly) {

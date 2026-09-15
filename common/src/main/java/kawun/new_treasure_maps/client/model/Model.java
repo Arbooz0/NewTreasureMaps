@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.Resource;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.jspecify.annotations.Nullable;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -71,7 +70,7 @@ public class Model {
 
 
 
-    public static @Nullable Model getModel(FoldType type) {
+    public static Model getModel(FoldType type) {
         if (loadedModels.containsKey(type)) {
             return loadedModels.get(type);
         }
@@ -81,7 +80,7 @@ public class Model {
     }
 
 
-    private static @Nullable Model loadModel(FoldType type) {
+    private static Model loadModel(FoldType type) {
         Optional<Resource> res = Minecraft.getInstance().getResourceManager().getResource(Utils.identifier("models/" + type.model + ".model"));
         if (res.isPresent()) {
             try (InputStream stream = res.get().open()) {

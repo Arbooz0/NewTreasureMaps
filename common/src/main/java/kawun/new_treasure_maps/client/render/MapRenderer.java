@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.animation.Animation;
 import kawun.new_treasure_maps.client.model.Model;
 import kawun.new_treasure_maps.client.sound.SoundManager;
@@ -15,19 +16,19 @@ import kawun.new_treasure_maps.client.utils.HandHelper;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.items.MapComponent;
-import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.util.HashMap;
 
@@ -53,7 +54,7 @@ public class MapRenderer {
             ItemStack itemStack,
             float inverseArmHeight,
             PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
+            MultiBufferSource submitNodeCollector,
             int lightCoords
     ) {
         MapComponent data = itemStack.get(Items.MAP_COMPONENT);
@@ -134,7 +135,7 @@ public class MapRenderer {
             ItemStack itemStack,
             PoseStack poseStack,
             HumanoidArm arm,
-            SubmitNodeCollector submitNodeCollector,
+            MultiBufferSource submitNodeCollector,
             int lightCoords
     ) {
         MapComponent data = itemStack.get(Items.MAP_COMPONENT);
@@ -153,10 +154,10 @@ public class MapRenderer {
     public static void renderThirdPerson(
         ItemStack itemStack,
         PlayerModel model,
-        AvatarRenderState state,
+        LivingEntity entity,
         HumanoidArm arm,
         PoseStack poseStack,
-        SubmitNodeCollector submitNodeCollector,
+        MultiBufferSource submitNodeCollector,
         int lightCoords
     ) {
         MapComponent data = itemStack.get(Items.MAP_COMPONENT);
@@ -182,15 +183,16 @@ public class MapRenderer {
 
         float anim = 1;
         if (time == null) {
-            model.translateToHand(state, arm, poseStack);
+            model.translateToHand(arm, poseStack);
             poseStack.mulPose(animation.getMapOffsetThirdPerson(arm));
         } else {
             time.update();
             if (time.needPlaySound()) {
-                SoundManager.playSound(state.x, state.y, state.z);
+
+                SoundManager.playSound(entity.getX(), entity.getY(), entity.getZ());
             }
             anim = 1 - time.part2;
-            animation.animateThirdPerson(poseStack, submitNodeCollector, arm, time, model, state, lightCoords);
+            animation.animateThirdPerson(poseStack, submitNodeCollector, arm, time, model, lightCoords);
             if (time.isEnd && time.isReverse) {
                 animationsTime.remove(data.id());
             }
@@ -220,7 +222,7 @@ public class MapRenderer {
 
 
 
-    private static void renderMap(PoseStack poseStack, MapComponent data, SubmitNodeCollector submitNodeCollector, int light, float anim) {
+    private static void renderMap(PoseStack poseStack, MapComponent data, MultiBufferSource submitNodeCollector, int light, float anim) {
         Model model = Model.getModel(data.foldType());
         if (model == null) {
             return;
@@ -229,13 +231,8 @@ public class MapRenderer {
         RenderType renderType = getRenderType(data.id(), data.foldType());
         RenderType backRenderType = getBackRenderType(data.id(), data.foldType());
 
-        submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
-            renderModel(model, pose, vertexConsumer, light, anim, true);
-        });
-
-        submitNodeCollector.submitCustomGeometry(poseStack, backRenderType, (pose, vertexConsumer) -> {
-            renderModel(model, pose, vertexConsumer, light, anim, false);
-        });
+        renderModel(model, poseStack.last(), submitNodeCollector.getBuffer(renderType), light, anim, true);
+        renderModel(model, poseStack.last(), submitNodeCollector.getBuffer(backRenderType), light, anim, false);
     }
 
 
@@ -244,21 +241,25 @@ public class MapRenderer {
     ) {
         if (t > 0.3f) {
             float w = 1 - (t - 0.3f) / 5;
-            int block = (int) (LightCoordsUtil.block(lightCoords) * w);
-            int sky = (int) (LightCoordsUtil.sky(lightCoords) * w);
-            lightCoords = LightCoordsUtil.pack(block, sky);
+            int block = (int) (LightTexture.block(lightCoords) * w);
+            int sky = (int) (LightTexture.sky(lightCoords) * w);
+            lightCoords = LightTexture.pack(block, sky);
         }
 
         for (int j = 0; j < model.countVertex; j++) {
             int i = front ? model.countVertex - j - 1 : j;
             Vector2f uv = model.getUV(i);
+            Vector3f normal = model.getNormal(i, t).mul(front ? 1 : -1);
+            float nX = normal.x;
+            float nY = normal.y;
+            float nZ = normal.z;
             vertexConsumer
                     .addVertex(pose, model.getVertex(i, t))
                     .setColor(-1)
                     .setUv(uv.x, uv.y)
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(lightCoords)
-                    .setNormal(pose, model.getNormal(i, t).mul(front ? 1 : -1));
+                    .setNormal(pose, nX, nY, nZ);
         }
     }
 
@@ -348,8 +349,8 @@ public class MapRenderer {
     }
 
 
-    public static RenderType newRenderType(Identifier texture) {
-        return RenderTypes.entityCutoutCull(texture);
+    public static RenderType newRenderType(ResourceLocation texture) {
+        return RenderType.entityCutout(texture);
     }
 
 

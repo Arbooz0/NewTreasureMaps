@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ByteMap;
 import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
+import kawun.new_treasure_maps.client.utils.ARGB;
 import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.utils.Utils;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
@@ -15,10 +16,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ARGB;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.level.biome.Biome;
 import org.joml.Vector2i;
-import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,7 +81,7 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
 
 
 
-    public @Nullable BlockPos getChestPos() {
+    public BlockPos getChestPos() {
         return findPlaceChest(30, 50);
     }
 
@@ -332,11 +333,12 @@ public abstract class BaseDrawnMapCreate extends BaseMapCreate {
         }
         blackout = (blackout * 255) / 6;
 
+
         return switch (type) {
-            case 1 -> ARGB.scaleRGB(a | 4352433, blackout); // Синий
-            case 2 -> ARGB.scaleRGB(a | 13107250, blackout); // Красный
-            case 3 -> ARGB.scaleRGB(a | 8866583, blackout); // Коричневый
-            default -> ARGB.color(a, blackout, blackout, blackout); // Черный-Серый
+            case 1 -> ARGB.scaleRGB(a | 11626818, blackout); // Синий
+            case 2 -> ARGB.scaleRGB(a | 3277000, blackout); // Красный
+            case 3 -> ARGB.scaleRGB(a | 1526663, blackout); // Коричневый
+            default -> ARGB32.color(a, blackout, blackout, blackout); // Черный-Серый
         };
     }
 

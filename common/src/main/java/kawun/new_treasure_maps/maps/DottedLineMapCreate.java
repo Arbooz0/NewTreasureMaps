@@ -7,7 +7,6 @@ import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
 import net.minecraft.core.BlockPos;
 import org.joml.Vector2i;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,10 +101,10 @@ public class DottedLineMapCreate extends BaseMapCreate {
 
     public static int convertColor(byte color) {
         return switch (color) {
-            case 1 -> -53722;
-            case 2 -> -5046246;
+            case 1 -> -14274817;
+            case 2 -> -15073101;
             case 3 -> -16777216;
-            case 4 -> -12806867;
+            case 4 -> -13789892;
             default -> 0;
         };
     }
@@ -221,7 +220,7 @@ public class DottedLineMapCreate extends BaseMapCreate {
 
     }
 
-    private Vector2i randomDir(Vector2i dir, @Nullable Vector2i lastDir) {
+    private Vector2i randomDir(Vector2i dir, Vector2i lastDir) {
         ArrayList<Vector2i> list = new ArrayList<>();
         list.add(normalizeVector(dir));
         Vector2i v1 = new Vector2i(dir.y, dir.x * -1);

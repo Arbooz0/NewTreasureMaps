@@ -5,6 +5,7 @@ import kawun.new_treasure_maps.commands.CommandRegister;
 import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.loot.LootRegister;
 import kawun.new_treasure_maps.loot.LootTableModify;
+import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.network.Network;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.registries.Registries;
@@ -31,6 +32,8 @@ public class NeoforgeEntrypoint {
 
     public NeoforgeEntrypoint(IEventBus eventBus, Dist dist) {
         NewTreasureMaps.init();
+        eventBus.addListener(this::registerEvent);
+        eventBus.addListener(this::registerPayload);
     }
 
 
@@ -50,8 +53,7 @@ public class NeoforgeEntrypoint {
     }
 
 
-    @SubscribeEvent
-    public static void registerEvent(RegisterEvent event) {
+    public void registerEvent(RegisterEvent event) {
         if (event.getRegistryKey().equals(Registries.ITEM)) {
             Items.register((id, item) -> event.register(Registries.ITEM, id, () -> item));
         }
@@ -77,11 +79,11 @@ public class NeoforgeEntrypoint {
     }
 
 
-    @SubscribeEvent
-    public static void registerPayload(RegisterPayloadHandlersEvent event) {
+
+    public void registerPayload(RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("1");
         Network.registerPacket(
-                (type, codec) -> registrar.playToClient(type, codec)
+                (type, codec, handler) -> registrar.playToClient(type, codec, (p, c) -> handler.accept(p))
         );
     }
 

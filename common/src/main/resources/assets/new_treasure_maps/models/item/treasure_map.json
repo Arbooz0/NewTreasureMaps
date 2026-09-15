@@ -2,5 +2,35 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "new_treasure_maps:item/treasure_map"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.1 },
+      "model": "new_treasure_maps:item/perspective_map"
+    },
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.2 },
+      "model": "new_treasure_maps:item/dotted_line_map"
+    },
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.3 },
+      "model": "new_treasure_maps:item/drawn_map"
+    },
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.4 },
+      "model": "new_treasure_maps:item/area_drawn_map"
+    },
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.5 },
+      "model": "new_treasure_maps:item/colored_map"
+    },
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.6 },
+      "model": "new_treasure_maps:item/area_colored_map"
+    },
+    {
+      "predicate": { "new_treasure_maps:map_type": 0.7 },
+      "model": "new_treasure_maps:item/side_view_map"
+    }
+  ]
 }

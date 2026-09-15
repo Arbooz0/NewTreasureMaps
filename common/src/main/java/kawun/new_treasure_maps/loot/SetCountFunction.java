@@ -8,9 +8,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.Validatable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
@@ -24,6 +23,8 @@ public class SetCountFunction extends LootItemConditionalFunction {
                     .apply(i, SetCountFunction::new)
     );
 
+    public static final LootItemFunctionType<? extends LootItemConditionalFunction> TYPE = new LootItemFunctionType<>(CODEC);
+
     public static final TagKey<Item> tagSingleItems = TagKey.create(Registries.ITEM, Utils.identifier("single"));
 
     private final NumberProvider count;
@@ -34,14 +35,8 @@ public class SetCountFunction extends LootItemConditionalFunction {
     }
 
     @Override
-    public MapCodec<SetCountFunction> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public void validate(ValidationContext context) {
-        super.validate(context);
-        Validatable.validate(context, "count", this.count);
+    public LootItemFunctionType<? extends LootItemConditionalFunction> getType() {
+        return TYPE;
     }
 
     @Override

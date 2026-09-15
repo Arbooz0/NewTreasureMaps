@@ -5,14 +5,11 @@ import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.items.Items;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.*;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,11 +32,11 @@ public class RandomItems {
 
         int[] types = new int[Type.values().length];
 
-        HashSet<Identifier> recipe = new HashSet<>();
+        HashSet<ResourceLocation> recipe = new HashSet<>();
 
         Collection<RecipeHolder<?>> recipes = NewTreasureMaps.server.getRecipeManager().getRecipes();
         for (RecipeHolder recipeHolder : recipes) {
-            Identifier id = recipeHolder.id().identifier();
+            ResourceLocation id = recipeHolder.id();
             if (!id.getNamespace().equals("minecraft")) {
                 recipe.add(id);
             }
@@ -50,7 +47,7 @@ public class RandomItems {
                 continue;
             }
 
-            Identifier id = BuiltInRegistries.ITEM.getKey(item);
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
             if (id.getNamespace().equals("minecraft")) {
                 continue;
             }
@@ -74,7 +71,7 @@ public class RandomItems {
             } else {
                 if (item instanceof BlockItem blockItem) {
                     Block block = blockItem.getBlock();
-                    if (block.getLootTable().isEmpty()) {
+                    if (NewTreasureMaps.server.reloadableRegistries().getLootTable(block.getLootTable()).equals(LootTable.EMPTY)) {
                         continue;
                     }
                     if (block instanceof StairBlock) {
@@ -113,7 +110,7 @@ public class RandomItems {
     }
 
 
-    public static @Nullable Item getRandomItem(String name) {
+    public static Item getRandomItem(String name) {
         init();
 
         Type type = Type.map.get(name);
@@ -136,11 +133,11 @@ public class RandomItems {
 
 
     public static boolean isWeapon(ItemStack item) {
-        return item.has(DataComponents.TOOL) || item.has(DataComponents.WEAPON);
+        return item.has(DataComponents.TOOL) || item.getItem() instanceof TieredItem;
     }
 
     public static boolean isArmor(ItemStack item) {
-        return item.has(DataComponents.EQUIPPABLE);
+        return item.getItem() instanceof ArmorItem;
     }
 
     public static boolean isFood(ItemStack item) {

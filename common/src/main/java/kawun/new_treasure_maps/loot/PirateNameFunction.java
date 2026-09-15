@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.List;
@@ -16,14 +17,17 @@ public class PirateNameFunction extends LootItemConditionalFunction {
             i -> commonFields(i).apply(i, PirateNameFunction::new)
     );
 
+    public static final LootItemFunctionType<? extends LootItemConditionalFunction> TYPE = new LootItemFunctionType<>(CODEC);
+
 
     private PirateNameFunction(List<LootItemCondition> predicates) {
         super(predicates);
     }
 
+
     @Override
-    public MapCodec<PirateNameFunction> codec() {
-        return CODEC;
+    public LootItemFunctionType<? extends LootItemConditionalFunction> getType() {
+        return TYPE;
     }
 
 

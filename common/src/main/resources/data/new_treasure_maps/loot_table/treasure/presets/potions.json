@@ -22,7 +22,7 @@
       ],
       "functions": [
         {
-          "function": "minecraft:set_random_potion"
+          "function": "new_treasure_maps:random_potion"
         }
       ]
     }

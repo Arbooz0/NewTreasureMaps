@@ -14,6 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -31,6 +32,9 @@ public class TagRandomEntry extends LootPoolSingletonContainer {
     );
 
 
+    public static final LootPoolEntryType TYPE = new LootPoolEntryType(CODEC);
+
+
     private final String name;
 
 
@@ -38,13 +42,6 @@ public class TagRandomEntry extends LootPoolSingletonContainer {
         super(weight, quality, conditions, functions);
         this.name = name;
     }
-
-
-    @Override
-    public MapCodec<? extends LootPoolSingletonContainer> codec() {
-        return CODEC;
-    }
-
 
     @Override
     protected void createItemStack(Consumer<ItemStack> output, LootContext context) {
@@ -68,5 +65,10 @@ public class TagRandomEntry extends LootPoolSingletonContainer {
     public TagKey<Item> getTag() {
         String folder = ConfigManager.config.imbalanced_loot ? "imbalanced/" : "balanced/";
         return TagKey.create(Registries.ITEM, Utils.identifier(folder + name));
+    }
+
+    @Override
+    public LootPoolEntryType getType() {
+        return TYPE;
     }
 }

@@ -1,6 +1,7 @@
 package kawun.new_treasure_maps.client.animation;
 
 import com.mojang.math.Axis;
+import kawun.new_treasure_maps.Constants;
 import net.minecraft.world.entity.HumanoidArm;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;

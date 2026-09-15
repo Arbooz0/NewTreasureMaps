@@ -3,14 +3,11 @@ package kawun.new_treasure_maps.client.utils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.player.AvatarRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.player.PlayerModelPart;
 
 public class HandHelper {
 
@@ -42,17 +39,16 @@ public class HandHelper {
 
 
 
-    public static void setHand(PoseStack poseStack, HumanoidArm arm, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+    public static void setHand(PoseStack poseStack, HumanoidArm arm, MultiBufferSource submitNodeCollector, int lightCoords) {
         LocalPlayer player = minecraft.player;
-        AvatarRenderer<AbstractClientPlayer> avatarRenderer = minecraft.getEntityRenderDispatcher().getPlayerRenderer(player);
-        Identifier skinTexture = player.getSkin().body().texturePath();
+        PlayerRenderer avatarRenderer = (PlayerRenderer) minecraft.getEntityRenderDispatcher().getRenderer(player);
         if (arm == HumanoidArm.RIGHT) {
             avatarRenderer.renderRightHand(
-                    poseStack, submitNodeCollector, lightCoords, skinTexture, player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE)
+                    poseStack, submitNodeCollector, lightCoords, player
             );
         } else {
             avatarRenderer.renderLeftHand(
-                    poseStack, submitNodeCollector, lightCoords, skinTexture, player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE)
+                    poseStack, submitNodeCollector, lightCoords, player
             );
         }
     }

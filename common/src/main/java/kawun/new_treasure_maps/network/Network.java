@@ -14,6 +14,12 @@ public class Network {
 
 
 
+    public static void registerPacket(PacketConsumer consumer) {
+        consumer.accept(MapPacket.TYPE, MapPacket.STREAM_CODEC, obj -> MapPacket.handle((MapPacket) obj));
+        consumer.accept(OpenMapPacket.TYPE, OpenMapPacket.STREAM_CODEC, obj -> OpenMapPacket.handle((OpenMapPacket) obj));
+    }
+
+
     public static void registerPacket(BiConsumer<CustomPacketPayload.Type, StreamCodec> consumer) {
         consumer.accept(MapPacket.TYPE, MapPacket.STREAM_CODEC);
         consumer.accept(OpenMapPacket.TYPE, OpenMapPacket.STREAM_CODEC);
@@ -35,6 +41,12 @@ public class Network {
 
     public static Packet<ClientCommonPacketListener> makePacket(CustomPacketPayload payload) {
         return new ClientboundCustomPayloadPacket(payload);
+    }
+
+
+
+    public interface PacketConsumer {
+        void accept(CustomPacketPayload.Type type, StreamCodec codec, Consumer handler);
     }
 
 }

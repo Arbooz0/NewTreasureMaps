@@ -1,15 +1,15 @@
 package kawun.new_treasure_maps.utils;
 
 import kawun.new_treasure_maps.Constants;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2i;
 
 
 public class Utils {
 
 
-    public static Identifier identifier(String id) {
-        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, id);
+    public static ResourceLocation identifier(String id) {
+        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, id);
     }
 
 

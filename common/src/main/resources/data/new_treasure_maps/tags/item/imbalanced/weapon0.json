@@ -5,11 +5,6 @@
     "minecraft:wooden_pickaxe",
     "minecraft:wooden_axe",
     "minecraft:wooden_hoe",
-    "minecraft:copper_sword",
-    "minecraft:copper_shovel",
-    "minecraft:copper_pickaxe",
-    "minecraft:copper_axe",
-    "minecraft:copper_hoe",
     "minecraft:stone_sword",
     "minecraft:stone_shovel",
     "minecraft:stone_pickaxe",
@@ -26,11 +21,6 @@
     "minecraft:iron_axe",
     "minecraft:iron_hoe",
     "minecraft:shears",
-    "minecraft:wooden_spear",
-    "minecraft:stone_spear",
-    "minecraft:copper_spear",
-    "minecraft:iron_spear",
-    "minecraft:golden_spear",
     "minecraft:bow",
     "minecraft:crossbow"
   ]

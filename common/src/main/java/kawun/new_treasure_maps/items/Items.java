@@ -5,7 +5,7 @@ import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.utils.Utils;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,26 +25,25 @@ public class Items {
             DataComponentType.<MapComponent>builder().persistent(MapComponent.CODEC).build();
 
 
-
-    public static void register(BiConsumer<Identifier, Item> consumer) {
+    public static void register(BiConsumer<ResourceLocation, Item> consumer) {
         TREASURE_MAP = registerItem("treasure_map", TreasureMap::new, consumer,
                 new Item.Properties().stacksTo(1));
 
-        MUSIC_DISC_PIRATE_COVE = registerItem("music_disc_pirate_cove", Item::new, consumer,
+        MUSIC_DISC_PIRATE_COVE = registerItem("music_disc_pirate_cove", MusicDisc::new, consumer,
                 new Item.Properties()
                         .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG, Utils.identifier("pirate_cove")))
-                        .stacksTo(1).rarity(Rarity.UNCOMMON).overrideDescription("item.minecraft.music_disc_5"));
+                        .stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
 
-    public static void registerComponents(BiConsumer<Identifier, DataComponentType<?>> consumer) {
+    public static void registerComponents(BiConsumer<ResourceLocation, DataComponentType<?>> consumer) {
         consumer.accept(Utils.identifier("map"), MAP_COMPONENT);
     }
 
 
-    private static Item registerItem(String name, Function<Item.Properties, Item> func, BiConsumer<Identifier, Item> consumer, Item.Properties properties) {
-        Identifier id = Utils.identifier(name);
-        Item item = func.apply(properties.setId(ResourceKey.create(Registries.ITEM, id)));
+    private static Item registerItem(String name, Function<Item.Properties, Item> func, BiConsumer<ResourceLocation, Item> consumer, Item.Properties properties) {
+        ResourceLocation id = Utils.identifier(name);
+        Item item = func.apply(properties);
         consumer.accept(id, item);
         return item;
     }

@@ -4,25 +4,25 @@ import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kawun.new_treasure_maps.Constants;
+import kawun.new_treasure_maps.client.utils.ARGB;
 import kawun.new_treasure_maps.enums.FoldType;
 import kawun.new_treasure_maps.utils.TimePassed;
 import kawun.new_treasure_maps.utils.Utils;
 import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.pixels.PixelsBase;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.util.ARGB;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
 
+import java.awt.*;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Optional;
@@ -40,11 +40,11 @@ public class MapTextureManager {
 
 
 
-    public static Identifier getTextureIdentifier(int id) {
+    public static ResourceLocation getTextureIdentifier(int id) {
         return Utils.identifier("map" + id);
     }
 
-    public static Identifier getBackTextureIdentifier(String texture) {
+    public static ResourceLocation getBackTextureIdentifier(String texture) {
         return Utils.identifier("map_" + texture);
     }
 
@@ -62,17 +62,17 @@ public class MapTextureManager {
     }
 
 
-    public static @Nullable NativeImage loadBlockTexture(Identifier id) {
-        Block block = BuiltInRegistries.BLOCK.getValue(id);
+    public static NativeImage loadBlockTexture(ResourceLocation id) {
+        Block block = BuiltInRegistries.BLOCK.get(id);
         BlockState state = block.defaultBlockState();
-        TextureAtlasSprite texture = Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state).sprite();
+        TextureAtlasSprite texture = Minecraft.getInstance().getModelManager().getBlockModelShaper().getParticleIcon(state);
 
         String path = texture.contents().name().getPath();
         if (block == Blocks.GRASS_BLOCK) {
             path = "block/grass_block_top";
         }
 
-        Identifier idTexture = Identifier.parse("textures/" + path + ".png");
+        ResourceLocation idTexture = ResourceLocation.parse("textures/" + path + ".png");
 
         Optional<Resource> res = Minecraft.getInstance().getResourceManager().getResource(idTexture);
         if (res.isPresent()) {
@@ -81,13 +81,10 @@ public class MapTextureManager {
                 NativeImage newImage = new NativeImage(8, 8, true);
                 image.resizeSubRectTo(0, 0, 8, 8, newImage);
                 image.close();
-                BlockTintSource tint = Minecraft.getInstance().getBlockColors().getTintSource(state, 0);
-                if (tint != null) {
-                    int color = block == Blocks.WATER ? 0xFF2068EF : tint.color(state);
-                    for (int x = 0; x < 8; x++) {
-                        for (int y = 0; y < 8; y++) {
-                            newImage.setPixel(x, y, ARGB.multiply(newImage.getPixel(x, y), color));
-                        }
+                int color = block == Blocks.WATER ? -1087456 : Minecraft.getInstance().getBlockColors().getColor(state, null, null, 0);
+                for (int x = 0; x < 8; x++) {
+                    for (int y = 0; y < 8; y++) {
+                        newImage.setPixelRGBA(x, y, ARGB32.multiply(newImage.getPixelRGBA(x, y), color));
                     }
                 }
                 return newImage;
@@ -120,14 +117,14 @@ public class MapTextureManager {
     }
 
 
-    public static Identifier createNewTexture(int id, FoldType type) {
+    public static ResourceLocation createNewTexture(int id, FoldType type) {
         NativeImage image = loadTexture(type.getTexture());
         if (image == null) {
-            return Identifier.withDefaultNamespace("textures/map/map_background.png");
+            return ResourceLocation.withDefaultNamespace("textures/map/map_background.png");
         }
-        DynamicTexture texture = new DynamicTexture(() -> "treasuremap" + id, image);
+        DynamicTexture texture = new DynamicTexture(image);
 
-        Identifier identifier = getTextureIdentifier(id);
+        ResourceLocation identifier = getTextureIdentifier(id);
         Minecraft.getInstance().getTextureManager().register(identifier, texture);
         maps.put(id, texture);
         if (unsettedPixels.containsKey(id)) {
@@ -140,17 +137,17 @@ public class MapTextureManager {
     }
 
 
-    public static Identifier getBackTexture(FoldType type) {
+    public static ResourceLocation getBackTexture(FoldType type) {
         if (backTextureInit.contains(type.lastTexture)) {
             return getBackTextureIdentifier(type.lastTexture);
         }
         NativeImage image = loadTexture(type.lastTexture);
         if (image == null) {
-            return Identifier.withDefaultNamespace("textures/map/map_background.png");
+            return ResourceLocation.withDefaultNamespace("textures/map/map_background.png");
         }
-        DynamicTexture texture = new DynamicTexture(() -> "treasuremap_" + type.lastTexture, image);
+        DynamicTexture texture = new DynamicTexture(image);
 
-        Identifier identifier = getBackTextureIdentifier(type.lastTexture);
+        ResourceLocation identifier = getBackTextureIdentifier(type.lastTexture);
         Minecraft.getInstance().getTextureManager().register(identifier, texture);
         backTextureInit.add(type.lastTexture);
         return identifier;
@@ -183,9 +180,9 @@ public class MapTextureManager {
                     continue;
                 }
                 color = ARGB.scaleRGB(color, getNoise2(x, y));
-                int bg = image.getPixel(x + offsetX, y + offsetY);
+                int bg = image.getPixelRGBA(x + offsetX, y + offsetY);
                 color = blendColor(bg, color, alpha);
-                image.setPixel(x + offsetX, y + offsetY, color);
+                image.setPixelRGBA(x + offsetX, y + offsetY, color);
             }
         }
 
@@ -208,7 +205,7 @@ public class MapTextureManager {
                                 continue;
                             }
 
-                            int color = i.getPixel(x, y);
+                            int color = i.getPixelRGBA(x, y);
                             int alpha = (color >> 24) & 0xFF;
                             if (copyImage.applyNoise()) {
                                 alpha = (int) (alpha * getNoise(tX, tY));
@@ -217,11 +214,11 @@ public class MapTextureManager {
                                 if (alpha < 10) {
                                     continue;
                                 }
-                                int bg = image.getPixel(offsetX + tX, offsetY + tY);
+                                int bg = image.getPixelRGBA(offsetX + tX, offsetY + tY);
                                 color = blendColor(bg, color, alpha);
                             }
-                            image.setPixel(offsetX + tX, offsetY + tY, color);
-                        } catch (Exception _) {
+                            image.setPixelRGBA(offsetX + tX, offsetY + tY, color);
+                        } catch (Exception e) {
 
                         }
                     }
@@ -243,15 +240,15 @@ public class MapTextureManager {
 
 
     public static float getNoise(int x, int y) {
-        return noiseTransparency == null ? 1 : (noiseTransparency.getPixel(x, y) & 0xFF) / 255.0f;
+        return noiseTransparency == null ? 1 : (noiseTransparency.getPixelRGBA(x, y) & 0xFF) / 255.0f;
     }
 
     public static float getNoise2(int x, int y) {
-        return noiseBlackout == null ? 1 : (noiseBlackout.getPixel(x, y) & 0xFF) / 255.0f;
+        return noiseBlackout == null ? 1 : (noiseBlackout.getPixelRGBA(x, y) & 0xFF) / 255.0f;
     }
 
     public static boolean getMask(int x, int y) {
-        return mask == null || (mask.getPixel(x / 4, y / 4) & 0xFF) != 0;
+        return mask == null || (mask.getPixelRGBA(x / 4, y / 4) & 0xFF) != 0;
     }
 
 

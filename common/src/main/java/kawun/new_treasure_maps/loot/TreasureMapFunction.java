@@ -9,6 +9,7 @@ import kawun.new_treasure_maps.maps.Maps;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
@@ -26,6 +27,9 @@ public class TreasureMapFunction extends LootItemConditionalFunction {
                     .apply(i, TreasureMapFunction::new));
 
 
+    public static final LootItemFunctionType<? extends LootItemConditionalFunction> TYPE = new LootItemFunctionType<>(CODEC);
+
+
     private final int lootLevel;
 
 
@@ -41,14 +45,13 @@ public class TreasureMapFunction extends LootItemConditionalFunction {
 
 
     @Override
-    public MapCodec<? extends LootItemConditionalFunction> codec() {
-        return CODEC;
+    public LootItemFunctionType<? extends LootItemConditionalFunction> getType() {
+        return TYPE;
     }
-
 
     @Override
     protected ItemStack run(ItemStack itemStack, LootContext context) {
-        Vec3 lootPos = context.getOptionalParameter(LootContextParams.ORIGIN);
+        Vec3 lootPos = context.getParamOrNull(LootContextParams.ORIGIN);
         if (lootPos == null) {
             Constants.LOG.error("Loot origin is NULL");
             return itemStack;

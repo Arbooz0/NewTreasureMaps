@@ -1,26 +1,15 @@
 package kawun.new_treasure_maps.saveddata;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
-import kawun.new_treasure_maps.utils.Utils;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.saveddata.SavedDataType;
 
 public class FreeID extends SavedData {
 
-    public static final Codec<FreeID> CODEC = RecordCodecBuilder.create(
-            i -> i.group(
-                    Codec.INT.optionalFieldOf("id", -1).forGetter(m -> m.lastID))
-                    .apply(i, FreeID::new)
-    );
-
-    public static final SavedDataType<FreeID> TYPE = new SavedDataType<>(
-            Utils.identifier("last_id"), FreeID::new, CODEC, null
-    );
-
-
     private int lastID;
+
 
     public FreeID() {}
 
@@ -29,10 +18,26 @@ public class FreeID extends SavedData {
     }
 
 
+    @Override
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+        tag.putInt("id", lastID);
+        return tag;
+    }
+
+
+    public static FreeID load(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+        return new FreeID(tag.getInt("id"));
+    }
+
+
+    public static SavedData.Factory<FreeID> factory() {
+        return new Factory<>(FreeID::new, FreeID::load, null);
+    }
+
 
     public static int getFreeID() {
         if (NewTreasureMaps.server != null) {
-            return NewTreasureMaps.server.getDataStorage().computeIfAbsent(TYPE).nextID();
+            return NewTreasureMaps.server.overworld().getDataStorage().computeIfAbsent(factory(), Constants.MOD_ID + "_last_id").nextID();
         }
         return 0;
     }

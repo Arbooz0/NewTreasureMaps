@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -255,7 +256,7 @@ public class PerspectiveMapCreate extends BaseMapCreate {
                             texture = TEXTURE_LOGS;
                         } else if (state.is(BlockTags.LEAVES)) {
                             texture = TEXTURE_LEAVES;
-                        } else if (state.is(BlockTags.GRASS_BLOCKS)) {
+                        } else if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.PODZOL)) {
                             if (result.getDirection() == Direction.UP) {
                                 texture = TEXTURE_GRASS_TOP;
                             } else {

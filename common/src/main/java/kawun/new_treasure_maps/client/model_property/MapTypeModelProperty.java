@@ -1,33 +1,18 @@
 package kawun.new_treasure_maps.client.model_property;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import kawun.new_treasure_maps.items.Items;
 import kawun.new_treasure_maps.items.MapComponent;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperty;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.Nullable;
 
-public class MapTypeModelProperty implements SelectItemModelProperty<String> {
+public class MapTypeModelProperty implements ClampedItemPropertyFunction {
 
-    public static final Type<MapTypeModelProperty, String> TYPE = Type.create(MapCodec.unit(new MapTypeModelProperty()), Codec.STRING);
 
     @Override
-    public @Nullable String get(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity owner, int seed, ItemDisplayContext displayContext) {
+    public float unclampedCall(ItemStack itemStack, ClientLevel clientLevel, LivingEntity livingEntity, int i) {
         MapComponent data = itemStack.get(Items.MAP_COMPONENT);
-        return data == null ? "" : data.mapType().name();
-    }
-
-    @Override
-    public Codec<String> valueCodec() {
-        return Codec.STRING;
-    }
-
-    @Override
-    public Type<? extends SelectItemModelProperty<String>, String> type() {
-        return TYPE;
+        return data == null ? 0 : (data.mapType().ordinal() / 10.0F);
     }
 }

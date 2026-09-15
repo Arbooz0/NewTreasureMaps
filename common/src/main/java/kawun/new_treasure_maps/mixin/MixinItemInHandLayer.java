@@ -7,14 +7,16 @@ import kawun.new_treasure_maps.items.Items;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.player.PlayerModel;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,21 +25,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
 @Mixin(PlayerItemInHandLayer.class)
-public abstract class MixinItemInHandLayer<S extends AvatarRenderState, M extends EntityModel<S> & ArmedModel<S> & HeadedModel> extends ItemInHandLayer<S, M> {
+public abstract class MixinItemInHandLayer<T extends Player, M extends EntityModel<T> & ArmedModel & HeadedModel> extends ItemInHandLayer<T, M> {
 
 
-    public MixinItemInHandLayer(RenderLayerParent<S, M> renderer) {
-        super(renderer);
+    public MixinItemInHandLayer(RenderLayerParent<T, M> renderer, ItemInHandRenderer itemInHandRenderer) {
+        super(renderer, itemInHandRenderer);
     }
 
-    @Inject(at = @At("HEAD"), method = "submitArmWithItem", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "renderArmWithItem", cancellable = true)
     protected void submitArmWithItem(
-            S state,
-            ItemStackRenderState item,
+            LivingEntity entity,
             ItemStack itemStack,
+            ItemDisplayContext displayContext,
             HumanoidArm arm,
             PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
+            MultiBufferSource submitNodeCollector,
             int lightCoords,
             CallbackInfo ci
     ) {
@@ -49,7 +51,7 @@ public abstract class MixinItemInHandLayer<S extends AvatarRenderState, M extend
         }
 
         if (this.getParentModel() instanceof PlayerModel playerModel) {
-            MapRenderer.renderThirdPerson(itemStack, playerModel, state, arm, poseStack, submitNodeCollector, lightCoords);
+            MapRenderer.renderThirdPerson(itemStack, playerModel, entity, arm, poseStack, submitNodeCollector, lightCoords);
         }
 
         ci.cancel();

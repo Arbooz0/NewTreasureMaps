@@ -29,7 +29,7 @@ public class CommandRegister {
             List<Supplier<LiteralArgumentBuilder<CommandSourceStack>>> commands
     ) {
         LiteralArgumentBuilder<CommandSourceStack> baseCommand = Commands.literal(Constants.MOD_ID)
-                .requires(Commands.hasPermission(Commands.LEVEL_ADMINS));
+                .requires(c -> c.hasPermission(Commands.LEVEL_ADMINS));
 
         for (Supplier<LiteralArgumentBuilder<CommandSourceStack>> supplier : commands) {
             LiteralArgumentBuilder<CommandSourceStack> command = supplier.get();

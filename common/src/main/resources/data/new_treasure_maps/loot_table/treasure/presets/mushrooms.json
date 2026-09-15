@@ -150,10 +150,6 @@
                   "duration": 60
                 },
                 {
-                  "type": "minecraft:breath_of_the_nautilus",
-                  "duration": 60
-                },
-                {
                   "type": "minecraft:conduit_power",
                   "duration": 60
                 },

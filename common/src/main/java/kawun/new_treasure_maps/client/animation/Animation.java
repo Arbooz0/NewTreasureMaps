@@ -4,9 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import kawun.new_treasure_maps.client.utils.AnimationTime;
 import kawun.new_treasure_maps.client.utils.HandHelper;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.player.PlayerModel;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -16,7 +15,7 @@ import org.joml.Vector3f;
 public abstract class Animation {
 
     protected PoseStack poseStack;
-    protected SubmitNodeCollector submitNodeCollector;
+    protected MultiBufferSource submitNodeCollector;
     protected HumanoidArm arm;
     protected AnimationTime time;
     protected int lightCoords;
@@ -24,7 +23,6 @@ public abstract class Animation {
     protected boolean mainHandEmpty;
 
     protected PlayerModel model;
-    protected AvatarRenderState state;
 
 
 
@@ -42,7 +40,7 @@ public abstract class Animation {
 
     public void animate(
             PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
+            MultiBufferSource submitNodeCollector,
             HumanoidArm arm,
             AnimationTime time,
             int lightCoords,
@@ -64,11 +62,10 @@ public abstract class Animation {
 
     public void animateThirdPerson(
             PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
+            MultiBufferSource submitNodeCollector,
             HumanoidArm arm,
             AnimationTime time,
             PlayerModel model,
-            AvatarRenderState state,
             int lightCoords
     ) {
         this.poseStack = poseStack;
@@ -76,7 +73,6 @@ public abstract class Animation {
         this.arm = arm;
         this.time = time;
         this.model = model;
-        this.state = state;
         this.lightCoords = lightCoords;
         animateThirdPerson();
         this.poseStack = null;
@@ -84,15 +80,19 @@ public abstract class Animation {
         this.arm = null;
         this.time = null;
         this.model = null;
-        this.state = null;
     }
 
 
     public void animateArm(PlayerModel model, AnimationTime time, HumanoidArm arm) {
+        if (this.time != null) {
+            return;
+        }
         this.model = model;
         this.time = time;
         this.arm = arm;
         animateArm();
+        model.rightSleeve.copyFrom(model.rightArm);
+        model.leftSleeve.copyFrom(model.leftArm);
         this.model = null;
         this.time = null;
         this.arm = null;
@@ -129,7 +129,7 @@ public abstract class Animation {
 
 
     public void translateToHand(HumanoidArm arm) {
-        model.translateToHand(state, arm, poseStack);
+        model.translateToHand(arm, poseStack);
     }
 
 

@@ -1,30 +1,17 @@
 package kawun.new_treasure_maps.saveddata;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.NewTreasureMaps;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.network.Network;
-import kawun.new_treasure_maps.utils.Utils;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.saveddata.SavedDataType;
-import org.jspecify.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 
 public class MapSavedData extends SavedData {
-
-    public static final Codec<MapSavedData> CODEC = RecordCodecBuilder.create(
-        i -> i.group(
-                    MapType.CODEC.fieldOf("type").forGetter(m -> m.mapType),
-                    Codec.BYTE_BUFFER.fieldOf("bytes").forGetter(m -> ByteBuffer.wrap(m.bytes))
-                )
-                .apply(i, MapSavedData::new)
-    );
-
 
     public int id;
     public MapType mapType = MapType.NONE;
@@ -39,25 +26,32 @@ public class MapSavedData extends SavedData {
         this.bytes = bytes;
     }
 
-    public MapSavedData(MapType mapType, ByteBuffer bytes) {
+    public MapSavedData(MapType mapType, byte[] bytes) {
         this.mapType = mapType;
-        this.bytes = bytes.array();
+        this.bytes = bytes;
     }
 
 
-    public static SavedDataType<MapSavedData> getSavedDataType(int id) {
-        return new SavedDataType<>(
-                Utils.identifier("map" + id),
-                MapSavedData::new,
-                CODEC,
-                null
-        );
+    @Override
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+        tag.putByte("type", mapType.getId());
+        tag.putByteArray("bytes", bytes);
+        return tag;
+    }
+
+    public static MapSavedData load(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+        return new MapSavedData(MapType.byId(tag.getByte("type")), tag.getByteArray("bytes"));
     }
 
 
-    public static @Nullable MapSavedData load(int id) {
+    public static SavedData.Factory<MapSavedData> factory() {
+        return new Factory<>(MapSavedData::new, MapSavedData::load, null);
+    }
+
+
+    public static MapSavedData load(int id) {
         if (NewTreasureMaps.server != null) {
-            MapSavedData data = NewTreasureMaps.server.getDataStorage().get(getSavedDataType(id));
+            MapSavedData data = NewTreasureMaps.server.overworld().getDataStorage().get(factory(), Constants.MOD_ID + "_map" + id);
             if (data != null) {
                 data.id = id;
             }
@@ -69,7 +63,8 @@ public class MapSavedData extends SavedData {
 
     public void save() {
         if (NewTreasureMaps.server != null) {
-            NewTreasureMaps.server.getDataStorage().set(getSavedDataType(id), this);
+            setDirty();
+            NewTreasureMaps.server.overworld().getDataStorage().set(Constants.MOD_ID + "_map" + id, this);
         }
     }
 

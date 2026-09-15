@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ByteArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteMap;
 import kawun.new_treasure_maps.Constants;
 import kawun.new_treasure_maps.client.texture.MapTextureManager;
+import kawun.new_treasure_maps.client.utils.ARGB;
 import kawun.new_treasure_maps.enums.MapType;
 import kawun.new_treasure_maps.network.MapPacket;
 import kawun.new_treasure_maps.utils.Utils;
@@ -14,16 +15,15 @@ import kawun.new_treasure_maps.utils.pixels.Pixels;
 import kawun.new_treasure_maps.utils.pixels.PixelsInt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ARGB;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
-import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 
@@ -69,7 +69,7 @@ public class SideViewMapCreate extends BaseMapCreate {
     }
 
 
-    private @Nullable BlockPos findPlaceChest() {
+    private BlockPos findPlaceChest() {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int i = 0; i < 20; i++) {
             int offset = Utils.getRandomRange(-32, 32);
@@ -82,7 +82,7 @@ public class SideViewMapCreate extends BaseMapCreate {
                 pos.setX(fromPosition.x);
             }
 
-            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos);
+            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
             y = Utils.getRandomRange(y - 100, y - 90);
             pos.setY(y);
 
@@ -172,7 +172,7 @@ public class SideViewMapCreate extends BaseMapCreate {
         bytes.add((byte) blocks.size());
 
         for (Block block : blocks.keySet()) {
-            Identifier id = BuiltInRegistries.BLOCK.getKey(block);
+            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
             String idText = id.getNamespace().equals("minecraft") ? id.getPath() : id.toString();
             byte[] idBytes = idText.getBytes(StandardCharsets.US_ASCII);
             bytes.add((byte) idBytes.length);
@@ -214,7 +214,7 @@ public class SideViewMapCreate extends BaseMapCreate {
                 stoneId = (byte) (n + 1);
             }
             i += l;
-            Identifier id = Identifier.parse(idText);
+            ResourceLocation id = ResourceLocation.parse(idText);
             NativeImage image = MapTextureManager.loadBlockTexture(id);
             if (image != null) {
                 images.put((byte) (n + 1), image);
@@ -251,7 +251,7 @@ public class SideViewMapCreate extends BaseMapCreate {
 
         PixelsInt pixels = new PixelsInt(256);
         boolean[] lastColumnIsStone = new boolean[256];
-        int blackColor = ARGB.color(50, 50, 50);
+        int blackColor = ARGB32.color(50, 50, 50);
 
         for (int x = 0; x < 256; x++) {
             for (int y = 0; y < 256; y++) {
@@ -299,7 +299,7 @@ public class SideViewMapCreate extends BaseMapCreate {
                 }
 
                 NativeImage image = images.get(id);
-                int color = image.getPixel(x % 6, y % 6);
+                int color = image.getPixelRGBA(x % 6, y % 6);
                 if (layer > 0) {
                     if (y > blackoutY[x]) {
                         color = ARGB.scaleRGB(color, 1.0f - (layer / 4.0f));

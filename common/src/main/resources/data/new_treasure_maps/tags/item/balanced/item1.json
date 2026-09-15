@@ -7,8 +7,6 @@
     "minecraft:skull_banner_pattern",
     "minecraft:mojang_banner_pattern",
     "minecraft:globe_banner_pattern",
-    "minecraft:field_masoned_banner_pattern",
-    "minecraft:bordure_indented_banner_pattern",
     "minecraft:goat_horn",
     "minecraft:emerald",
     "minecraft:lapis_lazuli",
@@ -21,7 +19,6 @@
     "minecraft:gold_ingot",
     "minecraft:gold_nugget",
     "minecraft:iron_nugget",
-    "minecraft:copper_nugget",
     "minecraft:diamond"
   ]
 }

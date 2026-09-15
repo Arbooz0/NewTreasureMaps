@@ -76,10 +76,6 @@
           "weight": 3
         },
         {
-          "type": "minecraft:item",
-          "name": "minecraft:copper_nugget"
-        },
-        {
           "type": "minecraft:tag",
           "name": "minecraft:copper_ores",
           "expand": true

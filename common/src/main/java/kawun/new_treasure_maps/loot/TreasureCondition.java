@@ -1,6 +1,5 @@
 package kawun.new_treasure_maps.loot;
 
-import com.mojang.serialization.MapCodec;
 import kawun.new_treasure_maps.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -9,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
 public class TreasureCondition implements LootItemCondition {
@@ -21,7 +21,7 @@ public class TreasureCondition implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {
-        Vec3 lootPos = context.getOptionalParameter(LootContextParams.ORIGIN);
+        Vec3 lootPos = context.getParamOrNull(LootContextParams.ORIGIN);
         if (lootPos == null) {
             Constants.LOG.error("Loot origin is NULL");
             return false;
@@ -49,7 +49,7 @@ public class TreasureCondition implements LootItemCondition {
     }
 
     @Override
-    public MapCodec<? extends LootItemCondition> codec() {
+    public LootItemConditionType getType() {
         return null;
     }
 }

@@ -1,7 +1,6 @@
 package kawun.new_treasure_maps.utils.pixels;
 
 import org.joml.Vector2i;
-import org.jspecify.annotations.Nullable;
 
 
 public class Pixels extends PixelsBase {
@@ -23,7 +22,10 @@ public class Pixels extends PixelsBase {
     }
 
     public Pixels(byte[] pixels) {
-        int size = (int) Math.sqrt(pixels.length);
+        this(pixels, (int) Math.sqrt(pixels.length));
+    }
+
+    private Pixels(byte[] pixels, int size) {
         super(size, size);
         this.pixels = pixels;
     }
@@ -63,7 +65,7 @@ public class Pixels extends PixelsBase {
     }
 
 
-    public void drawImage(Vector2i pos, Pixels image, float pivotX, float pivotY, boolean swapX, @Nullable BlendColor blend) {
+    public void drawImage(Vector2i pos, Pixels image, float pivotX, float pivotY, boolean swapX, BlendColor blend) {
         int startX = (int) (pos.x - (image.width * pivotX));
         int startY = (int) (pos.y - (image.height * pivotY));
         for (int y = 0; y < image.height; y++) {
